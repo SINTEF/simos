@@ -1,4 +1,4 @@
-expand = require(':/res/macro.js').expand;
+var njs = require('../../njs')();
 
 function CommonLangBase(model){
 	this.constructor(model);
@@ -6,6 +6,9 @@ function CommonLangBase(model){
 exports.CommonLangBase = CommonLangBase;
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.constructor = function(model) {
+	
+	this.model = undefined;
+	
 	this.setModel(model);
 	
 	this.targetType = {
@@ -20,6 +23,12 @@ CommonLangBase.prototype.constructor = function(model) {
 	};
 	
 	this.dimensionType = "integer";
+	
+	this.packageSep = ':';
+	this.versionSep = '_';
+	
+	this.packagePathSep = '.';
+	
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.numericTypes = function(){
@@ -50,7 +59,7 @@ CommonLangBase.prototype.objectToText = function(obj, text, block){
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.show = function(obj){
-	print(this.objectToText(obj, '', '   '));
+	njs.print(this.objectToText(obj, '', '   '));
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getModel = function(){
@@ -124,8 +133,8 @@ CommonLangBase.prototype.getClassName = function() {
 /*----------------------------------------------------------------------------*/
 
 CommonLangBase.prototype.getClassNameFromType = function(typeName) {
-
-	return typeName;
+	
+	return this.parseTypePath(typeName).name;
 };
 /*----------------------------------------------------------------------------*/
 
@@ -135,7 +144,7 @@ CommonLangBase.prototype.addVersion = function(typeName, version) {
 		return typeName;
 	}
 	else {
-		return typeName + "_" + version;
+		return typeName + this.versionSep + version;
 	}
 };
 /*----------------------------------------------------------------------------*/
@@ -178,8 +187,37 @@ CommonLangBase.prototype.getName = function() {
     return this.getModel().name;
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.getVersion = function() {
-    return this.getModel().version;
+CommonLangBase.prototype.getVersion = function(p, model) {
+	if (model == undefined) {
+		model = this.getModel();
+	}
+	
+	if (p == undefined)
+		return JSON.stringify(model.__versions__);
+	else
+		return model.__versions__[p];
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getPackagesVersions = function(packages, model) {
+	if (model == undefined) {
+		model = this.getModel();
+	}
+	
+	var versions = [];
+	
+	for (var j = 0, len = packages.length; j < len; j++){
+		versions.push(this.getVersion(packages[j], model));
+	}
+	
+	return versions;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getPackages = function() {
+	var packages = [];
+	for (var key in this.getModel().__versions__) {
+		packages.push(key);
+	} 
+	return packages;
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getAttrs = function() {
@@ -390,6 +428,32 @@ CommonLangBase.prototype.isString = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.findProperty = function(prop, model) {
+	if (model == undefined) {
+		model = this.model;
+	}
+	
+	for (var i = 0, len = model.properties.length; i< len ; i++){
+		if (model.properties[i].name == prop.name)
+			return i;
+	}
+	return -1;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.hasProperty = function(prop, model) {
+	if (model == undefined) {
+		model = this.model;
+	}
+	
+	var ind = this.findProperty(prop, model);
+	if (ind == -1){
+		return false;
+	}
+	else {
+		return true;
+	}
+};
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getPropDependencies = function(prop) {
 	return prop.__dependencies;
 };
@@ -510,49 +574,89 @@ CommonLangBase.prototype.getSingles = function(props) {
 	return propList;
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.packagePath = function(ppath,pver) {
-	var packages = ppath.split(/[\s::]+/);
-	var versions = pver.split(/[\s::]+/);
+CommonLangBase.prototype.packagePath = function(pnames,pvers) {
+	/*two lists 
+	 * pnames: name of packages in order
+	 * pvers: vertion of packages in order*/
 	
-	var paths = [];
-	for (var i = 0; i< packages.length; i++){
-		paths.push(this.addVersion(packages[i], versions[i]));
+	var ppath = [];
+	for (var i = 0, len = pnames.length; i< len; i++) {
+		var pnv = '';
+		if (pvers[i] != '')
+			pnv = this.addVersion(pnames[i], pvers[i]);
+		else
+			pnv = pnames[i];
+		
+		ppath.push(pnv);
 	}
-	return paths.join('.');
+	return ppath.join(this.packagePathSep);
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.entitySuperTypes = function() {
+CommonLangBase.prototype.typePath = function(pnames,pvers, typeName) {
+	/*two lists 
+	 * pnames: name of packages in order
+	 * pvers: vertion of packages in order*/
+	
+	return this.packagePath(pnames, pvers) + this.packagePathSep + typeName;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.splitPackages = function(packages) {
+	return packages.split(this.packageSep);
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.parseTypePath = function(type, model) {
+	/* get a complex type package path,
+	 * e.g. model:hydro:wamit:rao
+	 * and extract path and versioning data*/
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	var packages = this.splitPackages(type);
+	/* take out the typename */
+	var typeName = packages[packages.length-1];
+	packages = packages.slice(0,packages.length-1);
+	var versions = this.getPackagesVersions(packages,model);
+				
+	
+	return({	"packages": packages,
+				"versions": versions,
+				"name": typeName,
+				"path": this.typePath(packages, versions, typeName)});
+
+
+	
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.superTypes = function(model) {
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
 	var exts = [];
 	
-	
-	if ((this.model['extends'] != undefined) &&  (this.model['extends'] != '')) {
-		var packages = this.model['extends']['package']['name'].split(/[\s,]+/);
-		var packagesVer = this.model['extends']['package']['version'].split(/[\s,]+/);
-		var types = this.model['extends']['type']['name'].split(/[\s,]+/);
-		var typesVer = this.model['extends']['type']['version'].split(/[\s,]+/);
+	if (model['extends'] instanceof Array) {
 		
-		if ((packages.length != packagesVer.length) || 
-			(packages.length != types.length)|| 
-			(packages.length != typesVer.length)){
-			throw "packages, types and versions must have the same length in _extends.";
-		}
-		else {
-			for (var i = 0; i<types.length; i++) {
-				this.packagePath(packages[i], packagesVer[i]);
-				exts.push({	"package": {"name": packages[i], 
-										"version": packagesVer[i], 
-										"path": this.packagePath(packages[i],packagesVer[i])},
-							"type": {"name": types[i], "version": typesVer[i]} });
-			}
+		var types = model['extends'];
+		for (var i = 0, len = types.length; i< len; i++){
+			exts.push(this.parseTypePath(types[i], model));
+
 		}
 	}
 
+	
 	return exts;
 	
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.isDerived = function() {
-	var exts = this.entitySuperTypes();
+CommonLangBase.prototype.isDerived = function(model) {
+	if (model == undefined){
+		model = this.getModel();
+	}
+
+	
+	var exts = this.superTypes(model);
+	
 	if (exts.length == 0){
 		return false;
 	}

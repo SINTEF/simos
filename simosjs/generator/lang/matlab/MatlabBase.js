@@ -1,5 +1,5 @@
-expand = require(':/res/macro.js').expand;
-CommonLangBase = require('generator.commonLangBase').CommonLangBase;
+
+var CommonLangBase = require('../CommonLangBase').CommonLangBase;
 
 /*----------------------------------------------------------------------------*/
 function MatlabBase(model){
@@ -8,7 +8,6 @@ function MatlabBase(model){
 exports.MatlabBase = MatlabBase;
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype = Object.create(CommonLangBase.prototype);
-exports.MatlabBase.prototype = MatlabBase.prototype;
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.constructor = function(model) {
 	CommonLangBase.prototype.constructor(model);
@@ -24,6 +23,9 @@ MatlabBase.prototype.constructor = function(model) {
 	    "tiny"		:"int8"
 	};
 	
+	this.name = 'matlab';
+	this.ext = 'm';
+
 	this.blockSpace = '    ';
 	
 	this.sep1 = '%******************************************************************************';
@@ -35,7 +37,7 @@ MatlabBase.prototype.stringify = function(str) {
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.makeInternal = function(str) {
-	return ('INT' + str);
+	return ('INT' + str);	
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.initPublicProperties = function(bl) {
@@ -138,17 +140,6 @@ MatlabBase.prototype.initPrivateProperties = function(bl) {
 
 
     return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-MatlabBase.prototype.getTypePath = function(prop) {	
-	var pack = prop['package'];
-	if (pack == undefined){
-		pack = this.getModel()["package"];
-	}
-	
-	var ppath = this.packagePath(pack.name, pack.version);
-	
-	return (ppath + '.' + prop.type); 
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.getPropertyValue = function(prop) {
@@ -636,7 +627,7 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 		
 		nameFlag = nameFlag + this.stringify(indName) + ' num2str(' + indName + ') ';
 	}
-	var indArray = indNames.join(',');
+	var indArray = indNames.reverse().join(',');
 
 	return {'cmd' : cmd.join('\n'),
 			'indNames': indNames,
@@ -646,12 +637,26 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 			'bl': bl+(dimList.length)-1};
 };
 /*----------------------------------------------------------------------------*/
+MatlabBase.prototype.makeModelType = function(model) {
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	var packages = this.splitPackages(model["package"]);
+	var versions = this.getPackagesVersions(packages, model);
+	var typeName = model.name;
+	
+	console.log(this.typePath(packages,versions,typeName));
+	return this.typePath(packages,versions,typeName);
+	
+};
+/*----------------------------------------------------------------------------*/
 MatlabBase.prototype.factoryFunc = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
-		
+	
 	cmd.push(this.getBlockSpace(bl) + 
 	'function obj = create(~,name)');
 	cmd.push(this.getBlockSpace(bl+1) + 
@@ -661,7 +666,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'end ');
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'obj = ' + this.getTypePath(this.getModel()) + '(name);');
+		'obj = ' + this.makeModelType(this.getModel()) + '(name);');
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');	
 	cmd.push(this.getCodeSeparator(bl));
@@ -670,7 +675,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
     for (var i = 0; i<props.length; i++) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
-			
+    		var propType = this.parseTypePath(prop.type).path;
 			
 				cmd.push(this.getBlockSpace(bl) + 
 				'function obj = create' + this.firstToUpper(prop.name) +'(~,name)');
@@ -682,7 +687,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 					'end ');
 
 				cmd.push(this.getBlockSpace(bl+1) + 
-					'obj = ' + this.getTypePath(prop) + '(name);');
+					'obj = ' + propType + '(name);');
 				cmd.push(this.getBlockSpace(bl) + 
 				'end');	
 				cmd.push(this.getCodeSeparator(bl));
@@ -697,7 +702,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'end ');
 				cmd.push(this.getBlockSpace(bl+1) + 
-					'obj = ' + this.getTypePath(prop) + '(name);');
+					'obj = ' + propType + '(name);');
 				
 				cmd.push(this.getBlockSpace(bl+1) + 
 					this.objName() + '.' + prop.name + '{end+1} = obj;');
@@ -724,7 +729,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.getBlockSpace(bl) + 
 				'function obj = createSet' + this.firstToUpper(prop.name) +'(' + this.objName() + ')');	
 				cmd.push(this.getBlockSpace(bl+1) + 
-					this.objName() + '.' + prop.name + ' = ' + this.getTypePath(prop)
+					this.objName() + '.' + prop.name + ' = ' + propType
 						+ '(' + this.stringify(prop.name)+ ');');
 
 				cmd.push(this.getBlockSpace(bl+1) + 
@@ -875,32 +880,6 @@ MatlabBase.prototype.saveToHDF5Handle = function(bl) {
 
 	cmd.push(this.getBlockSpace(bl+1));
 
-	/* saving root attributes */
-	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-	'fileattrib(' + filePath + ',\'+w\');' );
-	cmd.push(this.getBlockSpace(bl+1));
-	
-	/* general data-structure attributes */
-	var attrs = this.getPropertyStorableAttrs(this.getModel());
-	for(var i = 0; i < attrs.length; i++) {
-		var attr = attrs[i];  
-
-		cmd.push(this.getBlockSpace(bl+1) + 
-		'h5writeatt(' + filePath + ',handle,' + 
-			this.stringify(attr) +',' + 
-			this.objName() + '.'+this.modelDesAtt() + '.' + attr + ');' 
-			);
-
-	}
-
-	cmd.push(this.getBlockSpace(bl+1));
-
-	cmd.push(this.getBlockSpace(bl+1) + 
-	'h5writeatt(' + filePath + ',handle,' + this.stringify( this.modelDesAtt()) +',' + this.objName() + '.' + this.modelDesAtt() + 'str' + ');' );
-	
-	cmd.push(this.getBlockSpace(bl+1));
 	
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');
@@ -925,6 +904,13 @@ MatlabBase.prototype.saveDataToHDF5Handle = function(bl) {
 		cmd.push(this.getBlockSpace(bl+1) + '');
 	}
 	*/
+	
+	if (this.isDerived()) {
+		throw "Derived models can not be used for code generation with matlab.";
+	}
+	
+
+	/* writing properties */
 	
 	var properties = this.getProperties();
 	var propNum = properties.length;
@@ -968,6 +954,30 @@ MatlabBase.prototype.saveDataToHDF5Handle = function(bl) {
 		cmd.push(this.getBlockSpace(bl+1));
 
 	}
+	
+	/* saving root attributes */
+	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
+
+	cmd.push(this.getBlockSpace(bl+1) + 
+			'fileattrib(' + filePath + ',\'+w\');' );
+	
+	/* putting accessed package names into the main root attributes */
+	var packages = this.getPackages();
+	for(var i = 0, len = packages.length; i< len; i++) {
+		var key = packages[i];
+		cmd.push(this.getBlockSpace(bl+1) + 
+				'h5writeatt(' + filePath + ',handle,' + 
+					this.stringify(key) +',' + 
+					this.stringify(this.getVersion(key)) + ');' 
+					);
+
+	}
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+			'h5writeatt(' + filePath + ',handle,\'type\',' + 
+				this.stringify(this.getModel()["package"] + this.packageSep + this.getModel().type) + ');' 
+				);
+
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');
 	
@@ -1166,7 +1176,7 @@ MatlabBase.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 
 
 		cmd.push(this.getBlockSpace(bl+2) + 
-	 			'refs = {};');
+	 			'order = {};');
 
 		cmd.push(this.getBlockSpace(bl+2) + 
 	 			'if (' + this.objName() + '.isContained(varName))');
@@ -1174,26 +1184,30 @@ MatlabBase.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 		var loopBlock = this.loopBlockForArray(bl+3,prop);
 		cmd.push(loopBlock.cmd);
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'item = ' + this.objName() + '.' + this.makePrivate(prop.name) + '{' +loopBlock.indArray + '};' 
-				);	
+					'item = ' + this.objName() + '.' + this.makePrivate(prop.name) + 
+						'{' +loopBlock.indArray + '};'	);	
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 					'item.' + this.makeInternal("FilePath") + ' = ' + 
 					this.objName() + '.' + this.makeInternal("FilePath") + ';');
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 					'path = [handle \'/\' ' + this.stringify(prop.name) + ' \'/\' item.name ];');	
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'item.saveToHDF5Handle([path \'/\']);' 
-				);		
+					'item.saveToHDF5Handle([path \'/\']);' );		
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'refs{end+1} = path;' 
+					'order{end+1} = item.name;' 
 				);
 		cmd.push(loopBlock.ends);
 
+		/*
 		cmd.push(this.getBlockSpace(bl+3) + 
 				'hdf5write(' + filePath + ',[handle ' + this.stringify(prop.name) + ' \'/values\' ] , refs' +
 				', \'WriteMode\', \'append\' );'
 				);
-
+		 */
+		
+		cmd.push(this.getBlockSpace(bl+3) + 
+				'h5writeatt(' + filePath + ',handle,\'order\', order);'	);
+		
 		cmd.push(this.getBlockSpace(bl+2) + 
 				'else');
 		cmd.push(this.getBlockSpace(bl+3) +

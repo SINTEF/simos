@@ -71,6 +71,9 @@ doc/Doxygen/DTAGS
 *.tgz
 *.gtgz
 
+# binary hdf5 files
+*.h5
+
 # ignore the persistent .build tag in the main directory
 /.build
 
@@ -81,7 +84,10 @@ doc/Doxygen/DTAGS
 /.tags
 
 # ignore eclipse project files in the main directory
-/.cproject
-/.project
-
+.cproject
+.project
+.*project
+.settings
+# generated files
+#generated/
 # end-of-file

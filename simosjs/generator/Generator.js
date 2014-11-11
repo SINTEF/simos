@@ -1,0 +1,335 @@
+//var njs = require('../njs')();
+//var CommonLangBase = require('./commonLangBase.js').CommonLangBase;
+
+var fs = require('fs');
+var path = require('path');
+var njs = require('../njs')();
+
+fs.mkdirPathSync = function(dirPath, mode) {
+	  //Call the standard fs.mkdir
+	try {
+	  fs.mkdirSync(dirPath, mode);
+	}
+	catch (ex) {
+	    //When it fail in this way, do the custom steps
+	    if (ex && ex.errno === 34) {
+	      //Create all the parents recursively
+	      fs.mkdirPathSync(path.dirname(dirPath), mode);
+	      //And then the directory
+	      fs.mkdirPathSync(dirPath, mode);
+	    }
+	  };
+	};
+	
+/*----------------------------------------------------------------------------*/
+function Generator(lang){
+	this.constructor(lang);
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.constructor = function(lang) {
+	this.simosPath = path.join('..','..');
+	this.modelsPath = path.join(this.simosPath, 'models');
+		
+	this.outPath = undefined;
+	
+	this.lang = undefined;
+	
+	if (lang != undefined)
+		this.setLang(lang);
+	
+	this.versionFlag = '__versions__';
+	this.packageFlag = '__package__';
+	
+	this.modelExt = 'json';
+	
+	this.flatModel = true;
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.toString = function(){
+	return "Generator";
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.isModelName = function(name) {
+	if ((name != this.versionFlag) &&  (name != this.packageFlag))
+		return true;
+	else
+		return false;
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getOutPath = function() {
+	if (this.outPath != undefined) {
+		return this.outPath;
+	}
+	else {
+		throw(this.outpyPath + ' is not a valid path.');
+	} 
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.setLang = function(lang) {
+	if (lang.toLowerCase() == 'python') {
+		this.lang = require('./lang/python').generator;
+	}
+	else if (lang.toLowerCase() == 'matlab'){
+		this.lang = require('./lang/matlab').generator;
+	}
+	else {
+		throw(lang + ' language is not defined.');
+	}
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* Package and model name and path manipulation */
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+Generator.prototype.splitPackageName = function(packageName) {
+	var parts = packageName.split(this.lang.versionSep);
+	
+	return {"name": parts.slice(0, parts.length-1).join(this.lang.versionSep),
+			"version": parts[parts.length-1]};
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.packageIDFromModelID = function(modelID) {
+	var parts = modelID.split(this.lang.packageSep);
+	return parts.slice(0,parts.length-1).join(this.lang.packageSep);
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.modelNameFromID = function(modelID) {
+	var parts = modelID.split(this.lang.packageSep);
+	return parts[parts.length-1];
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.expandPackages = function(packageID) {
+	var ps = packageID.split(this.lang.packageSep);
+	
+	var packages = [];
+	
+	for (var i = 0, len = ps.length; i < len; i++) {
+		packages.push(this.splitPackageName(ps[i]));
+	}
+	
+	return packages;
+};
+
+/*----------------------------------------------------------------------------*/
+Generator.prototype.sourcePackageIDtoPath = function(packageID) {
+	 var packagePath = packageID.split(this.lang.packageSep).join('/');
+	 return path.join(this.modelsPath, packagePath); 
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.targetPackageIDtoPath = function(packageID) {
+	var packagePath = '';
+	
+	if (this.lang.name.toLowerCase() == 'python'){
+		packagePath = packageID.split(this.lang.packageSep).join('/');
+	}
+	else if (this.lang.name.toLowerCase() == 'matlab'){
+		var packages = packageID.split(this.lang.packageSep);
+		for (var i = 0, len = packages.length; i < len; i++) {
+			packages[i] = '+' + packages[i];
+		}
+		packagePath = packages.join('/');
+	}
+	else {
+		throw(this.lang.name + ' language is not defined.');
+	} 
+
+	return path.join(this.getOutPath(), packagePath);
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.initPackagePath = function(packageID) {
+	var outppath = this.targetPackageIDtoPath(packageID);
+	
+	
+	if (!fs.exists(outppath))
+		fs.mkdirPathSync(outppath);
+	
+	if (this.lang.name.toLowerCase() == 'python'){
+		var packages = packageID.split(this.lang.packageSep);
+		for (var i = 0, len = packages.length; i < len; i++) {
+			var pout = path.join(this.getOutPath(), packages.slice(0,i+1).join(path.sep));
+			var initFilePath = path.join(pout, '__init__.py');
+			if (!fs.exists(initFilePath))
+				fs.writeFileSync( initFilePath,	'');
+		}
+	}
+	
+	return outppath;
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* model manipulation */
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getModel = function(modelID) {
+	
+	var modelPath = this.sourcePackageIDtoPath(modelID);
+	
+	//console.log(path.resolve(modelPath) + '.' + this.modelExt);
+	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
+	
+	return require(modelPath);
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getModelVersion = function(modelID) {
+	
+	var modelPath = this.sourcePackageIDtoPath(modelID);
+	var dir = path.dirname(modelPath);
+	var versionFile = path.join(dir, this.versionFlag);
+		
+	delete require.cache[path.resolve(versionFile+ '.' + this.modelExt)];
+	
+	return require(versionFile);
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.addVersionToModel = function(model, version, packages) {
+	
+	/* add package and version data to model*/
+	if (model[this.versionFlag] == undefined){
+		model[this.versionFlag] =  version;
+		/* adding current package and versions */
+		for (var i=0, len = packages.length; i< len; i++){
+			model[this.versionFlag][packages[i].name] = packages[i].version;
+		}
+	}
+	
+	return model;
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.addPackageDataToModel = function(model, packages) {
+	
+	if (model["package"] == undefined) {
+		var packageNames = [];
+		for (var i=0, len = packages.length; i< len; i++){
+			packageNames.push(packages[i].name);
+		}
+		model["package"] =  packageNames.join(this.lang.packageSep);
+	}
+	
+	return model;
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.addPackagesToPropType = function(model) {
+	for (var p = 0, plen = model.properties.length; p < plen; p++){
+		var prop = model.properties[p];
+		if (!this.lang.isAtomic(prop)) {
+			var packages = this.lang.splitPackages(prop.type);
+			if (packages.length == 1) {
+				prop.type = model["package"] + this.lang.packageSep + prop.type;
+			}
+		}
+	}
+	
+	return model;
+
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.flattenModel = function(model) {
+	if (!this.lang.isDerived(model)){
+		return model;
+	}
+	var superTypes = this.lang.superTypes(model);
+	
+	for(var i = 0, ilen = superTypes.length; i < ilen; i++){
+		var type = superTypes[i];
+		var ppath = [];
+		for (var j = 0, jlen = type.packages.length; j < jlen; j++){
+			ppath.push(this.lang.addVersion(type.packages[j], type.versions[j]));
+		}
+		ppath.push(type.name);
+		
+		var supModelID = ppath.join(this.lang.packageSep);
+				
+		var supModel = this.initModel(supModelID);
+		for (var p = 0, plen = supModel.properties.length; p < plen; p++){
+			var prop = supModel.properties[p];
+			if (!this.lang.hasProperty(prop, model)){
+				model.properties.push(prop);
+			}
+		}
+	}
+	
+	model["extends"] = undefined;
+	
+	return model;
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.initModel = function(modelID) {
+	
+	var model = this.getModel(modelID);
+	
+	var packageID = this.packageIDFromModelID(modelID);
+	var packages = this.expandPackages(packageID);
+	
+	model = this.addPackageDataToModel(model, packages);
+
+	var version = this.getModelVersion(modelID);
+	
+	model = this.addVersionToModel(model, version, packages);
+	
+	model = this.addPackagesToPropType(model);
+	
+	if (this.flatModel) {
+		model = this.flattenModel(model);
+	}
+	return model;
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* Code generator */
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+Generator.prototype.generate = function(model) {
+	
+	return this.lang.generate(model);
+	
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.generateModel = function(modelID) {
+	
+	var model = this.initModel(modelID);
+		
+	var packageID = this.packageIDFromModelID(modelID);
+	
+	var outppath = this.initPackagePath(packageID);
+	
+	var outFileName = this.modelNameFromID(modelID) + '.' + this.lang.ext;
+	var outFilePath = path.join(outppath, outFileName);
+	
+	fs.writeFileSync( outFilePath, this.generate(model));
+	
+	console.log("\t" + outFileName + ' is created!');
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.generatePackage = function(packageID) {
+	console.log(njs.sep1);
+	
+	console.log("creating package " + packageID);
+	console.log("output directory " + this.targetPackageIDtoPath(packageID));
+	
+	var ppath = this.sourcePackageIDtoPath(packageID); 
+	
+	var models = fs.readdirSync(ppath);
+		
+	for (var i = 0, len = models.length; i < len; i++) {
+		var modelNameParts = models[i].split('.');
+		var modelName = modelNameParts.slice(0,modelNameParts.length-1).join('.');
+	 
+		if (this.isModelName(modelName)){
+			console.log(njs.sep2);
+			console.log("creating " + modelName);
+			this.generateModel( packageID + this.lang.packageSep + modelName);
+		}
+	}
+	
+	console.log(njs.sep1);
+};
+/*----------------------------------------------------------------------------*/
+module.exports = function() { return new Generator(); };

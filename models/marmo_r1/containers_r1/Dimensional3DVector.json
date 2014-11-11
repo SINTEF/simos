@@ -1,0 +1,25 @@
+
+{	
+	"name": "Dimensional3DVector",
+	"type": "Dimensional3DVector",
+	"description": "single 3D vector with dimension",
+	
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+				
+	"properties": [
+						 	  
+	{"name": "x", 
+	 	"type": "double", "value":"0.0",
+	 	"description": "x value"}	,		
+			 
+	{"name": "y", 
+		"type": "double", "value":"0.0",
+	 	"description": "y value"}	,	
+			 			 
+	{"name": "z", 
+		"type": "double", "value":"0.0",
+	 	"description": "z value"}	 
+	 
+	]
+	
+}

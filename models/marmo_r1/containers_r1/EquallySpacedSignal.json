@@ -1,0 +1,44 @@
+
+{	
+	"name": "EquallySpacedSignal",
+	"type": "EquallySpacedSignal",
+	"description": "data model for an equally spaced signal.",
+
+
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+					
+	"properties": [
+	    
+
+	{"name": "nSamples", 
+             "type": "integer", "value": 1,
+             "description": "number of data points."},
+	    
+	 
+	{"name": "value", 
+			 "type": "double", "dim": "nSamples", 
+			 "description": "data points."},			 
+
+	{"name": "xname", 
+			"type": "string", "value": "x",
+			"description": "name for the x value"},
+
+	{"name": "xdescription", 
+			"type": "string", "value": "",
+			"description": "name for the x value"},
+			 
+	{"name": "xunit", 
+			 "type": "string", "value": "",
+			 "description": "delta unit."},
+			 			 
+	{"name": "xdelta", 
+			 "type": "double", "value": 1,
+			 "description": "signal spacing."},	
+			 		 
+	{"name": "xstart", 
+			 "type": "double", "value": 0,
+			 "description": "start of the signal input."}		 
+	  
+	]
+	
+}

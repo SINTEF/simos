@@ -88,6 +88,6 @@ doc/Doxygen/DTAGS
 .project
 .*project
 .settings
-# generated files
-#generated/
+# python binaries
+*.pyc
 # end-of-file

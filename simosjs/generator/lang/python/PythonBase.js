@@ -48,6 +48,8 @@ PythonBase.prototype.importModules = function() {
 	cmd.push('import numpy as np');
 	cmd.push('import h5py');
 	cmd.push('import json');
+	cmd.push('import collections');
+	cmd.push('import uuid');
 	cmd.push('import pyfoma.dataStorage as pyds');
 	
 	cmd.push(this.getSuperTypesImport());
@@ -95,7 +97,7 @@ PythonBase.prototype.getImportForCustomDataTypes = function() {
 	for (var i = 0; i<props.length; i++){
 		var prop =  props[i];
 		if (this.isAtomicType(prop.type) == false) {
-			var typeData = this.parseTypePath(prop.type);
+			var typeData = this.parseFullTypeName(prop.type);
 			if (importedTypes.indexOf(typeData.path) == -1) {
 				cmd.push('from ' + typeData.path + ' import ' + typeData.name);
 				importedTypes.push(typeData.path);
@@ -438,6 +440,8 @@ PythonBase.prototype.classInit = function(bl) {
 		cmd.push(this.getBlockSpace(bl+1));
 
 	}
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'self.ID = str(uuid.uuid4())');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'self._saved = {}');
@@ -548,7 +552,7 @@ PythonBase.prototype.propSet = function(prop, bl) {
 		else {
 			/* check if it has the correct type */
 			cmd.push(this.getBlockSpace(bl+1) + 
-					'if not(isinstance(val, ' + prop.type + ')):');
+					'if not(isinstance(val, ' + this.parseFullTypeName(prop.type).name + ')):');
 			cmd.push(this.getBlockSpace(bl+2) + 
 					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
 
@@ -619,7 +623,7 @@ PythonBase.prototype.arrayUpdateSize = function(prop, bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.getReprFunc = function(bl) {
+PythonBase.prototype.reprFunc = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -629,18 +633,14 @@ PythonBase.prototype.getReprFunc = function(bl) {
 	'def __repr__(self):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'return ( str(type(self)) +"\\n" + self._represent() +"\\n")' );
+		'return ( json.dumps(self.dictRepr(short=True), ' + 
+			'indent=4, separators=(\',\', \': \')) )' );
 
 	cmd.push(this.getBlockSpace(bl+1));
-	
-	cmd.push(this.getBlockSpace(bl) + 
-	'def _represent(self):');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'outstr = ""');
-	
-	
+		
 	if (this.isDerived()) {
+		throw "not implemented for dervied types.";
+		
 		var superTypes = this.superTypes();
 		for (var i = 0; i<superTypes.length; i++){
 			var supType = superTypes[i];
@@ -652,28 +652,238 @@ PythonBase.prototype.getReprFunc = function(bl) {
 		cmd.push(this.getBlockSpace(bl+1) + '');
 	}
 	
-	var props = this.getProperties();
+	return cmd.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.typeReprFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.getBlockSpace(bl) + 
+	'def typeRepr(self):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-			'return (outstr ' );
+		'rep = collections.OrderedDict()' );
+
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["__type__"] = ' + this.stringify(this.typePath(this.getModel())));
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["__ID__"] = self.ID' );
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["name"] = self.name');
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+	'return rep');
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.dictReprFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.getBlockSpace(bl) + 
+	'def dictRepr(self, allItems=False, short=False):');
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep = collections.OrderedDict()' );
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["__type__"] = ' + this.stringify(this.fullTypeName()));
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["__versions__"] = ' + this.getVersion() );
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["__ID__"] = self.ID' );
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["name"] = self.name');
+	
+	if (this.isDerived()) {
+		throw "not implemented for dervied types.";
+	}
+	
+	var props = this.getProperties();
 
 	for (var i = 0; i<props.length; i++) {
 		var prop = props[i];
 		propCmd = '';
-		if (this.isAtomicType(prop.type)){
-			propCmd = this.stringify(prop.name) + ' + " : " + str(self.' +  prop.name + ') + "\\n"';
+		
+		if (this.isReferenced(prop))
+			throw "not working for not contained elements.";
+		
+		if (this.isAtomic(prop)){
+			if (this.isSingle(prop)){
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'if (allItems or self.isSet("'+ prop.name +'")):');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'rep["'+ prop.name +'"] = self.' +  prop.name );
+			}
+			else if (this.isArray(prop)){
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'if (allItems or self.isSet("'+ prop.name +'")):');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'if (short):');
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'rep["'+ prop.name +'"] = str(self.' +  prop.name + ')');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'else:');			
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'rep["'+ prop.name +'"] = self.' +  prop.name + '.tolist()');
+
+			}
+			else
+				throw "atomic data is not single nor array !!";
 		}
 		else {
-			propCmd = this.stringify(prop.name) + ' + " : { " + "\\n    ".join(str(self.' +  prop.name + ').split("\\n")) + " }\\n"';
-		}
-		propCmd = '+ ' + propCmd;
-		
-		cmd.push(this.getBlockSpace(bl+2) + propCmd);
+			/*complex data type*/
+			if (this.isSingle(prop)){
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'if (allItems or self.isSet("'+ prop.name +'")):');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'if (short):');
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'rep["'+ prop.name +'"] = (self.' +  prop.name + '.typeRepr())');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'else:');			
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'rep["'+ prop.name +'"] = self.' +  prop.name + '.dictRepr()');
+			}
+			else if (this.isArray(prop)){
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'if (allItems or self.isSet("'+ prop.name +'")):');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'rep["'+ prop.name +'"] = []');
+				var loopBlock = this.getLoopBlockForArray(bl+2,prop);
+				cmd.push(loopBlock.cmd);
+					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
+						'if (short):');
+					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
+							'itemType = self.' + prop.name + loopBlock.indList + '.typeRepr()' );
+					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
+							'rep["'+ prop.name +'"].append( itemType )' );
+					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
+						'else:');			
+					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
+							'rep["'+ prop.name +'"].append( self.' + prop.name + loopBlock.indList + '.dictRepr() )' );
+				
+			}
+			else
+				throw "complex data is not single nor array !!";
+		}		
 	} 
-	cmd.push(this.getBlockSpace(bl+2) + ')');
+	cmd.push(this.getBlockSpace(bl+1) + 
+			'return rep');
 	
 	return cmd.join('\n');
 
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.jsonReprFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.getBlockSpace(bl) + 
+	'def jsonRepr(self):');
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'return ( json.dumps(self.dictRepr(short=False),' + 
+			'indent=4, separators=(\',\', \': \')) )' );
+	
+	cmd.push(this.getBlockSpace(bl+1));
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.loadFromJSONDict = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.getBlockSpace(bl) + 
+	'def loadFromJSONDict(self, data):');
+
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'self.ID = str(data["__ID__"])' );
+	
+	var properties = this.getProperties();
+	
+	for(var i = 0, ilen=properties.length; i < ilen; i++) {
+		var prop = properties[i];  
+		cmd.push(this.getBlockSpace(bl+1) + 
+			'varName = ' + this.stringify(prop.name) );
+		if (this.isAtomic(prop)) {
+			if (this.isSingle(prop)) {
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'try :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'setattr(self,varName, data[varName])' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'except :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'pass ' );
+			}
+			else{
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'try :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'setattr(self,varName, np.array(data[varName]))' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'except :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'pass' );			
+			}
+		}
+		else {
+			if (this.isSingle(prop)) {
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'try :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'createFunc = getattr(self,"createSet" + varName[0].capitalize()+varName[1:] )' );
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'item = createFunc()' );
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'item.loadFromJSONDict(data[varName])' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'except :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'pass' );
+			}
+			else{
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'try :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'createFunc = getattr(self,"createAppend" + varName[0].capitalize()+varName[1:])' );
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'for i0 in range(0,len(data[varName])):' );
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'item = createFunc()' );
+				cmd.push(this.getBlockSpace(bl+3) + 
+						'item.loadFromJSONDict(data[varName][i0])' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'except :');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'pass' );
+			 }
+
+		}
+
+		cmd.push(this.getBlockSpace(bl+1));
+
+	}
+
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+	'pass');
+	
+	cmd.push(this.getBlockSpace(bl+1));
+	
+	return cmd.join('\n');
 };
 
 /*----------------------------------------------------------------------------*/
@@ -697,6 +907,7 @@ PythonBase.prototype.loadFromHDF5Handle = function(bl) {
 	return cmd.join('\n');
 };
 
+
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.loadDataFromHDF5Handle = function(bl) {
 	if (bl == undefined) {
@@ -716,6 +927,9 @@ PythonBase.prototype.loadDataFromHDF5Handle = function(bl) {
 		}
 		cmd.push(this.getBlockSpace(bl+1) + '');
 	}
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+	'self.ID = str(handle.attrs["ID"])' );
 	
 	var properties = this.getProperties();
 	var propNum = properties.length;
@@ -970,7 +1184,7 @@ PythonBase.prototype.saveToHDF5Handle = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1));
 	
 	return cmd.join('\n');
-}
+};
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.saveDataToHDF5Handle = function(bl) {
 	
@@ -1006,8 +1220,10 @@ PythonBase.prototype.saveDataToHDF5Handle = function(bl) {
 	}
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'handle.attrs["type"] = self.' + this.modelDesAtt() + '["package"] + ' +
-		this.stringify(this.packageSep) + ' + self.' + this.modelDesAtt() + '["type"]' );
+		'handle.attrs["type"] = ' + this.stringify(this.typePath(this.getModel())) );
+
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'handle.attrs["ID"] = self.ID' );
 
 	/* writing properties */
 	var properties = this.getProperties();
@@ -1534,7 +1750,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
     for (var i = 0; i<props.length; i++) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
-			var propType = this.parseTypePath(prop.type).name;
+			var propType = this.parseFullTypeName(prop.type).name;
 			
 				cmd.push(this.getBlockSpace(bl) + 
 				'def create' + this.firstToUpper(prop.name) +'(self,name):');	

@@ -134,7 +134,7 @@ CommonLangBase.prototype.getClassName = function() {
 
 CommonLangBase.prototype.getClassNameFromType = function(typeName) {
 	
-	return this.parseTypePath(typeName).name;
+	return this.parseFullTypeName(typeName).name;
 };
 /*----------------------------------------------------------------------------*/
 
@@ -592,7 +592,32 @@ CommonLangBase.prototype.packagePath = function(pnames,pvers) {
 	return ppath.join(this.packagePathSep);
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.typePath = function(pnames,pvers, typeName) {
+CommonLangBase.prototype.typePath = function(model) {
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	var packages = this.splitPackages(model["package"]);
+	var versions = this.getPackagesVersions(packages, model);
+	var typeName = model.name;
+	
+	return this.makeTypePath(packages,versions,typeName);
+	
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.fullTypeName = function(model) {
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	var packages = model["package"];
+	var typeName = model.name;
+	
+	return (packages + this.packageSep + typeName);
+	
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.makeTypePath = function(pnames,pvers, typeName) {
 	/*two lists 
 	 * pnames: name of packages in order
 	 * pvers: vertion of packages in order*/
@@ -604,7 +629,7 @@ CommonLangBase.prototype.splitPackages = function(packages) {
 	return packages.split(this.packageSep);
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.parseTypePath = function(type, model) {
+CommonLangBase.prototype.parseFullTypeName = function(type, model) {
 	/* get a complex type package path,
 	 * e.g. model:hydro:wamit:rao
 	 * and extract path and versioning data*/
@@ -622,7 +647,7 @@ CommonLangBase.prototype.parseTypePath = function(type, model) {
 	return({	"packages": packages,
 				"versions": versions,
 				"name": typeName,
-				"path": this.typePath(packages, versions, typeName)});
+				"path": this.makeTypePath(packages, versions, typeName)});
 
 
 	
@@ -639,7 +664,7 @@ CommonLangBase.prototype.superTypes = function(model) {
 		
 		var types = model['extends'];
 		for (var i = 0, len = types.length; i< len; i++){
-			exts.push(this.parseTypePath(types[i], model));
+			exts.push(this.parseFullTypeName(types[i], model));
 
 		}
 	}
@@ -673,6 +698,10 @@ CommonLangBase.prototype.isContained = function(prop) {
 	else {
 		return false;
 	}
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isReferenced = function(prop) {
+	return !this.isContained(prop);
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.isOptional = function(prop) {

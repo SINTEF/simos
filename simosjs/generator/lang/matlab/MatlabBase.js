@@ -636,20 +636,7 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 			'ends': ends.join('\n'),
 			'bl': bl+(dimList.length)-1};
 };
-/*----------------------------------------------------------------------------*/
-MatlabBase.prototype.makeModelType = function(model) {
-	if (model == undefined){
-		model = this.getModel();
-	}
-	
-	var packages = this.splitPackages(model["package"]);
-	var versions = this.getPackagesVersions(packages, model);
-	var typeName = model.name;
-	
-	console.log(this.typePath(packages,versions,typeName));
-	return this.typePath(packages,versions,typeName);
-	
-};
+
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.factoryFunc = function(bl) {
 	if (bl == undefined) {
@@ -666,7 +653,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'end ');
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'obj = ' + this.makeModelType(this.getModel()) + '(name);');
+		'obj = ' + this.fullTypeName(this.getModel()) + '(name);');
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');	
 	cmd.push(this.getCodeSeparator(bl));
@@ -675,7 +662,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
     for (var i = 0; i<props.length; i++) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
-    		var propType = this.parseTypePath(prop.type).path;
+    		var propType = this.parseFullTypeName(prop.type).path;
 			
 				cmd.push(this.getBlockSpace(bl) + 
 				'function obj = create' + this.firstToUpper(prop.name) +'(~,name)');

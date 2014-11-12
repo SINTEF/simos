@@ -46,8 +46,13 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push(entity.arraysUpdateSize(1));
 	cmd.push('');
 	cmd.push('    #---------------------------------------------------------------------------');
-	cmd.push(entity.getReprFunc(1));
-	cmd.push('');
+	cmd.push(entity.reprFunc(1));
+	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.typeReprFunc(1));
+	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.dictReprFunc(1));
+	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.jsonReprFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.clone(1));
 	cmd.push('    #---------------------------------------------------------------------------');
@@ -108,6 +113,8 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('            raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
 	cmd.push('');
 	cmd.push('        self._storageBackEndServer.close()');    
+	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.loadFromJSONDict(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadFromHDF5Handle(1));
 	cmd.push(entity.loadDataFromHDF5Handle(1));

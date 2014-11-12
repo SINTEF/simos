@@ -1,0 +1,12 @@
+{   
+    "name": "ModelTest",
+    "type": "ModelTest",
+    "description": "Model test data.",
+    
+    "extends": ["marmo:containers:DataBundle"],
+    
+    "properties": [
+  
+    ]
+    
+}

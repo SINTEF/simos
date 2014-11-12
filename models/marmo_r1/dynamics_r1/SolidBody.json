@@ -1,0 +1,44 @@
+
+{	
+	"name": "SolidBody",
+	"type": "SolidBody",
+	"description": "Dynamic properties of a Solid Body.",
+	
+    "extends": ["Location"],
+	
+	"properties": [
+
+	{"name": "CofG", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "Coordinate for center of gravity. in Body fixed coordinate. "},
+
+	{"name": "Ixx", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "kg m^2", "value": "0.0",
+			 "description": "Moment of inetia. "},
+			 
+	{"name": "Iyy", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "kg m^2", "value": "0.0",
+			 "description": "Moment of inetia. "},
+
+	{"name": "Izz", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "kg m^2", "value": "0.0",
+			 "description": "Moment of inetia. "},
+			 			 
+	{"name": "M", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "kg", "value": "0.0",
+			 "description": "Mass."},
+			 			
+	{"name": "CofR", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "Coordinate for center of rotation. Used to calculate moments. in Body fixed coordinate."}
+	]
+	
+}

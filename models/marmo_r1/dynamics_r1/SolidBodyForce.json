@@ -1,0 +1,14 @@
+
+{	
+    "name": "SolidBodyForce",
+    "type": "SolidBodyForce",
+
+	"description": "Moments on a solid body in 3 dimensions modes of motion .",
+	
+	"extends": ["marmo:containers:NonEquallySpaced3DVectorSignal"],
+	
+	"properties": [
+
+	]
+	
+}

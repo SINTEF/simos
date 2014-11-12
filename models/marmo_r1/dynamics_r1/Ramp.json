@@ -1,0 +1,51 @@
+
+{	
+	"name": "Ramp",
+	"type": "Ramp",
+	"description": "Ramp function description",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "function", 
+			"type": "string", 
+			"value": "lin",
+			"description": "ramp function, can be either lin, cos, exp ...."
+			},
+			 	  
+	{"name": "startTime", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "s",
+			 "value": 0.0,
+			 "description": "ramp start time."
+			 },		
+			 
+	{"name": "endTime", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "value": 1.0,
+			 "unit": "s",
+			 "description": "ramp end time."
+			 },		
+			 
+	{"name": "startValue", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "value": 0.0,
+			 "description": "ramp start value."
+			 },		
+			 
+	{"name": "endValue", 
+			 "type": "marmo:containers:DimensionalScalar",
+			 "value": 0.0,
+			 "description": "ramp end value."
+			 },
+
+	{"name": "coeff", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "value": 0.0,
+			 "description": "ramp end value."
+			 }
+	 
+	]
+	
+}

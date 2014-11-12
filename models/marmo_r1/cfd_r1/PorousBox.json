@@ -1,0 +1,15 @@
+
+{	
+	"name": "PorousBox",
+	"type": "PorousBox",
+	"description": "Description of a 3D Box geometry with porosity.",
+	"extends": ["marmo:geometry:Box"],
+	
+	"properties": [
+
+	{"name": "porosity", 
+			"type": "double", "value": "0.0",
+			"description": "porosity value."}
+	]
+	
+}

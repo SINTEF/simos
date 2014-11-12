@@ -1,0 +1,26 @@
+
+{	
+	"name": "RefinementBox",
+	"type": "RefinementBox",
+	"description": "Description of a 3D Box for mesh refinement.",
+
+	"extends": ["marmo:geometry:Box"],
+	
+	"properties": [
+						
+	{"name": "criteriaFlags", 
+			"type": "integer", "dim": "3",
+			"description": "flags for criteria"},
+
+	{"name": "targetSizes", 
+			"type": "marmo:containers:Dimensional3DVector", 
+			"unit": "m",
+			"__dependencies": { "unit": "unit" },
+			"description": "target size criterias."},
+
+	{"name": "refineLevel", 
+			"type": "integer", "value": "0",
+			"description": "refine level."}
+	]
+	
+}

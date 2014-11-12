@@ -1,0 +1,43 @@
+
+{	
+	"name": "SolidBodyOscillator",
+	"type": "SolidBodyOscillator",
+	"description": "Forced oscillations in 6 modes of motion .",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "surge", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "m",
+			"description": "surge oscillator."},
+
+	{"name": "sway", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "m",
+			"description": "sway oscillator."},
+
+	{"name": "heave", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "m",
+			"description": "heave oscillator."},
+						
+	{"name": "roll", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "rad",
+			"description": "roll oscillator."},
+			
+	{"name": "pitch", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "rad",
+			"description": "pitch oscillator."},
+
+	{"name": "yaw", 
+			"type": "SimpleHarmonicOscillator", 
+			"unit": "rad",
+			"description": "yaw oscillator."}
+
+	]
+	
+}

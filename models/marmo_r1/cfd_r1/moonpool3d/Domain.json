@@ -1,0 +1,27 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of the computational domain for a 3D ship geometry with bilge keel and moonpool.",
+	
+	"extends": ["marmo:cfd:RectangularComputationDomain"],
+	
+	"properties": [
+
+	{"name": "ship", 
+			"type": "ShipMoonPoolGeometry", 
+			"__assign": {	"unit": "m",
+			 				"valid": "1"}, 
+			"__dependencies": { "unit": "unit" },
+			"description": "ship with moonpool geometry description."},
+			
+	{"name": "object", 
+			"type": "BoxShaped3DObject", "version": "1",
+			"__assign": {	"unit": "m",
+			 				"valid": "0"},
+			"__dependencies": { "unit": "unit" },
+			"description": "object inside moonpool."}
+
+	]
+	
+}

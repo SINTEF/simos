@@ -1,0 +1,19 @@
+
+{	
+	"name": "FloatingSolidBody",
+	"type": "FloatingSolidBody",
+	"description": "Dynamic properties of a floating solid body.",
+	
+    "extends": ["SolidBody"],
+	
+	"properties": [
+
+	{"name": "CofB", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "Coordinate for center of bouyancy. in Body fixed coordinate. "}
+
+	]
+	
+}

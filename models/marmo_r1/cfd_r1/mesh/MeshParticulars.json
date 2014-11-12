@@ -1,0 +1,53 @@
+
+{	
+	"name": "MeshParticulars",
+	"type": "MeshParticulars",
+	"description": "Description of the computational domain for a 3D ship geometry with bilge keel and moonpool.",
+	
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+			
+	{"name": "id", 
+			"type": "string", "value": "mesh",
+			"description": "mesh id"},
+
+	{"name": "resolutionID", 
+			"type": "string", "value": "fine",
+			"description": "mesh resolution id"},
+
+	{"name": "dimension", 
+			"type": "integer", "value": "3",
+			"description": "2 or 3 d mesh."},
+
+	{"name": "nCells", 
+			"type": "integer", "value": "1",
+			"description": "number of mesh cells."},
+			
+	{"name": "faces", 
+			"type": "Surface", 
+			"dim": "*" ,
+			"__dependencies": { "unit": "unit" },
+			"description": "mesh faces."},
+
+	{"name": "faceting", 
+			"type": "Faceting", 
+			"description": "faceting settings"},
+			
+	{"name": "maxGlobalRefinement", 
+			"type": "integer", "value": "1",
+			"description": "maximum number of global refinement."},
+			
+	{"name": "refineBoxes", 
+			"type": "RefinementBox", 
+			"dim": "*" ,
+			"__dependencies": { "unit": "unit" },
+			"description": "mesh faces."},
+
+	{"name": "nBackgroundCells", 
+			"type": "Vector3D", "version": "1",
+			"description": "number of background cells in each direction."}
+
+	]
+	
+}

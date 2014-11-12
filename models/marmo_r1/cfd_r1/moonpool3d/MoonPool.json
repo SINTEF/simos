@@ -1,0 +1,51 @@
+
+{	
+	"name": "MoonPool",
+	"type": "MoonPool",
+	"description": "Description of a 3D moonpool geometry.",
+
+    "extenda": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+    
+	{"name": "length", 
+			"type": "marmo:containers:DimensionalScalar",
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "moonpool length, along the length of the ship."},
+												
+	{"name": "beam", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m", "value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "moonpool beam, along the beam of ship."},
+
+	{"name": "height", 
+			"type": "marmo:containers:DimensionalScalar",
+			"value": "0.0", "unit": "m",
+			"__dependencies": { "unit": "unit" },
+			"description": "moonpool height, along the ship draft."},
+
+	{"name": "opening", 
+			"type": "marmo:geometry:Box", 
+			"unit": "m",
+			"__dependencies": { "unit": "unit" },
+			"description": "moonpool opening."},
+					
+	{"name": "cen", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "Coordinate of the center of moonpool in ship coordinate system."},
+			 
+	{"name": "zRot", 
+			 "type": "marmo:containers:DimensionalScalar", "version": "1",
+			 "unit": "deg",
+			 "value": 0.0,
+			 "description": "moon-pool rotation alngle in ship around vertical direction."}
+	
+
+	]
+	
+}

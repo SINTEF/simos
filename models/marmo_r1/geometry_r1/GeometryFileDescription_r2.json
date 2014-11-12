@@ -1,0 +1,33 @@
+
+{	
+	"name": "GeometryFileDescription",
+	"type": "GeometryFileDescription",
+	"description": "Description of a geometry file model.",
+
+    "extends": ["marmo:basic:NamedEntityWithUnit"],
+
+	"properties": [
+						
+	{"name": "type", 
+			"type": "string", "value": "",
+			"description": "geometry file type."},
+
+	{"name": "origin", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "location of (0,0,0) of the geometry file."},
+
+	{"name": "rot", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "deg",
+			 "description": "rotation vector of the geometry file."},
+
+	{"name": "scale", 
+			 "type": "marmo:containers:Vector3D", 
+			 "unit": "",
+			 "description": "scale factors of the geometry file."}
+			 			 			
+	]
+	
+}

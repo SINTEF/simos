@@ -1,0 +1,17 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "A ship moonpool study.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	   
+	"properties": [
+
+	{"name": "scenarios", 
+			"type": "ForcedMotionScenario", 
+			"dim": "*",
+			"description": "a list of scenarios"}
+	]
+	
+}

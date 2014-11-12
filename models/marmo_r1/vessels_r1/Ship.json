@@ -1,0 +1,46 @@
+
+{	
+	"name": "Ship",
+	"type": "Ship",
+	"description": "Description of a 3D ship geometry with bilge keel and moonpool.",
+
+	"extends": ["marmo:dynamics:FloatingSolidBody"],
+	
+	"properties": [
+
+	{"name": "modelFile", 
+			"type": "marmo:geometry:GeometryFileDescription", 
+			"unit": "m",
+			"description": "ship geometry file."},
+			
+	{"name": "length", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "ship draft"},
+						
+	{"name": "height", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "ship height"},
+
+	{"name": "draft", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "ship draft"},
+			
+	{"name": "beam", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "The breadth of the ship "}
+
+	]
+	
+}

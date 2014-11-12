@@ -1,0 +1,50 @@
+
+{	
+	"name": "BilgeKeel",
+	"type": "BilgeKeel",
+	"description": "Description of a 3D bilge keel geometry.",
+	
+	"extenda": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+			
+	{"name": "length", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "bilge keel length"},
+												
+	{"name": "radius", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m", "value": 0.0,
+			"__dependencies": { "unit": "unit" },
+			"description": "Bilge radius"},
+
+	{"name": "angle", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "deg", "value": 0.0,
+			"__dependencies": { "unit": "unit" },
+			"description": "Bilge keel angle"},
+			
+	{"name": "height", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value": "0.0", "unit": "m",
+			"__dependencies": { "unit": "unit" },
+			"description": "bilge keel length."},
+
+	{"name": "thickness", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value": "0.0", "unit": "m",
+			"__dependencies": { "unit": "unit" },
+			"description": "bilge keel length."},
+			
+	{"name": "root", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "Coordinate for center of gravity. "}
+
+	]
+	
+}

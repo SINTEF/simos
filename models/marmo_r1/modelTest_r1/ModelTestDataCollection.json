@@ -10,7 +10,7 @@
 
 			 			 
 	{"name": "tests", 
-			 "type": "DataBundle", 
+			 "type": "ModelTest", 
 			 "dim":"*",
 			 "description": "tests data."}
 			

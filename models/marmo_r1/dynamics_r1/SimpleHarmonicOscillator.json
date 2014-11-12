@@ -1,0 +1,45 @@
+
+{	
+	"name": "SimpleHarmonicOscillator",
+	"type": "SimpleHarmonicOscillator",
+	"description": "Properties of a simple harmonic oscillatory function.",
+	
+    "extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+			
+	{"name": "function", 
+			"type": "string", 
+			"value": "sin",
+			"description": "oscillatory function, can be either sin, or cos."
+			},
+
+			 	  
+	{"name": "T", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "description": "Period",
+			 "unit": "s"
+			 },		
+			 
+	{"name": "A", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "description": "Amplitude",
+			 "unit": "m",
+			 "__dependencies": {"unit": "unit"}
+			 },
+			 			 
+	{"name": "b", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "description": "Phase",
+			 "unit": "rad"
+			 },
+			 
+	{"name": "ramp", 
+			 "type": "Ramp", 
+			 "description": "oscillator ramp.",
+			 "__dependencies": {"endValue": "A"}
+			 }
+	 
+	]
+	
+}

@@ -1,0 +1,44 @@
+
+{	
+	"name": "Box",
+	"type": "Box",
+	"description": "Description of a 3D Box geometry.",
+	
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	    
+	"properties": [
+
+	{"name": "length", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "box's length"},
+						
+	{"name": "beam", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "box's width"},
+
+	{"name": "height", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "box's height"},
+
+	{"name": "cen", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "location of the box's center."},
+
+	{"name": "rot", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "deg",
+			 "description": "rotation vector of box around the center of the box."}
+	]
+	
+}

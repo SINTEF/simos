@@ -1,0 +1,20 @@
+
+{	
+	"name": "ComputationDomain",
+	"type": "ComputationDomain",
+	"description": "Description of the computational domain for a 3D ship geometry with bilge keel and moonpool.",
+	
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+
+	{"name": "mesh", 
+			"type": "marmo:cfd:mesh:MeshParticulars", 
+			"unit": "m",
+			"__assign": {"dimension": "3"},
+			"__dependencies": { "unit": "unit" },
+			"description": "mesh properties."}
+
+	]
+	
+}

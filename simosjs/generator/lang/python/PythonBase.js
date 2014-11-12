@@ -99,7 +99,7 @@ PythonBase.prototype.getImportForCustomDataTypes = function() {
 		if (this.isAtomicType(prop.type) == false) {
 			var typeData = this.parseFullTypeName(prop.type);
 			if (importedTypes.indexOf(typeData.path) == -1) {
-				cmd.push('from ' + typeData.path + ' import ' + typeData.name);
+				cmd.push('import ' + typeData.path );
 				importedTypes.push(typeData.path);
 			}
 		}
@@ -146,7 +146,7 @@ PythonBase.prototype.getPythonArrayShape = function(prop) {
 PythonBase.prototype.getInitObjectList = function(prop) {
 	if ((this.isArray(prop)) && (! this.isAtomicType(prop.type))){
 		/* we have o use a list with the defined dimensions of the object */
-		var className = this.getClassNameFromType(prop.type);
+		var classPath = this.getClassPathFromType(prop.type);
 		var dimList = this.getDimensionList(prop);
 		var leftBlock = '';
 		var rightBlock = '';
@@ -160,7 +160,7 @@ PythonBase.prototype.getInitObjectList = function(prop) {
 			rightBlock = rightBlock + ' for ' + indName + ' in range(0,self.' + dimList[i] + ')]';
 			objName = objName + ' + str(' + indName + ')';
 		}
-		return leftBlock + ' ' + className + '(' + objName  + ')' + rightBlock;
+		return leftBlock + ' ' + classPath + '(' + objName  + ')' + rightBlock;
 	}
 	else {
 		throw ('Array with non-atomic type was expected.', prop);
@@ -217,8 +217,10 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 				
 			}
 		}
-		else if (!(this.isAtomic(prop)) && (this.isContained(prop))){
-			return (this.getClassNameFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+		else if (!(this.isAtomic(prop)) && 
+				  (this.isContained(prop)) && 
+				 !(this.isOptional(prop))){
+			return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 		}
 		else {
 			return 'None';
@@ -234,8 +236,10 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 			}
 		}
 		else {
-			if (!(this.isAtomic(prop)) && (this.isContained(prop))){
-				return (this.getClassNameFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+			if (!(this.isAtomic(prop)) && 
+				 (this.isContained(prop)) && 
+				!(this.isOptional(prop)) ){
+				return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 			}
 			else {
 				return 'None';
@@ -552,7 +556,7 @@ PythonBase.prototype.propSet = function(prop, bl) {
 		else {
 			/* check if it has the correct type */
 			cmd.push(this.getBlockSpace(bl+1) + 
-					'if not(isinstance(val, ' + this.parseFullTypeName(prop.type).name + ')):');
+					'if not(isinstance(val, ' + this.getClassPathFromType(prop.type)  + ')):');
 			cmd.push(this.getBlockSpace(bl+2) + 
 					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
 
@@ -1133,7 +1137,7 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 				cmd.push(this.getBlockSpace(bl+3) + 
 					'num = len(handle[' + this.stringify(prop.name) + '].attrs["order"])');
 				cmd.push(this.getBlockSpace(bl+3) + 
-					'self.' + this.makePrivate(prop.name) + ' = [' + this.getClassNameFromType(prop.type) + '() for a in range(num)]');
+					'self.' + this.makePrivate(prop.name) + ' = [' + this.getClassPathFromType(prop.type) + '() for a in range(num)]');
 				cmd.push(this.getBlockSpace(bl+3) + 
 					'index = 0');
 				
@@ -1750,7 +1754,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
     for (var i = 0; i<props.length; i++) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
-			var propType = this.parseFullTypeName(prop.type).name;
+			var propType = this.getClassPathFromType(prop.type) ;
 			
 				cmd.push(this.getBlockSpace(bl) + 
 				'def create' + this.firstToUpper(prop.name) +'(self,name):');	

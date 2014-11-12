@@ -136,6 +136,10 @@ CommonLangBase.prototype.getClassNameFromType = function(typeName) {
 	
 	return this.parseFullTypeName(typeName).name;
 };
+CommonLangBase.prototype.getClassPathFromType = function(typeName) {
+	var parsed = this.parseFullTypeName(typeName);
+	return (parsed.path + this.packagePathSep + parsed.name);
+};
 /*----------------------------------------------------------------------------*/
 
 CommonLangBase.prototype.addVersion = function(typeName, version) {

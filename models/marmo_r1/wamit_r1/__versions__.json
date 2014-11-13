@@ -1,6 +1,0 @@
-{   
-    "packages": [{"name":     "basic",
-                  "version":  "r1"},
-                 {"name":     "containers",
-                  "version":  "r1"}]
-}

@@ -1,0 +1,12 @@
+{   
+    "marmo":        "r1",
+    "basic":        "r1",
+    "containers":   "r1",
+    "cfd":          "r1",
+    "dynamics":     "r1",
+    "geometry":     "r1",
+    "vessels":      "r1",
+    
+    "modelTest":    "r1",
+    "wamit":        "r1"
+}

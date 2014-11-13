@@ -258,6 +258,20 @@ CommonLangBase.prototype.isStorableAttr = function(attr) {
 
 };
 /*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isEmpty = function(obj) {
+	if (obj == null) return true;
+	if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+    
+    if (Object.getOwnPropertyNames(obj).length > 0) return false;
+
+    return false;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.hasAssignments = function(prop) {
+	return !(this.isEmpty(this.getAssignments));
+};
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getAssignments = function(prop) {
 	var assign = {};
     if (this.isAtomicType(prop.type)) {
@@ -268,7 +282,7 @@ CommonLangBase.prototype.getAssignments = function(prop) {
     		assign = prop.__assign; 
     	}
     	
-    	/*add default assignments 
+    	/* add default assignments 
     	 * name, description, unit, value, valid*/
     	
     	if (!(this.isArray(prop))) {
@@ -305,6 +319,19 @@ CommonLangBase.prototype.getDimensionType = function() {
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getProperties = function() {
     return this.getModel().properties;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getProperty = function(name, model) {
+	if (model == undefined) {
+		model = this.getModel();
+	}
+
+	if (this.hasProperty(name, model)){
+		return model.properties[this.findProperty(name, model)];
+	}
+	else
+		throw "property " + name + " does not exist.";
+    
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getPublicProperties = function() {
@@ -432,24 +459,24 @@ CommonLangBase.prototype.isString = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.findProperty = function(prop, model) {
+CommonLangBase.prototype.findProperty = function(name, model) {
 	if (model == undefined) {
 		model = this.model;
 	}
 	
 	for (var i = 0, len = model.properties.length; i< len ; i++){
-		if (model.properties[i].name == prop.name)
+		if (model.properties[i].name == name)
 			return i;
 	}
 	return -1;
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.hasProperty = function(prop, model) {
+CommonLangBase.prototype.hasProperty = function(name, model) {
 	if (model == undefined) {
 		model = this.model;
 	}
 	
-	var ind = this.findProperty(prop, model);
+	var ind = this.findProperty(name, model);
 	if (ind == -1){
 		return false;
 	}
@@ -461,21 +488,31 @@ CommonLangBase.prototype.hasProperty = function(prop, model) {
 CommonLangBase.prototype.getPropDependencies = function(prop) {
 	return prop.__dependencies;
 };
+
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.hasDependencies = function(prop) {
+	var dept = this.getPropDependencies(prop);
+	return !(this.isEmpty(dept));
+};
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getDependentChildFor = function(child, prop) {
+	var dependentProps = [];
+	
 	var dept = this.getPropDependencies(child);
 	if (dept != undefined) {
 		for (d in dept) {
 			if (dept[d] == prop.name) {
-				/* only one dependent variable for each prop is allowed in child */
-				return d;
+				dependentProps.push(d);
 			}
 		}
 	}
 
+	return dependentProps;
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getChildProps = function(prop) {
+	/* for each property, find a list of dependent properties*/
+	
 	var props = this.getProperties();
 	var childProps = [];
 	

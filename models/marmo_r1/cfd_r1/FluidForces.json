@@ -24,19 +24,19 @@
 			},
 			
 	{"name": "CofR", 
-			 "type": "Dimensional3DVector", 
+			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "description": "Coordinate for center of rotation. Used to calculate moments. "
 			 },
 	  			
 	{"name": "time", 
-			 "type": "EquallySpacedSignal", 
+			 "type": "marmo:containers:EquallySpacedSignal", 
 			 "__dependencies": {	"unit": "timeUnit" },
 			 "description": "Array of times "
 			 },
 
 	{"name": "preF", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "forceUnit" },
 			 "__assign": {		"xname": "time" },
@@ -44,7 +44,7 @@
 			 },		
 
 	{"name": "visF", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "forceUnit" },
 			 "__assign": {		"xname": "time" },
@@ -52,7 +52,7 @@
 			 },		
 
 	{"name": "porF", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "forceUnit" },
 			 "__assign": {		"xname": "time" },
@@ -60,7 +60,7 @@
 			 },		
 			 
 	{"name": "preM", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "momUnit" },
 			 "__assign": {		"xname": "time" },
@@ -68,7 +68,7 @@
 			 },		
 
 	{"name": "visM", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "momUnit" },
 			 "__assign": {		"xname": "time" },
@@ -76,7 +76,7 @@
 			 },		
 
 	{"name": "porM", 
-			 "type": "NonEquallySpaced3DVectorSignal", 
+			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",
 			 						"unit": "momUnit" },
 			 "__assign": {		"xname": "time" },

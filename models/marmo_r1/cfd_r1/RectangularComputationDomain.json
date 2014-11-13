@@ -4,7 +4,7 @@
 	"type": "RectangularComputationDomain",
 	"description": "Description of a computational domain.",
 	
-	"extends": ["marmo:geometry:Box","ComputationDomain"],
+	"extends": ["marmo:geometry:Box","marmo:cfd:ComputationDomain"],
 	
 	"properties": [
 

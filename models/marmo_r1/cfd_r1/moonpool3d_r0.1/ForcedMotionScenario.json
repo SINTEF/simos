@@ -1,0 +1,21 @@
+
+{	
+	"name": "ForcedMotionScenario",
+	"type": "ForcedMotionScenario",
+	"description": "Description of a 3D ship with moonpool forced motion scenario.",
+	
+    "extends": ["marmo:cfd:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "Domain", 
+			"description": "Computational domain."},
+
+	{"name": "oscillator", 
+			"type": "marmo:dynamics:SolidBodyOscillator", 
+			"description": "surge oscillator."}
+
+	]
+	
+}

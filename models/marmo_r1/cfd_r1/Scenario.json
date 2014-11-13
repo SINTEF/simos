@@ -1,0 +1,35 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a CFD scenario.",
+	
+    "extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "forces", 
+			"type": "FluidForces", 
+			"dim": "*",
+			"description": "a collection of recorded forces."},
+
+	{"name": "probes", 
+			"type": "Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+
+	{"name": "postpro", 
+			"type": "marmo:containers:DataBundle",
+			"description": "a collection of post processed results interesting for this problem."},
+									
+	{"name": "runConfig", 
+			"type": "RunConfig", 
+			"description": "Run configuration."},
+			
+    {"name": "logs", 
+            "type": "Log",
+            "dim": "*",
+            "description": "logs of the application."}
+	]
+	
+}

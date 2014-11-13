@@ -1,0 +1,84 @@
+
+{	
+	"name": "RunConfig",
+	"type": "RunConfig",
+	"description": "Description of a 2D ship forced motion scenario.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "startTime", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.0",
+			"unit": "s",
+			"description": "start time."},
+			
+	{"name": "endTime", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"1.0",
+			"unit": "s",
+			"description": "end of simulation time."},
+
+	{"name": "timeStep", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.1",
+			"unit": "s",
+			"description": "time step."},
+
+	{"name": "adjustTimeStep", 
+			"type": "string", "value":"no",	
+			"description": "adjusting time step, (yes:fixed time step, or no)."},
+
+	{"name": "maxCo", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.4",
+			"description": "maximum courant number, used with adjustable time step."},
+			
+	{"name": "maxTimeStep", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.1",
+			"unit": "s",
+			"description": "maximum time step, used with adjustable time step."},
+
+	{"name": "writeInterval", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.1",
+			"unit": "s",
+			"description": "writing interval"},
+			
+	{"name": "cpuTime", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"value":"0.0",
+			"unit": "s",
+			"description": "CPU time (wall clock time) for running the case."},
+	
+	{"name": "nCPUs", 
+			"type": "integer",  
+			"value":"1",
+			"description": "Number of CPUs."},
+			
+	{"name": "runPath", 
+			"type": "string", "value":"",	
+			"description": "Keep the track of the run folder."},
+
+			
+	{"name": "machineName", 
+			"type": "string", "value":"",	
+			"description": "Name of the machine used to run the scenario."},
+			
+	{"name": "application", 
+			"type": "string", "value":"",	
+			"description": "Application to be used for running, executable filename."},
+
+	{"name": "applicationPath", 
+			"type": "string", "value":"",	
+			"description": "Path to application."},
+
+	{"name": "applicationVersion", 
+			"type": "string", "value":"",	
+			"description": "Version of the application."}
+	
+	]
+	
+}

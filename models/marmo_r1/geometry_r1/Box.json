@@ -8,21 +8,21 @@
 	    
 	"properties": [
 
-	{"name": "length", 
+	{"name": "l", 
 			"type": "marmo:containers:DimensionalScalar", 
 			"unit": "m",
 			"value": "0.0",
 			"__dependencies": { "unit": "unit" },
 			"description": "box's length"},
 						
-	{"name": "beam", 
+	{"name": "b", 
 			"type": "marmo:containers:DimensionalScalar", 
 			"unit": "m",
 			"value": "0.0",
 			"__dependencies": { "unit": "unit" },
 			"description": "box's width"},
 
-	{"name": "height", 
+	{"name": "h", 
 			"type": "marmo:containers:DimensionalScalar", 
 			"unit": "m",
 			"value": "0.0",

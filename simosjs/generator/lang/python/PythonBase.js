@@ -144,7 +144,7 @@ PythonBase.prototype.getPythonArrayShape = function(prop) {
 };
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.getInitObjectList = function(prop) {
-	if ((this.isArray(prop)) && (! this.isAtomicType(prop.type))){
+	if ((this.isArray(prop)) && (! this.isAtomic(prop))){
 		/* we have o use a list with the defined dimensions of the object */
 		var classPath = this.getClassPathFromType(prop.type);
 		var dimList = this.getDimensionList(prop);
@@ -152,6 +152,9 @@ PythonBase.prototype.getInitObjectList = function(prop) {
 		var rightBlock = '';
 		// var objName = JSON.stringify(className);
 		var objName = this.stringify(prop.name);
+		
+		if (dimList.length > 1)
+			throw "getInitObjectList is not implemented for more than one dimensional array.";
 		
 		for (var i = dimList.length-1; i>=0; i--){
 			var indName = 'i' + i;
@@ -167,31 +170,196 @@ PythonBase.prototype.getInitObjectList = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.getInitObject = function(bl, prop) {
+PythonBase.prototype.assignPropertyValue = function(bl, assign, varName) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	for (a in assign) {
+		cmd.push(this.getBlockSpace(bl) + 
+		varName + '.' + a +	' = ' + JSON.stringify(assign[a]) );
+	}		
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.assignPropSinglesValues = function(bl, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	if (this.isSingle(prop)) {
+		var assign = this.getAssignments(prop);
+		if (Object.getOwnPropertyNames(assign).length > 0) {
+			cmd.push(this.assignPropertyValue(bl, assign, 'self.' + prop.name));
+		}
+	}
+	else
+		throw "only single object can be handled here.";
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.assignPropArraysValues = function(bl, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	if (this.isArray(prop)) {
+		var assign = this.getAssignments(prop);
+		if (Object.getOwnPropertyNames(assign).length > 0) {
+			var loopBlock = this.getLoopBlockForArray(bl+1, prop);
+			cmd.push(loopBlock.cmd);
+			cmd.push(this.assignPropertyValue(loopBlock.bl+1, assign, 
+				'self.' + this.getPropertyPrivateName(prop) + loopBlock.indList));
+		}
+	}
+	else
+		throw "only array object can be handled here.";
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.assignPropValues = function(bl, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	if (this.isArray(prop))
+		cmd.push(this.assignPropArraysValues(bl, prop));	
+	else 
+		cmd.push(this.assignPropSinglesValues(bl, prop));	
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	cmd.push(this.getBlockSpace(bl) + 
+			varName + '.' + deptProp + 
+			' = ' + varNameRef );
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setPropSinglesRefs = function(bl, childProp, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	if (this.isSingle(childProp)) {
+		var deptProps = this.getDependentChildFor(childProp,prop);
+		
+		if (deptProps.length > 0) {
+			for (var di = 0, dilen = deptProps.length; di < dilen; di++){
+				cmd.push(
+				this.setPropertyRef(bl, 'self.' + childProp.name, deptProps[di], 'self.' + prop.name)
+				);
+			}	
+		}
+	}
+	else
+		throw "only single object can be handled here.";
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setPropArraysRefs = function(bl, childProp, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	if (varName == undefined) {
+		varName = 'self.' + prop.name;
+	}
+	
+	var cmd = [];
+
+	if (this.isArray(childProp)) {
+
+		var deptProps = this.getDependentChildFor(childProp,prop);
+		
+		if (deptProps.length > 0) {
+			var loopBlock = this.getLoopBlockForArray(bl, childProp);
+			cmd.push(loopBlock.cmd);
+	
+			for (var di = 0, dilen = deptProps.length; di < dilen; di++){
+				cmd.push(
+						this.setPropertyRef(loopBlock.bl+1, 'self.' + childProp.name + loopBlock, 
+								deptProps[di], 
+								'self.' + prop.name)
+						);
+			}	
+		}
+	}
+	else
+		throw "only array object can be handled here.";
+
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setPropRefs = function(bl, prop) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 
-	var assign = this.getAssignments(prop);
-	
-	if (this.isArray(prop)) {
-		for (a in assign) {
-			var loopBlock = this.getLoopBlockForArray(bl+1, prop);
-			cmd.push(loopBlock.cmd);
-			cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'self.' + this.getPropertyPrivateName(prop) + loopBlock.indList + '.' + a +
-					' = self.' + JSON.stringify(assign[a]) );
-		}		
-	}
-	else {
-		for (a in assign) {
-			cmd.push(this.getBlockSpace(bl) + 
-					'self.' + this.getPropertyPrivateName(prop) + '.' + a + ' = ' + JSON.stringify(assign[a]));
-	
+	/* make relations between child and parrent data sets */
+	var childProps = this.getChildProps(prop);
+	for (var i = 0; i<childProps.length; i++) {
+		var childProp = childProps[i];
+		
+		if (this.isAtomic(childProp)) {
+			throw ('Illigal type for dependicy.',childProp);
+		}
+		else if (this.isArray(childProp)) {
+			cmd.push(this.setPropArraysRefs(bl, childProp, prop));
+
+		}
+		else {
+			cmd.push(this.setPropSinglesRefs(bl, childProp, prop));
 		}
 	}
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setChildPropRefs = function(bl, childProp, objName) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	if (objName == undefined){
+		objName = 'self.' + childProp.name;
+	}
+	
+	var cmd = [];
 
+	
+	var dept = this.getPropDependencies(childProp);
+	if (dept != undefined) {
+		for (d in dept) {
+			var prop = this.getProperty(dept[d]);
+			cmd.push(
+			this.setPropertyRef(bl, objName + '.' + d, 'self.' + prop.name)
+				);
+		}
+	}
+	
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
@@ -423,8 +591,8 @@ PythonBase.prototype.classInit = function(bl) {
 			cmd.push(this.getBlockSpace(bl+1) + 
 				'self.' + this.getPropertyPrivateName(prop) + ' = ' + this.getPropertyValue(prop));
 			
-			if (!(this.isAtomic(prop)) && (this.isContained(prop)) ){
-				cmd.push(this.getInitObject(bl+1, prop));
+			if (!(this.isAtomic(prop)) && (this.isContained(prop) && this.hasAssignments(prop)) ){
+				cmd.push(this.assignPropValues(bl+1, prop));
 			}
 		}
 		
@@ -576,27 +744,9 @@ PythonBase.prototype.propSet = function(prop, bl) {
 	}
 	
 	/* make relations between child and parrent data sets */
-	var childProps = this.getChildProps(prop);
-	for (var i = 0; i<childProps.length; i++) {
-		var childProp = childProps[i];
-		
-		if (this.isAtomicType(childProp.type)) {
-			throw ('Illigal type for dependicy.',childProp);
-		}
-		else if (this.isArray(childProp)) {
-			var loopBlock = this.getLoopBlockForArray(bl+1, childProp);
-			cmd.push(loopBlock.cmd);
-			cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'self.' + childProp.name + loopBlock.indList + '.' + this.getDependentChildFor(childProp,prop) 
-					+ ' = self.' + prop.name );
-
-		}
-		else {
-			cmd.push(this.getBlockSpace(bl+1) + 
-					'self.' + childProp.name + '.' + this.getDependentChildFor(childProp,prop) 
-					+ ' = self.' + prop.name );
-		}
-	}
+	if (this.hasDependencies(prop))
+		cmd.push(this.setPropRefs(bl+1, prop));
+	
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 			'if not(' + JSON.stringify(prop.name) + ' in self._sync.keys()):');
@@ -991,7 +1141,7 @@ PythonBase.prototype.loadFromHDF5HandleItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.getBlockSpace(bl) + 
-	'def _loadFromHDF5HandleItem(self, handle, varName, type):');
+	'def _loadFromHDF5HandleItem(self, handle, varName, myType):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'loadFlag = True');
@@ -1006,19 +1156,19 @@ PythonBase.prototype.loadFromHDF5HandleItem = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'if (loadFlag):');
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "AtomicSingle"):');
+			'if (myType == "AtomicSingle"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._loadFromHDF5HandleItemAtomicSingle(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "AtomicArray"):');
+			'if (myType == "AtomicArray"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._loadFromHDF5HandleItemAtomicArray(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "NonAtomicArray"):');
+			'if (myType == "NonAtomicArray"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "NonAtomicSingle"):');
+			'if (myType == "NonAtomicSingle"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName)' );
 	
@@ -1288,7 +1438,7 @@ PythonBase.prototype.saveToHDF5HandleItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.getBlockSpace(bl) + 
-	'def _saveToHDF5HandleItem(self, handle, varName, type):');
+	'def _saveToHDF5HandleItem(self, handle, varName, myType):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'saveFlag = True');
@@ -1296,19 +1446,19 @@ PythonBase.prototype.saveToHDF5HandleItem = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'if (saveFlag):');
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "AtomicSingle"):');
+			'if (myType == "AtomicSingle"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._saveToHDF5HandleItemAtomicSingle(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "AtomicArray"):');
+			'if (myType == "AtomicArray"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._saveToHDF5HandleItemAtomicArray(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "NonAtomicArray"):');
+			'if (myType == "NonAtomicArray"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._saveToHDF5HandleItemNonAtomicArray(handle, varName)' );
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (type == "NonAtomicSingle"):');
+			'if (myType == "NonAtomicSingle"):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'self._saveToHDF5HandleItemNonAtomicSingle(handle, varName)' );
 	
@@ -1406,10 +1556,7 @@ PythonBase.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.getBlockSpace(bl+2) + 
 			'elif not(getattr(self, varName).REF == None ):');
 	cmd.push(this.getBlockSpace(bl+3) +
-				'dset = handle.create_dataset(varName, dtype=ref_dtype )' );
-	cmd.push(this.getBlockSpace(bl+3) +
-				'dset = getattr(self, varName).REF' );
-
+				'handle.create_dataset(varName,data=getattr(self, varName).REF, dtype=ref_dtype )' );
 	/*
 	 * cmd.push(this.getBlockSpace(bl+2) + 'dset =
 	 * maindgrp.create_dataset("values"' + ',(len(getattr(self,varName)),),
@@ -1504,9 +1651,7 @@ PythonBase.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 				'if not(item.REF == None ):' );
 		cmd.push(this.getBlockSpace(loopBlock.bl+2) +
-					'dset = handle.create_dataset(item.name, dtype=ref_dtype )' );
-		cmd.push(this.getBlockSpace(loopBlock.bl+2) +
-					'dset = item.REF' );
+					'handle.create_dataset(item.name,data=item.REF, dtype=ref_dtype )' );
 		
 		cmd.push(this.getBlockSpace(bl+3) + 
 				'maindgrp.attrs["order"] =  itemNames');
@@ -1752,7 +1897,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
 
 	var props = this.getProperties();
     for (var i = 0; i<props.length; i++) {
-    	if (!(this.isAtomicType(props[i].type))) {
+    	if (!(this.isAtomic(props[i]))) {
     		var prop = props[i];
 			var propType = this.getClassPathFromType(prop.type) ;
 			
@@ -1764,27 +1909,46 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			
 			if (this.isArray(prop)){
 				cmd.push(this.getBlockSpace(bl) + 
-				'def createAppend' + this.firstToUpper(prop.name) +'(self,name=None):');	
+				'def append' + this.firstToUpper(prop.name) +'(self,name=None):');	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'obj = ' + propType + '(name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'if not(obj.name in [a.name for a in self.' + prop.name + ']):');
 				cmd.push(this.getBlockSpace(bl+2) + 
 						'self.' + prop.name + '.append(obj)');
+				if (this.hasAssignments(prop))
+					cmd.push(
+						this.assignPropertyValue(bl+2,	this.getAssignments(prop), 'obj')
+						);
+				if (this.hasDependencies(prop))
+					cmd.push(
+						this.setChildPropRefs(bl+2, prop, 'obj')
+						);
+				
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'return obj');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'else:');
 				cmd.push(this.getBlockSpace(bl+2) + 
-						'print ("warning: object %s already exist."%(obj.name))');	
-				cmd.push(this.getBlockSpace(bl+1) + 
-					'return obj');
+						'print ("warning: object %s already exist."%(obj.name))');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'return None');
 						
 			}
 			else {
 				cmd.push(this.getBlockSpace(bl) + 
-				'def createSet' + this.firstToUpper(prop.name) +'(self):');	
+				'def new' + this.firstToUpper(prop.name) +'(self):');	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'self.' + prop.name + ' = ' + propType 
 						+ '(' + this.stringify(prop.name)+ ')');
+				if (this.hasAssignments(prop))
+					cmd.push(
+					this.assignPropSinglesValues(bl+1,	prop)
+					);
+				if (this.hasDependencies(prop))
+					cmd.push(
+					this.setPropRefs(bl+1,prop)
+					);
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'return self.' + prop.name);
 			}

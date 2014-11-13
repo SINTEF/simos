@@ -346,7 +346,7 @@ Generator.prototype.initModel = function(modelID) {
 	
 	/* save new generated model */
 	var modelStr = JSON.stringify(model, undefined, 2);
-	var genPackagePath = this.generatedPackageIDtoPath(packageID) + '(gen)';
+	var genPackagePath = this.generatedPackageIDtoPath(packageID);
 	this.createOutPath(genPackagePath);
 		
 	var outFileName = this.modelNameFromID(modelID) + '(gen).' + this.modelExt;

@@ -214,7 +214,7 @@ PythonBase.prototype.assignPropArraysValues = function(bl, prop) {
 	if (this.isArray(prop)) {
 		var assign = this.getAssignments(prop);
 		if (Object.getOwnPropertyNames(assign).length > 0) {
-			var loopBlock = this.getLoopBlockForArray(bl+1, prop);
+			var loopBlock = this.getLoopBlockForArray(bl, prop);
 			cmd.push(loopBlock.cmd);
 			cmd.push(this.assignPropertyValue(loopBlock.bl+1, assign, 
 				'self.' + this.getPropertyPrivateName(prop) + loopBlock.indList));
@@ -591,7 +591,8 @@ PythonBase.prototype.classInit = function(bl) {
 			cmd.push(this.getBlockSpace(bl+1) + 
 				'self.' + this.getPropertyPrivateName(prop) + ' = ' + this.getPropertyValue(prop));
 			
-			if (!(this.isAtomic(prop)) && (this.isContained(prop) && this.hasAssignments(prop)) ){
+			if (!this.isAtomic(prop) 		&&  this.isContained(prop) && 
+				 this.hasAssignments(prop)  && !this.isOptional(prop) ){
 				cmd.push(this.assignPropValues(bl+1, prop));
 			}
 		}
@@ -849,7 +850,9 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'rep["__type__"] = ' + this.stringify(this.fullTypeName()));
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["__versions__"] = ' + this.getVersion() );
+		'if not(short):');
+	cmd.push(this.getBlockSpace(bl+2) + 
+			'rep["__versions__"] = ' + this.getVersion() );
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'rep["__ID__"] = self.ID' );
 	cmd.push(this.getBlockSpace(bl+1) + 
@@ -1902,7 +1905,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			var propType = this.getClassPathFromType(prop.type) ;
 			
 				cmd.push(this.getBlockSpace(bl) + 
-				'def create' + this.firstToUpper(prop.name) +'(self,name):');	
+				'def makea' + this.firstToUpper(prop.name) +'(self,name):');	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'return ' + propType + '(name)');
 			
@@ -1937,7 +1940,18 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			}
 			else {
 				cmd.push(this.getBlockSpace(bl) + 
-				'def new' + this.firstToUpper(prop.name) +'(self):');	
+				'def create' + this.firstToUpper(prop.name) +'(self):');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if (self.' + prop.name + ' != None): ');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'raise Exception("object ' + prop.name + 
+						' already exist, use renew' + this.firstToUpper(prop.name) +
+						' to get a new one.") ');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'return self.renew' + this.firstToUpper(prop.name) + '()');
+				
+				cmd.push(this.getBlockSpace(bl) + 
+				'def renew' + this.firstToUpper(prop.name) +'(self):');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'self.' + prop.name + ' = ' + propType 
 						+ '(' + this.stringify(prop.name)+ ')');

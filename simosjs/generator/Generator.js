@@ -137,12 +137,15 @@ Generator.prototype.targetPackageIDtoPath = function(packageID) {
 	
 };
 /*----------------------------------------------------------------------------*/
+Generator.prototype.generatedPackageIDtoPath = function(packageID) {
+	var genPackageID = 'generated:' + packageID;
+	return this.sourcePackageIDtoPath(genPackageID);
+};
+/*----------------------------------------------------------------------------*/
 Generator.prototype.initPackagePath = function(packageID) {
 	var outppath = this.targetPackageIDtoPath(packageID);
 	
-	
-	if (!fs.exists(outppath))
-		fs.mkdirPathSync(outppath);
+	this.createOutPath(outppath);
 	
 	if (this.lang.name.toLowerCase() == 'python'){
 		var packages = packageID.split(this.lang.packageSep);
@@ -156,6 +159,14 @@ Generator.prototype.initPackagePath = function(packageID) {
 	
 	return outppath;
 };
+/*----------------------------------------------------------------------------*/
+Generator.prototype.createOutPath = function(outppath) {
+	if (!fs.exists(outppath))
+		fs.mkdirPathSync(outppath);
+	
+	return outppath;
+};
+
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 /* model manipulation */
@@ -277,6 +288,24 @@ Generator.prototype.initModel = function(modelID) {
 	if (this.flatModel) {
 		model = this.flattenModel(model);
 	}
+	
+	/* save new generated model */
+	var modelStr = JSON.stringify(model, undefined, 2);
+	console.log(packageID);
+	var genPackagePath = this.generatedPackageIDtoPath(packageID);
+	this.createOutPath(genPackagePath);
+	
+	console.log(genPackagePath);
+	
+	var outFileName = this.modelNameFromID(modelID) + '.' + this.modelExt;
+	var outFilePath = path.join(genPackagePath, outFileName);
+	
+	console.log(outFilePath);
+	
+	fs.writeFileSync( outFilePath, modelStr);
+	/*--------------------------*/
+	
+	
 	return model;
 };
 /*----------------------------------------------------------------------------*/

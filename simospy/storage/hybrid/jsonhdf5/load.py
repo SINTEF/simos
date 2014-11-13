@@ -1,5 +1,5 @@
 import json
-import imp
+#import imp
 
 def load(filePath):
     print("loading json file %s"%filePath)
@@ -29,9 +29,9 @@ def makeTypePath(fullTypeName, versionData):
     
     versions = getVersions(packages, versionData)
     
-    type = ''
+    myType = ''
     for package,version in zip(packages,versions):
-        type = type + package + '_' + version + '.'
+        myType = myType + package + '_' + version + '.'
     
     return (type + typeName), typeName
 

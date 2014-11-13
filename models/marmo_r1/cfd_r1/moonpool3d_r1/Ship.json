@@ -4,7 +4,7 @@
 	"type": "Ship",
 	"description": "Description of a 3D ship geometry with bilge keel and moonpool.",
 	
-	"extenda": ["marmo:containers:vessels:Ship"],
+	"extends": ["marmo:vessels:Ship"],
 	
 	"properties": [
 

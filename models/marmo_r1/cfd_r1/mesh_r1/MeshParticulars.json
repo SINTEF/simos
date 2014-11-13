@@ -45,7 +45,7 @@
 			"description": "mesh faces."},
 
 	{"name": "nBackgroundCells", 
-			"type": "Vector3D", "version": "1",
+			"type": "marmo:containers:Vector3D", "version": "1",
 			"description": "number of background cells in each direction."}
 
 	]

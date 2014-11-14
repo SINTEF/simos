@@ -1,0 +1,34 @@
+
+{	
+	"name": "Probe",
+	"type": "Probe",
+	"description": "data model for a probe in fluid.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "location", 
+         "type": "marmo:containers:Dimensional3DVector", 
+         "unit": "m",
+         "description": "Coordinate for probe location."
+         },		 		
+	         	 
+		{"name": "scalars", 
+		 "type": "marmo:containers:NonEquallySpacedSignal", 
+		 "dim":"*",
+		 "__assign": { "xname": "time",
+		               "xunit": "s" },
+		 "description": "scalar output probes."
+		 },
+				 			 
+		{"name": "vectors", 
+		 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
+		 "dim":"*",
+		 "__assign": { "xname": "time",
+                       "xunit": "s" },
+		 "description": "3D vector output probes."}
+	
+	]
+	
+}

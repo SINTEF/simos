@@ -1,0 +1,24 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of a WAMIT computation domain.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+	   {"name": "depth", 
+			"type": "double",
+			"value": "-1.0",
+			"description": "water depth, -1: infinite."},
+			
+	   {"name": "rho", 
+             "type": "marmo:containers:DimensionalScalar", 
+             "value": 1025.0,
+             "unit": "kg/m^3",
+             "description": "water density."}
+
+	]
+	
+}

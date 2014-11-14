@@ -1,0 +1,68 @@
+
+{	
+	"name": "FloatingVessel",
+	"type": "FloatingVessel",
+	"description": "Description of a general floating vessel.",
+
+	"extends": ["marmo:dynamics:FloatingSolidBody"],
+	
+	   "properties": [
+
+	   {"name": "modelFile", 
+			"type": "marmo:geometry:GeometryFileDescription", 
+			"unit": "m",
+			"description": "geometry file."},
+			
+	   {"name": "l", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "draft"},
+						
+    	{"name": "h", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "height"},
+
+	   {"name": "d", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "draft"},
+			
+    	{"name": "b", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"__dependencies": { "unit": "unit" },
+			"description": "beam"},
+			
+       {"name": "freeMotionModes", 
+             "type": "integer", 
+             "dim": "6",
+             "value": 1,
+             "optional": "ture",
+             "description": "the modes which are fixed."},
+             
+       {"name": "massMatrix", 
+             "type": "SixModesMassMatrix",
+             "optional": "true", 
+             "description": "Mass matrix."},
+             
+       {"name": "externalRestoringMatrix", 
+             "type": "SixModesRestoringMatrix",
+             "optional": "true", 
+             "description": "restoring matrix."},
+             
+       {"name": "externalDampingMatrix", 
+             "type": "SixModesDampingMatrix",
+             "optional": "true", 
+             "description": "damping matrix."}
+
+	]
+	
+}

@@ -1,0 +1,32 @@
+
+{	
+	"name": "SixModesMassMatrix",
+	"type": "SixModesMassMatrix",
+	"description": "A 6x6 matrix for storing the values for rigid body mass.",
+
+	"extends": ["marmo:dynamics:SixModesMatrix"],
+	
+	"properties": [
+			 
+	   {"name": "units", 
+             "type": "string", "dim": "6,6",
+             "value": [["kg", ""    , ""    ,""    ,""    ,""],
+                       [""  , "kg"  , ""    ,""    ,""    ,""],
+                       [""  , ""    , "kg"  ,""    ,""    ,""],
+                       [""  , ""    , ""    ,"kg m^2" ,""    ,""],
+                       [""  , ""    , ""    ,""    ,"kg m^2" ,""],
+                       [""  , ""    , ""    ,""    ,""    ,"kg m^2"]],
+             "description": "matrix of units."},
+             
+       {"name": "elemNames", 
+             "type": "string", "dim": "6,6",
+             "value": [["M" , ""    , ""    ,""    ,""    ,""],
+                       [""  , "M"   , ""    ,""    ,""    ,""],
+                       [""  , ""    , "M"   ,""    ,""    ,""],
+                       [""  , ""    , ""    ,"Ixx" ,""    ,""],
+                       [""  , ""    , ""    ,""    ,"Iyy" ,""],
+                       [""  , ""    , ""    ,""    ,""    ,"Izz"]],
+             "description": "matrix of element names."}   		 
+	]
+	
+}

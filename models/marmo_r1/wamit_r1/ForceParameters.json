@@ -1,0 +1,24 @@
+
+{	
+	"name": "ForceParameters",
+	"type": "ForceParameters",
+	"description": "Force configuration for wamit.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+	   {"name": "fieldPoints", 
+			"type": "marmo:containers:Dimensional3DVector",  
+            "dim": "*",
+            "description": "fields points used to extract data."},	
+             
+       {"name": "fixedModes", 
+             "type": "integer", 
+             "dim": "6",
+             "optional": "ture",
+             "description": "the modes which are fixed."}	
+
+	]
+	
+}

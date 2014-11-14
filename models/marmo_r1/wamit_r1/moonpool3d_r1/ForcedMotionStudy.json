@@ -2,7 +2,7 @@
 {	
 	"name": "ForcedMotionStudy",
 	"type": "ForcedMotionStudy",
-	"description": "A ship moonpool study.",
+	"description": "Forced motion study of a vessel in wamit.",
 	
 	"extends": ["marmo:basic:NamedEntity"],
 	   

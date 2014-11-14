@@ -1,0 +1,33 @@
+
+{	
+	"name": "Results",
+	"type": "Results",
+	"description": "Description of WAMIT results.",
+
+	"extends": ["marmo:vessels:FloatingVessel"],
+	
+	"properties": [
+
+	   {"name": "addedMass", 
+			"type": "string",
+			"value": "all",
+			"description": "list of releavent entities in the geometry file."},
+
+       {"name": "damping", 
+            "type": "string",
+            "value": "all",
+            "description": "list of releavent entities in the geometry file."},
+
+       {"name": "rao", 
+            "type": "string",
+            "value": "all",
+            "description": "list of releavent entities in the geometry file."},
+
+       {"name": "driftCoeff", 
+            "type": "string",
+            "value": "all",
+            "description": "list of releavent entities in the geometry file."}	
+
+	]
+	
+}

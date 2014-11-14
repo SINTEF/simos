@@ -363,7 +363,16 @@ PythonBase.prototype.setChildPropRefs = function(bl, childProp, objName) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.getPropertyValue = function(prop) {
+PythonBase.prototype.getAtomicInitValue = function(prop) {
+	if (this.isString(prop))
+		return this.stringify("");
+	else if (prop.type == 'integer')
+		return '0';
+	else
+		return '0.0';
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.getPropertyInit = function(bl, prop) {
 	/*
 	 * return properties default value, if property is an object (complex type),
 	 * it returns the command to instantiate that object.
@@ -372,15 +381,25 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 	if(prop.value == undefined){
 		if (this.isArray(prop)) {
 			if (this.isAtomic(prop)){
-				return 'np.zeros(' + this.getPythonArrayShape(prop) + ')';
+				var cmds = [];
+				cmds.push(this.getBlockSpace(bl) + 
+					'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.empty(shape=(' + 
+						this.getPythonArrayDimList(prop).join() + 
+						'), dtype=' + this.changeType(prop.type) + ')' );
+				cmds.push(this.getBlockSpace(bl) + 
+						'self.' + this.getPropertyPrivateName(prop) + 
+							'.fill(' + this.getAtomicInitValue(prop)+ ')' );
+				return cmds.join('\n');
 			}
 			else {
 				if (this.isContained(prop)){
 					// return this.getInitObjectList(prop);
-					return '[]';
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '= []');
 				}
 				else {
-					return '[]';
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '= []');
 				}
 				
 			}
@@ -388,7 +407,9 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 		else if (!(this.isAtomic(prop)) && 
 				  (this.isContained(prop)) && 
 				 !(this.isOptional(prop))){
-			return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+			return (this.getBlockSpace(bl) +
+					'self.' + this.getPropertyPrivateName(prop) + '=' + 
+						this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 		}
 		else {
 			return 'None';
@@ -398,10 +419,14 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 		if (this.isAtomic(prop)){
 			if (this.isSingle(prop)) {
 				if (prop.type == "boolean") {
-					return (this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + JSON.stringify(prop.value) + ')' + ')');
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '=' + 
+								this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + JSON.stringify(prop.value) + ')' + ')');
 				}
 				else {
-					return (this.changeType(prop.type) + '(' + JSON.stringify(prop.value) + ')');
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '=' + 
+								this.changeType(prop.type) + '(' + JSON.stringify(prop.value) + ')');
 				}
 			}
 			else {
@@ -409,7 +434,24 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 				 * check for dimensions
 				 * cast value types, must be presented as an array in JSON
 				 * with correct type*/
-				return ( JSON.stringify(prop.value) );
+				
+				if (prop.value instanceof Array)
+					return (this.getBlockSpace(bl) + 
+						'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.array(' + this.stringify(prop.value) +
+							', dtype=' + this.changeType(prop.type) + ')' );
+				else{
+					/*initialize all elements with a single value */
+					var cmds = [];
+					cmds.push(this.getBlockSpace(bl) + 
+						'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.empty(shape=(' + 
+							this.getPythonArrayDimList(prop).join() + 
+							'), dtype=' + this.changeType(prop.type) + ')' );
+					cmds.push(this.getBlockSpace(bl) + 
+							'self.' + this.getPropertyPrivateName(prop) + 
+								'.fill(' + this.changeType(prop.type) +'(' + this.stringify(prop.value) + '))' );
+					return cmds.join('\n');
+				}
+
 			}
 		}
 		else {
@@ -417,10 +459,13 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 				if (!(this.isAtomic(prop)) && 
 					 (this.isContained(prop)) && 
 					!(this.isOptional(prop)) ){
-					return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '=' + 
+								this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 				}
 				else {
-					return 'None';
+					return (this.getBlockSpace(bl) +
+							'self.' + this.getPropertyPrivateName(prop) + '=' + 'None');
 				}
 			}
 			else {
@@ -594,8 +639,7 @@ PythonBase.prototype.classInit = function(bl) {
 		var prop = properties[i];
 		if (prop.name == "name") {
 			/* initializing name */		
-			cmd.push(this.getBlockSpace(bl+1) + 
-						'self.' + this.getPropertyPrivateName(prop) + ' = ' + this.getPropertyValue(prop));			
+			cmd.push(this.getPropertyInit(bl+1, prop));			
 			cmd.push(this.getBlockSpace(bl+1) + 
 					'if not(name == None):');			
 			cmd.push(this.getBlockSpace(bl+2) + 
@@ -603,8 +647,7 @@ PythonBase.prototype.classInit = function(bl) {
 		}
 		else {
 			/* initializing other properties */
-			cmd.push(this.getBlockSpace(bl+1) + 
-				'self.' + this.getPropertyPrivateName(prop) + ' = ' + this.getPropertyValue(prop));
+			cmd.push(this.getPropertyInit(bl+1, prop));
 			
 			if (!this.isAtomic(prop) 		&&  this.isContained(prop) && 
 				 this.hasAssignments(prop)  && !this.isOptional(prop) ){
@@ -914,7 +957,7 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 				cmd.push(this.getBlockSpace(bl+2) + 
 					'if (short):');
 				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = str(self.' +  prop.name + ')');
+						'rep["'+ prop.name +'"] = str(self.' +  prop.name + '.shape)');
 				cmd.push(this.getBlockSpace(bl+2) + 
 					'else:');			
 				cmd.push(this.getBlockSpace(bl+3) + 

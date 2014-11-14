@@ -1,0 +1,21 @@
+
+{	
+	"name": "Body",
+	"type": "Body",
+	"description": "Description of a WAMIT body.",
+
+	"extends": ["marmo:vessels:FloatingVessel"],
+	
+	"properties": [
+
+
+			
+             
+       {"name": "modes", 
+             "type": "integer", 
+             "dim": "6",
+             "description": "radiation modes."}
+
+	]
+	
+}

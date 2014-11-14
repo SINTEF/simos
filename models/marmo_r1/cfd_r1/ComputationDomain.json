@@ -8,12 +8,16 @@
 	
 	"properties": [
 
-	{"name": "mesh", 
+	   {"name": "mesh", 
 			"type": "marmo:cfd:mesh:MeshParticulars", 
 			"unit": "m",
 			"__assign": {"dimension": "3"},
 			"__dependencies": { "unit": "unit" },
-			"description": "mesh properties."}
+			"description": "mesh properties."},
+			
+	   {"name": "water", 
+	       "type": "WaterProperties",
+	       "description": "properties of water in the domain."} 
 
 	]
 	

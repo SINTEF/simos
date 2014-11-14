@@ -1,0 +1,27 @@
+
+{	
+	"name": "ConfigParameters",
+	"type": "ConfigParameters",
+	"description": "WAMIT configuration parameters.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+        {"name": "nCPUs", 
+            "type": "integer",  
+            "value":"1",
+            "description": "Number of CPUs."},	
+            
+        {"name": "lowHight", 
+            "type": "integer",  "from": [0,1],
+            "value":"0",
+            "description": "0:low order, 1: high order."},
+            
+        {"name": "panelSize", 
+            "type": "integer", 
+            "value":"1",
+            "description": "a value for panel subdevision."}		
+	]
+	
+}

@@ -1,0 +1,32 @@
+
+{	
+	"name": "SixModesDampingMatrix",
+	"type": "SixModesDampingMatrix",
+	"description": "A 6x6 matrix for storing the values for rigid body damping.",
+
+	"extends": ["SixModesMatrix"],
+	
+	"properties": [
+			 
+	   {"name": "units", 
+             "type": "string", "dim": "6,6",
+             "value": [["", ""    , ""    ,""    ,""    ,""],
+                       [""  , ""  , ""    ,""    ,""    ,""],
+                       [""  , ""    , ""  ,""    ,""    ,""],
+                       [""  , ""    , ""    ,"" ,""    ,""],
+                       [""  , ""    , ""    ,""    ,"" ,""],
+                       [""  , ""    , ""    ,""    ,""    ,""]],
+             "description": "matrix of units."},
+             
+       {"name": "elemNames", 
+             "type": "string", "dim": "6,6",
+             "value": [["" , ""    , ""    ,""    ,""    ,""],
+                       [""  , ""   , ""    ,""    ,""    ,""],
+                       [""  , ""    , ""   ,""    ,""    ,""],
+                       [""  , ""    , ""    ,"" ,""    ,""],
+                       [""  , ""    , ""    ,""    ,"" ,""],
+                       [""  , ""    , ""    ,""    ,""    ,""]],
+             "description": "matrix of element names."}   		 
+	]
+	
+}

@@ -1,0 +1,20 @@
+
+{	
+	"name": "WaterProperties",
+	"type": "WaterProperties",
+	"description": "Contain properties of water.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	   
+	"properties": [
+			
+	    {"name": "rho", 
+             "type": "marmo:containers:DimensionalScalar", 
+             "value": 1025.0,
+             "unit": "kg/m^3",
+             "description": "water density."}
+
+
+	]
+	
+}

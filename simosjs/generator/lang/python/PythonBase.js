@@ -396,21 +396,36 @@ PythonBase.prototype.getPropertyValue = function(prop) {
 	}
 	else {
 		if (this.isAtomic(prop)){
-			if (prop.type == "boolean") {
-				return (this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + JSON.stringify(prop.value) + ')' + ')');
+			if (this.isSingle(prop)) {
+				if (prop.type == "boolean") {
+					return (this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + JSON.stringify(prop.value) + ')' + ')');
+				}
+				else {
+					return (this.changeType(prop.type) + '(' + JSON.stringify(prop.value) + ')');
+				}
 			}
 			else {
-				return (this.changeType(prop.type) + '(' + JSON.stringify(prop.value) + ')');
+				/* array with predefined values and fixed dimension,
+				 * check for dimensions
+				 * cast value types, must be presented as an array in JSON
+				 * with correct type*/
+				return ( JSON.stringify(prop.value) );
 			}
 		}
 		else {
-			if (!(this.isAtomic(prop)) && 
-				 (this.isContained(prop)) && 
-				!(this.isOptional(prop)) ){
-				return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+			if (this.isSingle(prop)) {
+				if (!(this.isAtomic(prop)) && 
+					 (this.isContained(prop)) && 
+					!(this.isOptional(prop)) ){
+					return (this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
+				}
+				else {
+					return 'None';
+				}
 			}
 			else {
-				return 'None';
+				/* array */
+				throw "array of objects can not be predefined.";
 			}
 
 		}
@@ -690,7 +705,7 @@ PythonBase.prototype.propSet = function(prop, bl) {
 	cmd.push(this.getBlockSpace(bl) + 'def ' + prop.name + '(self, val):');
 	
 	/* assign the value */
-	if (this.isAtomicType(prop.type)) {
+	if (this.isAtomic(prop)) {
 		if (this.isArray(prop)) {
 			/*
 			 * no chekcs here, TODO: add casting or checks for atomic type
@@ -706,8 +721,23 @@ PythonBase.prototype.propSet = function(prop, bl) {
 						'(' + this.changeType("integer") + '(val)' + ')');
 			}
 			else {
+				if (this.isLimited(prop)) {
+					if (prop.from instanceof Array){ 
+						cmd.push(this.getBlockSpace(bl+1) + 
+						'if not(' + this.changeType(prop.type) + '(val) in ' + this.stringify(prop.from) + '): ' );
+						cmd.push(this.getBlockSpace(bl+2) + 
+							'raise Exception(str(val) + " must be in " + str(' + this.stringify(prop.from) + ') )');
+					}
+					else{
+						cmd.push(this.getBlockSpace(bl+1) + 
+						'if not(' + this.changeType(prop.type) + '(val) in self.' + this.makePrivate(prop.from) + '): ' );
+						cmd.push(this.getBlockSpace(bl+2) + 
+							'raise Exception(str(val) + " must be in " + str(self.' + this.makePrivate(prop.from) + ') )');
+					}
+				}
 				cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
 						this.changeType(prop.type) +'(val)');
+				
 			}
 
 			

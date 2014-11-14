@@ -410,8 +410,8 @@ CommonLangBase.prototype.getDimensionList = function(prop) {
 /* Functions to handle properties reporting and sorting based on type  */
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.isArray = function(attr) {
-	if (attr.dim == undefined ) {
+CommonLangBase.prototype.isArray = function(prop) {
+	if (prop.dim == undefined ) {
 		return false;
 	}
 	else {
@@ -739,6 +739,10 @@ CommonLangBase.prototype.isContained = function(prop) {
 	else {
 		return false;
 	}
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isLimited = function(prop) {
+	return !(this.isEmpty(prop.from));
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.isReferenced = function(prop) {

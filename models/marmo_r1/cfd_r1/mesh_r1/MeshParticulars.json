@@ -17,7 +17,8 @@
 			"description": "mesh resolution id"},
 
 	{"name": "dimension", 
-			"type": "integer", "value": "3",
+			"type": "integer", "value": 3, 
+			"from": [2,3],
 			"description": "2 or 3 d mesh."},
 
 	{"name": "nCells", 

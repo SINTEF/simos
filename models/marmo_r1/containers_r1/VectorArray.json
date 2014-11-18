@@ -1,0 +1,30 @@
+
+{	
+	"name": "VectorArray",
+	"type": "VectorArray",
+	"description": "data model for a vector array.",
+
+
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+					
+	"properties": [
+	    
+	{"name": "len", 
+             "type": "integer", "value": 1,
+             "description": "number of data points."},
+	    
+	{"name": "x", 
+			 "type": "double", "dim": "len", 
+			 "description": "data points."},
+			 	 
+    {"name": "y", 
+             "type": "double", "dim": "len", 
+             "description": "data points."},
+             
+    {"name": "z", 
+             "type": "double", "dim": "len", 
+             "description": "data points."}
+             	  
+	]
+	
+}

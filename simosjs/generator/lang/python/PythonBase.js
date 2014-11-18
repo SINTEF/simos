@@ -46,6 +46,7 @@ PythonBase.prototype.importModules = function() {
 	cmd.push('#importing general modules');
 	
 	cmd.push('import numpy as np');
+	cmd.push('import os');
 	cmd.push('import h5py');
 	cmd.push('import json');
 	cmd.push('import collections');
@@ -387,7 +388,7 @@ PythonBase.prototype.setChildPropRefs = function(bl, childProp, objName) {
 		for (d in dept) {
 			var prop = this.getProperty(dept[d]);
 			cmd.push(
-			this.setPropertyRef(bl, objName + '.' + d, 'self.' + prop.name)
+			this.setPropertyRef(bl, objName, d, 'self.' + prop.name)
 				);
 		}
 	}
@@ -1426,7 +1427,29 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	
     return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.saveVertionsToHDF5Handle = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.getBlockSpace(bl) + 
+	'def _saveVertionsToHDF5Handle(self, handle):');
 
+	/* putting accessed package names into the main root attributes */
+	var packages = this.getPackages();
+	for(var i = 0, len = packages.length; i< len; i++) {
+		var key = packages[i];
+		cmd.push(this.getBlockSpace(bl+1) + 
+		'handle.attrs[' + this.stringify(key) + '] = ' + this.stringify(this.getVersion(key)) );
+	}
+	
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'pass');
+	
+	return cmd.join('\n');
+};
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.saveToHDF5Handle = function(bl) {
 	if (bl == undefined) {
@@ -1437,15 +1460,19 @@ PythonBase.prototype.saveToHDF5Handle = function(bl) {
 	cmd.push(this.getBlockSpace(bl) + 
 	'def _saveToHDF5Handle(self, handle):');
 
+	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'#first pass to save all contained items' );	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'self._saveDataToHDF5Handle(handle)' );
 	
+
+	/*
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'#second pass to link referenced  items' );	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'self._saveDataToHDF5Handle(handle)' );
+	*/
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'pass');
@@ -1478,14 +1505,6 @@ PythonBase.prototype.saveDataToHDF5Handle = function(bl) {
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'self.REF = handle.ref');
-
-	/* putting accessed package names into the main root attributes */
-	var packages = this.getPackages();
-	for(var i = 0, len = packages.length; i< len; i++) {
-		var key = packages[i];
-		cmd.push(this.getBlockSpace(bl+1) + 
-		'handle.attrs[' + this.stringify(key) + '] = ' + this.stringify(this.getVersion(key)) );
-	}
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'handle.attrs["type"] = ' + this.stringify(this.typePath(this.getModel())) );
@@ -1666,7 +1685,7 @@ PythonBase.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.getBlockSpace(bl+4) + 
 					'dgrp = handle[varName]' );
 	cmd.push(this.getBlockSpace(bl+3) + 
-				'getattr(self, varName)._saveToHDF5Handle(dgrp)');
+				'getattr(self, varName)._saveDataToHDF5Handle(dgrp)');
 	cmd.push(this.getBlockSpace(bl+2) + 
 			'elif not(getattr(self, varName).REF == None ):');
 	cmd.push(this.getBlockSpace(bl+3) +
@@ -1749,7 +1768,7 @@ PythonBase.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 					'dgrp = maindgrp[item.name]' );
 			
 		cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-				 'self.' + prop.name + loopBlock.indList + '._saveToHDF5Handle(dgrp)');
+				 'self.' + prop.name + loopBlock.indList + '._saveDataToHDF5Handle(dgrp)');
 
 		cmd.push(this.getBlockSpace(bl+3) + 
 			'maindgrp.attrs["order"] =  itemNames');
@@ -1838,7 +1857,7 @@ PythonBase.prototype.propGet = function(prop, bl) {
 
 
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.clone = function(bl) {
+PythonBase.prototype.cloneFunc = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -1849,7 +1868,7 @@ PythonBase.prototype.clone = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 			'newObj = ' + this.getClassName() + '()' );	     
 	cmd.push(this.getBlockSpace(bl+1) + 
-			'self._cloneTo(newObj)' );	     
+			'return self._cloneTo(newObj)' );	     
 
 	cmd.push(this.getBlockSpace(bl+1));
 	/* =============================================== */
@@ -1870,32 +1889,34 @@ PythonBase.prototype.clone = function(bl) {
 	
 	for (var i=0; i<props.length; i++) {
 		var prop = props[i];
-		
+		cmd.push(this.getBlockSpace(bl+1) + 
+				'if (self.isSet(' + this.stringify(prop.name) +')):' );	     
+
 		if (this.isAtomicType(prop.type)) {
 			if (this.isArray(prop)) {
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.getBlockSpace(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = np.copy(self.' + this.makePrivate(prop.name) + ')' );	     
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.getBlockSpace(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = self.' + this.makePrivate(prop.name) );	     				
 			}
 		}
 		else {
 			if (this.isArray(prop)) {
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.getBlockSpace(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = []' );	     	
-				var loopBlock = this.getLoopBlockForArray(bl+1,prop);
+				var loopBlock = this.getLoopBlockForArray(bl+2,prop);
 				cmd.push(loopBlock.cmd);
 					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 							'newObj.' + this.makePrivate(prop.name) + '.append(' +
 							' self.' + this.makePrivate(prop.name) + loopBlock.indList + '.clone() )' );    
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.getBlockSpace(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = self.' + this.makePrivate(prop.name) + '.clone()');	     				
 			}
@@ -2038,7 +2059,9 @@ PythonBase.prototype.factoryFunc = function(bl) {
 					cmd.push(
 						this.setChildPropRefs(bl+2, prop, 'obj')
 						);
-				
+				if (this.hasDependents(prop))
+					throw "array can not have dependents.";
+					
 				cmd.push(this.getBlockSpace(bl+2) + 
 						'return obj');
 				cmd.push(this.getBlockSpace(bl+1) + 

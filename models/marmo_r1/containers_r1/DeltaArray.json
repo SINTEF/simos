@@ -1,0 +1,27 @@
+
+{	
+	"name": "DeltaArray",
+	"type": "DeltaArray",
+	"description": "data model for a delta array.",
+
+
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+					
+	"properties": [
+	    
+
+	{"name": "nSamples", 
+             "type": "integer", "value": 1,
+             "description": "number of data points."},
+	    
+	{"name": "delta", 
+			 "type": "double", "value": 1,
+			 "description": "signal spacing."},	
+			 		 
+	{"name": "start", 
+			 "type": "double", "value": 0,
+			 "description": "start of the signal input."}		 
+	  
+	]
+	
+}

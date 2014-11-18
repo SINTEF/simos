@@ -1,0 +1,42 @@
+
+{	
+	"name": "NonEquallySpacedVectorXYSignal",
+	"type": "NonEquallySpacedVectorXYSignal",
+	"description": "data model for a collection of equally spaced 3D vector signals, model test data for instance.",
+	
+    "extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [	 
+
+        {"name": "len", 
+             "type": "integer", "value": 1,
+             "description": "number of data points."},
+
+	   {"name": "iDP", 
+			"type": "ScalarArray", 
+			"__dependencies": {"len": "len"},
+			"description": "independent parameter."},
+						 			 
+	   {"name": "x", 
+			 "type": "NonEquallySpacedScalarXYSignal", 
+			 "description": "x component value",
+			 "__dependencies": {	"unit": "unit",
+			 						"iDP": "iDP"}
+			 },		
+			 
+	   {"name": "y", 
+			 "type": "NonEquallySpacedScalarXYSignal", 
+			 "description": "y component value",
+			 "__dependencies": {	"unit": "unit",
+			 						"iDP": "iDP"}
+			 },
+			 			 
+	   {"name": "z", 
+			 "type": "NonEquallySpacedScalarXYSignal", 
+			 "description": "z component value",
+			 "__dependencies": {	"unit": "unit",
+			 						"iDP": "iDP"}
+			 }			 
+	]
+	
+}

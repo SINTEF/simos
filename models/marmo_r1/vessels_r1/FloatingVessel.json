@@ -39,29 +39,8 @@
 			"unit": "m",
 			"value": "0.0",
 			"__dependencies": { "unit": "unit" },
-			"description": "beam"},
+			"description": "beam"}
 			
-       {"name": "freeMotionModes", 
-             "type": "integer", 
-             "dim": "6",
-             "value": 1,
-             "optional": "ture",
-             "description": "the modes which are fixed."},
-             
-       {"name": "massMatrix", 
-             "type": "SixModesMassMatrix",
-             "optional": "true", 
-             "description": "Mass matrix."},
-             
-       {"name": "externalRestoringMatrix", 
-             "type": "SixModesRestoringMatrix",
-             "optional": "true", 
-             "description": "restoring matrix."},
-             
-       {"name": "externalDampingMatrix", 
-             "type": "SixModesDampingMatrix",
-             "optional": "true", 
-             "description": "damping matrix."}
 
 	]
 	

@@ -15,18 +15,14 @@
          },		 		
 	         	 
 		{"name": "scalars", 
-		 "type": "marmo:containers:NonEquallySpacedSignal", 
+		 "type": "ComplexScalarResponse", 
 		 "dim":"*",
-		 "__assign": { "xname": "time",
-		               "xunit": "s" },
 		 "description": "scalar output probes."
 		 },
 				 			 
 		{"name": "vectors", 
-		 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
+		 "type": "ComplexVectorResponse", 
 		 "dim":"*",
-		 "__assign": { "xname": "time",
-                       "xunit": "s" },
 		 "description": "3D vector output probes."}
 	
 	]

@@ -9,12 +9,12 @@
 	"properties": [
     
 	   {"name": "motionInd", 
-			"type": "integer", "from":[1,2,3,4,5,6]
+			"type": "integer", "from":[1,2,3,4,5,6],
 			"value": "1",
 			"description": "index for the mode of motion."},
 
        {"name": "forceInd", 
-            "type": "integer", "from":[1,2,3,4,5,6]
+            "type": "integer", "from":[1,2,3,4,5,6],
             "value": "1",
             "description": "index for the force."},
             

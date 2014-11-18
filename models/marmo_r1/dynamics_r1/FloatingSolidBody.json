@@ -4,11 +4,32 @@
 	"type": "FloatingSolidBody",
 	"description": "Dynamic properties of a floating solid body.",
 	
-    "extends": ["SolidBody"],
+    "extends": ["SolidBody", "MotionModes"],
 	
 	"properties": [
-
-	{"name": "CofB", 
+       {"name": "freeMotionModes", 
+             "type": "integer", 
+             "dim": "6",
+             "value": 1,
+             "optional": "ture",
+             "description": "the modes which are fixed."},
+             
+       {"name": "massMatrix", 
+             "type": "SixModesMassMatrix",
+             "optional": "true", 
+             "description": "Mass matrix."},
+             
+       {"name": "externalRestoringMatrix", 
+             "type": "SixModesRestoringMatrix",
+             "optional": "true", 
+             "description": "restoring matrix."},
+             
+       {"name": "externalDampingMatrix", 
+             "type": "SixModesDampingMatrix",
+             "optional": "true", 
+             "description": "damping matrix."},
+             
+	   {"name": "CofB", 
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },

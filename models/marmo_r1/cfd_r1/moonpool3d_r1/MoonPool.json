@@ -4,7 +4,7 @@
 	"type": "MoonPool",
 	"description": "Description of a 3D moonpool geometry.",
 
-    "extenda": ["marmo:basic:NamedEntityWithUnit"],
+    "extends": ["marmo:basic:NamedEntityWithUnit"],
 	
 	"properties": [
     

@@ -1113,7 +1113,7 @@ PythonBase.prototype.loadFromJSONDict = function(bl) {
 				cmd.push(this.getBlockSpace(bl+1) + 
 				'try :');
 				cmd.push(this.getBlockSpace(bl+2) + 
-					'createFunc = getattr(self,"createSet" + varName[0].capitalize()+varName[1:] )' );
+					'createFunc = getattr(self,"create" + varName[0].capitalize()+varName[1:] )' );
 				cmd.push(this.getBlockSpace(bl+2) + 
 					'item = createFunc()' );
 				cmd.push(this.getBlockSpace(bl+2) + 
@@ -1127,7 +1127,7 @@ PythonBase.prototype.loadFromJSONDict = function(bl) {
 				cmd.push(this.getBlockSpace(bl+1) + 
 				'try :');
 				cmd.push(this.getBlockSpace(bl+2) + 
-					'createFunc = getattr(self,"createAppend" + varName[0].capitalize()+varName[1:])' );
+					'createFunc = getattr(self,"append" + varName[0].capitalize()+varName[1:])' );
 				cmd.push(this.getBlockSpace(bl+2) + 
 					'for i0 in range(0,len(data[varName])):' );
 				cmd.push(this.getBlockSpace(bl+3) + 
@@ -1363,13 +1363,22 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	 /* single atomic type value */
 	 cmd.push(this.getBlockSpace(bl+1) + 
 	 	'try :');
-
 	 cmd.push(this.getBlockSpace(bl+2) + 
-			 'getattr(self,"_"+varName)._loadFromHDF5Handle(handle[varName])');
+	 		'if (varName in handle.keys()):');
+	 cmd.push(this.getBlockSpace(bl+3) + 
+				'obj = getattr(self,varName)');
+	 cmd.push(this.getBlockSpace(bl+3) + 
+				'if (obj == None):');
+	 cmd.push(this.getBlockSpace(bl+4) + 
+	 				'creFunc = getattr(self,"create"+varName[0].capitalize()+varName[1:])');
+	 cmd.push(this.getBlockSpace(bl+4) + 
+					'obj = creFunc()');
+	 cmd.push(this.getBlockSpace(bl+3) + 
+			 	'obj._loadFromHDF5Handle(handle[varName])');
 	 cmd.push(this.getBlockSpace(bl+1) + 
 		'except :');
 	 cmd.push(this.getBlockSpace(bl+2) + 
-			 'pass' );
+			 'raise Exception("was not possible to load " + varName)' );
 
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'pass');
@@ -1394,32 +1403,29 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i]; 
 		if ( (!(this.isAtomicType(prop.type))) && (this.isArray(prop)) ) {
+				
 			cmd.push(this.getBlockSpace(bl+1) + 
-			'if (varName == ' + this.stringify(prop.name) + '):' );
-				
-				cmd.push(this.getBlockSpace(bl+2) + 
-				'try :');
-				cmd.push(this.getBlockSpace(bl+3) + 
-					'num = len(handle[' + this.stringify(prop.name) + '].attrs["order"])');
-				cmd.push(this.getBlockSpace(bl+3) + 
-					'self.' + this.makePrivate(prop.name) + ' = [' + this.getClassPathFromType(prop.type) + '() for a in range(num)]');
-				cmd.push(this.getBlockSpace(bl+3) + 
-					'index = 0');
-				
-				var loopBlock = this.getLoopBlockForArray(bl+3,prop);
-				cmd.push(loopBlock.cmd);
-				cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'refObject = handle[' + this.stringify(prop.name) + '].attrs["order"][index]' );
-				
-				cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'self.' + this.makePrivate(prop.name) + loopBlock.indList + '._loadFromHDF5Handle(handle[' + this.stringify(prop.name) + '][refObject])');
-				cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-					'index = index + 1' );
+			'try :');
+			cmd.push(this.getBlockSpace(bl+2) + 
+				'num = len(handle[varName].attrs["order"])');
+			cmd.push(this.getBlockSpace(bl+2) + 
+				'setattr(self,varName,[])');
+			cmd.push(this.getBlockSpace(bl+2) + 
+				'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
+			cmd.push(this.getBlockSpace(bl+2) + 
+				'for i in range(num):');
+			cmd.push(this.getBlockSpace(bl+3) + 
+					'refObject = handle[varName].attrs["order"][i]' );
+			cmd.push(this.getBlockSpace(bl+3) + 
+					'obj = creFunc(refObject)');
+			
+			cmd.push(this.getBlockSpace(bl+3) + 
+					'obj._loadFromHDF5Handle(handle[varName][refObject])');
 
-				cmd.push(this.getBlockSpace(bl+2) + 
-				'except :');
-				cmd.push(this.getBlockSpace(bl+3) + 
-					'pass' );
+			cmd.push(this.getBlockSpace(bl+1) + 
+			'except :');
+			cmd.push(this.getBlockSpace(bl+2) + 
+				'pass' );
 		}
 	}
 	cmd.push(this.getBlockSpace(bl+1) + 

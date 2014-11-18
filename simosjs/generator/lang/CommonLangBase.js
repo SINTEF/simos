@@ -495,6 +495,11 @@ CommonLangBase.prototype.hasDependencies = function(prop) {
 	return !(this.isEmpty(dept));
 };
 /*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.hasDependents = function(prop) {
+	var dept = this.getChildProps(prop);
+	return !(this.isEmpty(dept));
+};
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getDependentChildFor = function(child, prop) {
 	var dependentProps = [];
 	
@@ -528,6 +533,27 @@ CommonLangBase.prototype.getChildProps = function(prop) {
 	}
 	
 	return childProps;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getParentProps = function(childProp) {
+	/* for each property, find a list of parent properties*/
+	
+	var props = this.getProperties();
+	var parentProps = [];
+	
+	var dept = this.getPropDependencies(childProp);
+	if (this.isEmpty(dept))
+		return parentProps;
+		
+	for (var i = 0; i<props.length; i++) {
+		for (d in dept) {
+			if (dept[d] == props[i].name) {
+				parentProps.push(props[i]);
+			}
+		}
+	}
+	
+	return parentProps;
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.isParentProp = function(prop) {

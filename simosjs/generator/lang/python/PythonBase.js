@@ -266,8 +266,15 @@ PythonBase.prototype.setPropSinglesRefs = function(bl, childProp, prop) {
 		
 		if (deptProps.length > 0) {
 			for (var di = 0, dilen = deptProps.length; di < dilen; di++){
+				var extraTab = 0;
+				if (this.isOptional(childProp)) {
+				cmd.push(this.getBlockSpace(bl) + 
+				'if not(self.' + childProp.name + '==None):'
+				);
+				extraTab = 1;
+				}
 				cmd.push(
-				this.setPropertyRef(bl, 'self.' + childProp.name, deptProps[di], 'self.' + prop.name)
+				this.setPropertyRef(bl+extraTab, 'self.' + childProp.name, deptProps[di], 'self.' + prop.name)
 				);
 			}	
 		}
@@ -282,9 +289,6 @@ PythonBase.prototype.setPropArraysRefs = function(bl, childProp, prop) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
-	if (varName == undefined) {
-		varName = 'self.' + prop.name;
-	}
 	
 	var cmd = [];
 
@@ -298,7 +302,7 @@ PythonBase.prototype.setPropArraysRefs = function(bl, childProp, prop) {
 	
 			for (var di = 0, dilen = deptProps.length; di < dilen; di++){
 				cmd.push(
-						this.setPropertyRef(loopBlock.bl+1, 'self.' + childProp.name + loopBlock, 
+						this.setPropertyRef(loopBlock.bl+1, 'self.' + childProp.name + loopBlock.indList, 
 								deptProps[di], 
 								'self.' + prop.name)
 						);
@@ -310,9 +314,36 @@ PythonBase.prototype.setPropArraysRefs = function(bl, childProp, prop) {
 
 	return cmd.join('\n');
 };
-
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.setPropRefs = function(bl, prop) {
+PythonBase.prototype.setPropRefs = function(bl, childProps, parents) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	/* make relations between child and parrent data sets */
+	for (var j = 0; j<parents.length; j++) {
+		var prop = parents[j];
+		for (var i = 0; i<childProps.length; i++) {
+			var childProp = childProps[i];
+			
+			if (this.isAtomic(childProp)) {
+				throw ('Illigal type for dependicy.',childProp);
+			}
+			else if (this.isArray(childProp)) {
+				cmd.push(this.setPropArraysRefs(bl, childProp, prop));
+	
+			}
+			else {
+				cmd.push(this.setPropSinglesRefs(bl, childProp, prop));
+			}
+		}
+	}
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setChildPropsRefs = function(bl, prop) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -320,20 +351,21 @@ PythonBase.prototype.setPropRefs = function(bl, prop) {
 
 	/* make relations between child and parrent data sets */
 	var childProps = this.getChildProps(prop);
-	for (var i = 0; i<childProps.length; i++) {
-		var childProp = childProps[i];
-		
-		if (this.isAtomic(childProp)) {
-			throw ('Illigal type for dependicy.',childProp);
-		}
-		else if (this.isArray(childProp)) {
-			cmd.push(this.setPropArraysRefs(bl, childProp, prop));
+	cmd.push(this.setPropRefs(bl, childProps, [prop]));
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.setParentPropsRefs = function(bl, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
 
-		}
-		else {
-			cmd.push(this.setPropSinglesRefs(bl, childProp, prop));
-		}
-	}
+	/* make relations between child and parrent data sets */
+	var parentProps = this.getParentProps(prop);
+	
+	cmd.push(this.setPropRefs(bl, [prop], parentProps));
 	
 	return cmd.join('\n');
 };
@@ -412,7 +444,8 @@ PythonBase.prototype.getPropertyInit = function(bl, prop) {
 						this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 		}
 		else {
-			return 'None';
+			return (this.getBlockSpace(bl) +
+					'self.' + this.getPropertyPrivateName(prop) + '= None' );
 		}
 	}
 	else {
@@ -818,8 +851,13 @@ PythonBase.prototype.propSet = function(prop, bl) {
 	}
 	
 	/* make relations between child and parrent data sets */
-	if (this.hasDependencies(prop))
-		cmd.push(this.setPropRefs(bl+1, prop));
+	if (this.hasDependencies(prop)) {
+		cmd.push(this.setParentPropsRefs(bl+1, prop));
+	}
+	if (this.hasDependents(prop)){
+		/*some other properties depend on this one */
+		cmd.push(this.setChildPropsRefs(bl+1, prop));
+	}
 	
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
@@ -2034,8 +2072,13 @@ PythonBase.prototype.factoryFunc = function(bl) {
 					);
 				if (this.hasDependencies(prop))
 					cmd.push(
-					this.setPropRefs(bl+1,prop)
+					this.setParentPropsRefs(bl+1,prop)
 					);
+				if (this.hasDependents(prop)){
+					cmd.push(
+					this.setChildPropsRefs(bl+1, prop)
+					);
+				}
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'return self.' + prop.name);
 			}

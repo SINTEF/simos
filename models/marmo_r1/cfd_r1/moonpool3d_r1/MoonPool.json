@@ -40,7 +40,7 @@
 			 "description": "Coordinate of the center of moonpool in ship coordinate system."},
 			 
 	{"name": "zRot", 
-			 "type": "marmo:containers:DimensionalScalar", "version": "1",
+			 "type": "marmo:containers:DimensionalScalar", 
 			 "unit": "deg",
 			 "value": 0.0,
 			 "description": "moon-pool rotation alngle in ship around vertical direction."}

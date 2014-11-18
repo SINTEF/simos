@@ -30,13 +30,13 @@
 			"description": "box's height"},
 
 	{"name": "cen", 
-			 "type": "marmo:containers:DimensionalScalar", 
+			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },
 			 "description": "location of the box's center."},
 
 	{"name": "rot", 
-			 "type": "marmo:containers:DimensionalScalar", 
+			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "deg",
 			 "description": "rotation vector of box around the center of the box."}
 	]

@@ -9,7 +9,7 @@
 	"properties": [
 
 	{"name": "scenarios", 
-			"type": "Ship", 
+			"type": "Domain", 
 			"dim": "*",
 			"description": "list of domains."}
 	]

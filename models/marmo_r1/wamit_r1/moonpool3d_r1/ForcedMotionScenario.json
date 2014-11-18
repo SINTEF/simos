@@ -16,17 +16,16 @@
 			"type": "marmo:containers:EquallySpacedSignal",
 			"unit": "s",  
 			"description": "wave periods."},
-			
-    {"name": "directions", 
-            "type": "marmo:containers:EquallySpacedSignal",
-            "unit": "deg",  
-            "description": "wave directions."},
     
-            
     {"name": "entityList", 
             "type": "string",
             "value": "all",
-            "description": "list of releavent entities in the geometry file."}
+            "description": "list of releavent entities in the geometry file."},
+            
+    {"name": "addedMassDamping", 
+            "type": "marmo:wamit:CompleteAddedMassDamping",
+            "description": "all values for added mass and damping mode of motion."}
+
             
             
 

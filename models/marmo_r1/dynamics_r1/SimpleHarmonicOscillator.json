@@ -18,7 +18,8 @@
 	{"name": "T", 
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Period",
-			 "unit": "s"
+			 "unit": "s",
+			 "__assign": {"value": "1.0"}
 			 },		
 			 
 	{"name": "A", 

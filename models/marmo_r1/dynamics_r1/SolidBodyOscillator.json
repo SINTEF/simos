@@ -11,31 +11,37 @@
 	{"name": "surge", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "m",
+			"optional": "ture",
 			"description": "surge oscillator."},
 
 	{"name": "sway", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "m",
+			"optional": "ture",
 			"description": "sway oscillator."},
 
 	{"name": "heave", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "m",
+			"optional": "ture",
 			"description": "heave oscillator."},
 						
 	{"name": "roll", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "rad",
+			"optional": "ture",
 			"description": "roll oscillator."},
 			
 	{"name": "pitch", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "rad",
+			"optional": "ture",
 			"description": "pitch oscillator."},
 
 	{"name": "yaw", 
 			"type": "SimpleHarmonicOscillator", 
 			"unit": "rad",
+			"optional": "ture",
 			"description": "yaw oscillator."}
 
 	]

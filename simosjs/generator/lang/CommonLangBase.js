@@ -942,3 +942,41 @@ CommonLangBase.prototype.modelDesAtt = function(prop) {
 		return 'MODEL' + prop.name;
 	}
 };
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.depluralizeName = function(name) {
+	if (name[name.length-1] == 's'){
+		return name.slice(0, name.length-1);
+	}
+	else {
+		return prop.name;
+	}
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.factoryAppendFuncName = function(prop) {
+	if (this.isArray(prop))
+		return 'append' + this.depluralize(this.firstToUpper(prop.name));
+	else
+		throw prop.name + " prop is not an array.";
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.factoryCreateFuncName = function(prop) {
+	if (this.isSingle(prop))
+		return 'create' + this.firstToUpper(prop.name);
+	else
+		throw prop.name + " prop is not a single.";
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.factoryReNewFuncName = function(prop) {
+	if (this.isSingle(prop))
+		return 'renew' + this.firstToUpper(prop.name);
+	else
+		throw prop.name + " prop is not a single.";
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.factoryMakeFuncName = function(prop) {
+	if (this.isArray(prop))
+		return 'makea' + this.depluralize(this.firstToUpper(prop.name));
+	if (this.isSingle(prop))
+		return 'makea' + this.firstToUpper(prop.name);
+
+};

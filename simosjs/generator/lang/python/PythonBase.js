@@ -1942,9 +1942,7 @@ PythonBase.prototype.lookForEntityFunc = function(bl) {
 		bl = 0;
 	}	
 	var cmd = [];
-	
-	var props = this.getNonAtomicArrayProperties();
-	
+		
 	cmd.push(this.getBlockSpace(bl) + 
 	'def _lookForEntity(self,name):');	
 	cmd.push(this.getBlockSpace(bl+1) + 
@@ -2024,6 +2022,7 @@ PythonBase.prototype.getEntityFunc = function(bl) {
 	
 	return cmd.join('\n');
 };
+
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.factoryFunc = function(bl) {
 	if (bl == undefined) {
@@ -2080,7 +2079,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			}
 			else {
 				cmd.push(this.getBlockSpace(bl) + 
-				'def create' + this.firstToUpper(prop.name) +'(self):');
+				'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'if (self.' + prop.name + ' != None): ');
 				cmd.push(this.getBlockSpace(bl+2) + 
@@ -2088,17 +2087,21 @@ PythonBase.prototype.factoryFunc = function(bl) {
 						' already exist, use renew' + this.firstToUpper(prop.name) +
 						' to get a new one.") ');
 				cmd.push(this.getBlockSpace(bl+1) + 
-					'return self.renew' + this.firstToUpper(prop.name) + '()');
+					'return self.renew' + this.firstToUpper(prop.name) + '(name)');
 				
 				cmd.push(this.getBlockSpace(bl) + 
-				'def renew' + this.firstToUpper(prop.name) +'(self):');
+				'def renew' + this.firstToUpper(prop.name) +'(self, name=None):');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'self.' + prop.name + ' = ' + propType 
-						+ '(' + this.stringify(prop.name)+ ')');
+							+ '('+ this.stringify(prop.name) +')');
 				if (this.hasAssignments(prop))
 					cmd.push(
 					this.assignPropSinglesValues(bl+1,	prop)
 					);
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if name != None:');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'self.' + prop.name + '.name = name' );
 				if (this.hasDependencies(prop))
 					cmd.push(
 					this.setParentPropsRefs(bl+1,prop)

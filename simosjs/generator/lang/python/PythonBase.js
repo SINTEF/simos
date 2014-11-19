@@ -2049,32 +2049,36 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			
 			if (this.isArray(prop)){
 				cmd.push(this.getBlockSpace(bl) + 
-				'def append' + this.firstToUpper(prop.name) +'(self,name=None):');	
+				'def append' + this.firstToUpper(prop.name) +'(self,name=None):');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'objs = [x for x in self.' + prop.name + ' if (x.name == name)]' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if len(objs) > 1:' );			
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'raise Exception(" more than one " + name + " is found in ' + prop.name + '")' );
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'elif len(objs) == 1:' );			
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'print ("warning: object %s already exist."%(name))' );	
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'return objs[0]' );	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'obj = ' + propType + '(name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
-					'if not(obj.name in [a.name for a in self.' + prop.name + ']):');
-				cmd.push(this.getBlockSpace(bl+2) + 
-						'self.' + prop.name + '.append(obj)');
+					'self.' + prop.name + '.append(obj)');
 				if (this.hasAssignments(prop))
 					cmd.push(
-						this.assignPropertyValue(bl+2,	this.getAssignments(prop), 'obj')
+						this.assignPropertyValue(bl+1,	this.getAssignments(prop), 'obj')
 						);
 				if (this.hasDependencies(prop))
 					cmd.push(
-						this.setChildPropRefs(bl+2, prop, 'obj')
+						this.setChildPropRefs(bl+1, prop, 'obj')
 						);
 				if (this.hasDependents(prop))
 					throw "array can not have dependents.";
 					
-				cmd.push(this.getBlockSpace(bl+2) + 
-						'return obj');
 				cmd.push(this.getBlockSpace(bl+1) + 
-					'else:');
-				cmd.push(this.getBlockSpace(bl+2) + 
-						'print ("warning: object %s already exist."%(obj.name))');
-				cmd.push(this.getBlockSpace(bl+2) + 
-						'return None');
+						'return obj');
 						
 			}
 			else {

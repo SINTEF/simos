@@ -2078,17 +2078,24 @@ PythonBase.prototype.factoryFunc = function(bl) {
 						
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl) + 
-				'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
-				cmd.push(this.getBlockSpace(bl+1) + 
-					'if (self.' + prop.name + ' != None): ');
-				cmd.push(this.getBlockSpace(bl+2) + 
-						'raise Exception("object ' + prop.name + 
-						' already exist, use renew' + this.firstToUpper(prop.name) +
-						' to get a new one.") ');
-				cmd.push(this.getBlockSpace(bl+1) + 
-					'return self.renew' + this.firstToUpper(prop.name) + '(name)');
+				if (this.isOptional(prop)) {
+					cmd.push(this.getBlockSpace(bl) + 
+					'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'if (self.' + prop.name + ' != None): ');
+					cmd.push(this.getBlockSpace(bl+2) + 
+							'raise Exception("object ' + prop.name + 
+							' already exist, use renew' + this.firstToUpper(prop.name) +
+							' to get a new one.") ');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'return self.renew' + this.firstToUpper(prop.name) + '(name)');
+					
+					cmd.push(this.getBlockSpace(bl) + 
+						'def delete' + this.firstToUpper(prop.name) +'(self):');
+						cmd.push(this.getBlockSpace(bl+1) + 
+							'self.' + this.makePrivate(prop.name) + ' = None ');
 				
+				}
 				cmd.push(this.getBlockSpace(bl) + 
 				'def renew' + this.firstToUpper(prop.name) +'(self, name=None):');
 				cmd.push(this.getBlockSpace(bl+1) + 

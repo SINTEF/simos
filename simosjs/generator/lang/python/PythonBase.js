@@ -941,6 +941,8 @@ PythonBase.prototype.typeReprFunc = function(bl) {
 		'rep["__ID__"] = self.ID' );
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'rep["name"] = self.name');
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["description"] = self.description');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 	'return rep');

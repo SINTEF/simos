@@ -900,7 +900,7 @@ PythonBase.prototype.reprFunc = function(bl) {
 	'def __repr__(self):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'return ( json.dumps(self.dictRepr(short=True), ' + 
+		'return ( json.dumps(self.dictRepr(short=True, deep=False), ' + 
 			'indent=4, separators=(\',\', \': \')) )' );
 
 	cmd.push(this.getBlockSpace(bl+1));
@@ -955,7 +955,7 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 	var cmd = [];
 
 	cmd.push(this.getBlockSpace(bl) + 
-	'def dictRepr(self, allItems=False, short=False):');
+	'def dictRepr(self, allItems=False, short=False, deep = True):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'rep = collections.OrderedDict()' );
@@ -969,6 +969,8 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 		'rep["__ID__"] = self.ID' );
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'rep["name"] = self.name');
+	cmd.push(this.getBlockSpace(bl+1) + 
+		'rep["description"] = self.description');
 	
 	if (this.isDerived()) {
 		throw "not implemented for dervied types.";
@@ -1012,13 +1014,13 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 				cmd.push(this.getBlockSpace(bl+1) + 
 				'if (allItems or self.isSet("'+ prop.name +'")):');
 				cmd.push(this.getBlockSpace(bl+2) + 
-					'if (short):');
+					'if (short and not(deep)):');
 				cmd.push(this.getBlockSpace(bl+3) + 
 						'rep["'+ prop.name +'"] = (self.' +  prop.name + '.typeRepr())');
 				cmd.push(this.getBlockSpace(bl+2) + 
 					'else:');			
 				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = self.' +  prop.name + '.dictRepr()');
+						'rep["'+ prop.name +'"] = self.' +  prop.name + '.dictRepr(allItems, short, deep)');
 			}
 			else if (this.isArray(prop)){
 				cmd.push(this.getBlockSpace(bl+1) + 
@@ -1028,7 +1030,7 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 				var loopBlock = this.getLoopBlockForArray(bl+2,prop);
 				cmd.push(loopBlock.cmd);
 					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-						'if (short):');
+						'if (short and not(deep)):');
 					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
 							'itemType = self.' + prop.name + loopBlock.indList + '.typeRepr()' );
 					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
@@ -1036,7 +1038,7 @@ PythonBase.prototype.dictReprFunc = function(bl) {
 					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 						'else:');			
 					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
-							'rep["'+ prop.name +'"].append( self.' + prop.name + loopBlock.indList + '.dictRepr() )' );
+							'rep["'+ prop.name +'"].append( self.' + prop.name + loopBlock.indList + '.dictRepr(allItems, short, deep) )' );
 				
 			}
 			else
@@ -1057,10 +1059,10 @@ PythonBase.prototype.jsonReprFunc = function(bl) {
 	var cmd = [];
 
 	cmd.push(this.getBlockSpace(bl) + 
-	'def jsonRepr(self):');
+	'def jsonRepr(self, short=False, deep=True):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'return ( json.dumps(self.dictRepr(short=False),' + 
+		'return ( json.dumps(self.dictRepr(short=short, deep=deep),' + 
 			'indent=4, separators=(\',\', \': \')) )' );
 	
 	cmd.push(this.getBlockSpace(bl+1));

@@ -1,0 +1,25 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "General study.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	   
+	"properties": [
+
+		{"name": "project", 
+			"type": "Project", 
+			"description": "project description."},
+			
+		{"name": "path", 
+			"type": "string",
+			"value": "", 
+			"description": "path to study relative to the machine's WORKPATH."},
+			
+		{"name": "postproScript", 
+			"type": "string", 
+			"description": "study post processor."}
+	]
+	
+}

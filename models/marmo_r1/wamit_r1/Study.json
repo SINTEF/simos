@@ -4,13 +4,10 @@
 	"type": "Study",
 	"description": "Wamit study.",
 	
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:project:Study"],
 	   
 	"properties": [
 
-	{"name": "project", 
-			"type": "marmo:runTools:Project", 
-			"description": "project description."}
 	]
 	
 }

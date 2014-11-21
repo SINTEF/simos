@@ -20,7 +20,11 @@
         {"name": "template", 
             "type": "string", "value":"",   
             "description": "The template case which used to create this scenario."},
-        
+
+        {"name": "rootPath", 
+            "type": "string", "value":"",   
+            "description": "Points to the relative ."},
+                    
         {"name": "machineName", 
             "type": "string", "value":"",   
             "description": "Name of the machine used to run the scenario."},

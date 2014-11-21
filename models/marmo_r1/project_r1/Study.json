@@ -17,7 +17,7 @@
 			"value": "", 
 			"description": "path to study relative to the machine's WORKPATH."},
 			
-		{"name": "postproScript", 
+		{"name": "postProScript", 
 			"type": "string", 
 			"description": "study post processor."}
 	]

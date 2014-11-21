@@ -7,11 +7,6 @@
     "extends": ["marmo:basic:NamedEntity"],
     	
 	"properties": [
-
-	   {"name": "fieldPoints", 
-			"type": "marmo:containers:Dimensional3DVector",  
-            "dim": "*",
-            "description": "fields points used to extract data."},	
              
        {"name": "fixedModes", 
              "type": "integer", 

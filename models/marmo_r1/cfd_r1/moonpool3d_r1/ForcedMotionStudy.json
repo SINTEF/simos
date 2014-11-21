@@ -4,7 +4,7 @@
 	"type": "ForcedMotionStudy",
 	"description": "A ship moonpool study.",
 	
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:cfd:Study"],
 	   
 	"properties": [
 

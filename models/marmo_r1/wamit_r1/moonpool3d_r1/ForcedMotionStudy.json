@@ -4,7 +4,7 @@
 	"type": "ForcedMotionStudy",
 	"description": "Forced motion study of a vessel in wamit.",
 	
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:wamit:Study"],
 	   
 	"properties": [
 

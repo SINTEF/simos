@@ -1,0 +1,16 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "A cfd study.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	   
+	"properties": [
+
+	{"name": "project", 
+			"type": "marmo:runTools:Project", 
+			"description": "a of the project."}
+	]
+	
+}

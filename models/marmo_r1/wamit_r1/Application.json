@@ -1,0 +1,17 @@
+{   
+    "name": "Application",
+    "type": "Application",
+    "description": "Wamit application.",
+    
+    "extends": ["marmo:runTools:Application"],
+    
+    "properties": [
+
+        {"name": "name", 
+            "type": "string", "value":"wamit",   
+            "description": "name of application."}
+
+      
+    ]
+    
+}

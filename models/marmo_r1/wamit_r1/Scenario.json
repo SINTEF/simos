@@ -24,7 +24,7 @@
             "type": "Results", 
             "description": "wamit results."},
     
-                        
+                 
 	{"name": "probes", 
 			"type": "Probe",
 			"dim": "*",
@@ -32,7 +32,12 @@
 
 	{"name": "postpro", 
 			"type": "marmo:containers:DataBundle",
-			"description": "a collection of post processed results interesting for this problem."}
+			"description": "a collection of post processed results interesting for this problem."},
+			
+    {"name": "runConfig", 
+            "type": "Runconfig", 
+            "description": "wamit run configuration."}
+
 
 	]
 	

@@ -49,8 +49,11 @@
 			
 	{"name": "domainSubDevision", 
 			"type": "marmo:containers:Vector3D", 
-			"description": "number of subdevisions in each direction. nCPUs must be multiplication of these three values."}
-	
+			"description": "number of subdevisions in each direction. nCPUs must be multiplication of these three values."},
+
+    {"name": "application", 
+            "type": "Application", 
+            "description": "Application to be used for running, executable filename."}	
 	]
 	
 }

@@ -1,0 +1,13 @@
+{   
+    "name": "Application",
+    "type": "Application",
+    "description": "General CFD application.",
+    
+    "extends": ["marmo:runTools:Application"],
+    
+    "properties": [
+
+      
+    ]
+    
+}

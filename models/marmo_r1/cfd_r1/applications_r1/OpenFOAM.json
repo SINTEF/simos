@@ -1,0 +1,16 @@
+{   
+    "name": "OpenFOAM",
+    "type": "OpenFOAM",
+    "description": "OpenFOAM application.",
+    
+    "extends": ["marmo:cfd:Application"],
+    
+    "properties": [
+
+        {"name": "name", 
+            "type": "string", "value":"openfoam",   
+            "description": "name of application."}
+      
+    ]
+    
+}

@@ -1628,9 +1628,9 @@ PythonBase.prototype.saveToHDF5HandleItemAtomicSingle = function(bl) {
 
 	 /* single atomic type value */
 	cmd.push(this.getBlockSpace(bl+1) + 
-	 	'if (self.isSet(varName) and self.isContained(varName)):');
+	 	'if (self.isSet(varName)):');
 	cmd.push(this.getBlockSpace(bl+2) + 
- 			'if (self.isContained(varName) and not(self._saved.has_key(varName))):');
+ 			'if (self.isContained(varName) ):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 			 	'handle[varName] = getattr(self,varName)');
 	cmd.push(this.getBlockSpace(bl+3) + 
@@ -1655,7 +1655,7 @@ PythonBase.prototype.saveToHDF5HandleItemAtomicArray = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
  		'if (self.isSet(varName)):');
 	cmd.push(this.getBlockSpace(bl+2) + 
-			'if (self.isContained(varName) and not(self._saved.has_key(varName))):');
+			'if (self.isContained(varName) ):');
 	cmd.push(this.getBlockSpace(bl+3) + 
 				'handle[varName] = np.asarray(getattr(self,varName))' );
 	cmd.push(this.getBlockSpace(bl+3) + 

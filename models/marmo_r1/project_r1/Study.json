@@ -15,7 +15,18 @@
 		{"name": "path", 
 			"type": "string",
 			"value": "", 
-			"description": "path to study relative to the machine's WORKPATH."}
+			"description": "path to study relative to the machine's WORKPATH."},
+
+		{"name": "postProcessor", 
+			"type": "marmo:runTools:Application",
+			"optional": "true",
+			"description": "post processor for the study."},
+			
+		{"name": "postProData", 
+			"type": "marmo:containers:PostProData",
+			"optional": "true",
+			"description": "post processed data."}
+			
 			
 	]
 	

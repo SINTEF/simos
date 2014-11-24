@@ -9,11 +9,17 @@
 	"properties": [
 
 	    {"name": "location", 
-         "type": "marmo:containers:Dimensional3DVector", 
+         "type": "Point", 
          "unit": "m",
          "description": "Coordinate for probe location."
          },		 		
-	         	 
+
+	    {"name": "waveDirection", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "deg",
+         "description": "Coordinate for probe location."
+         },
+         	         	 
 		{"name": "scalars", 
 		 "type": "ComplexScalarResponse", 
 		 "dim":"*",

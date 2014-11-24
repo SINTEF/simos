@@ -8,65 +8,22 @@
 	
 	"properties": [
 
-        {"name": "nSamples", 
-             "type": "integer", 
-             "value": 1,
-             "description": "number of data points."
-             },
-                         
-	    {"name": "xname", 
-	            "type": "string", "value": "T",
-	            "description": "priods"},
-	
-	    {"name": "xdescription", 
-	            "type": "string", "value": "",
-	            "description": "periods of socillations or waves."},
-	             
-	    {"name": "xunit", 
-	             "type": "string", 
-	             "value": "s",
-	             "description": "delta unit."
-	             },
-	                              
-	    {"name": "xvalue", 
-	             "type": "double", "dim": "nSamples",
-	             "description": "independent variable."
-	             },
 
         {"name": "mod", 
              "type": "marmo:containers:NonEquallySpacedSignal", 
-              "__dependencies": {   "unit": "unit",
-                                    "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
              "description": "modulus."},
 
         {"name": "phs", 
              "type": "marmo:containers:NonEquallySpacedSignal", 
               "__assign": { "unit": "deg"},
-              "__dependencies": {   "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
              "description": "phase."},
              
         {"name": "re", 
              "type": "marmo:containers:NonEquallySpacedSignal", 
-              "__dependencies": {   "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
-             "optional": "true",
              "description": "real part."},
              
         {"name": "im", 
              "type": "marmo:containers:NonEquallySpacedSignal", 
-              "__dependencies": {   "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
-             "optional": "true",
              "description": "imaginary part."} 
             
 	]

@@ -7,58 +7,17 @@
 	"extends": ["marmo:basic:NamedEntityWithUnit"],
 	
 	"properties": [
-
-        {"name": "nSamples", 
-             "type": "integer", 
-             "value": 1,
-             "description": "number of data points."
-             },
-                         
-
-	    {"name": "xname", 
-	            "type": "string", "value": "T",
-	            "description": "periods"},
-	
-	    {"name": "xdescription", 
-	            "type": "string", "value": "",
-	            "description": "periods of waves or oscillations."},
-	             
-	    {"name": "xunit", 
-	             "type": "string", 
-	             "value": "s",
-	             "description": "delta unit."
-	             },
-	                              
-	    {"name": "xvalue", 
-	             "type": "double", "dim": "nSamples",
-	             "description": "independent variable."
-	             },
              
         {"name": "x", 
              "type": "ComplexScalarResponse", 
-             "__dependencies": {    "unit": "unit",
-                                    "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
              "description": "x."},
 
         {"name": "y", 
              "type": "ComplexScalarResponse", 
-             "__dependencies": {    "unit": "unit",
-                                    "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
              "description": "y."},
              
         {"name": "z", 
              "type": "ComplexScalarResponse", 
-             "__dependencies": {    "unit": "unit",
-                                    "xname": "xname",
-                                    "xunit": "xunit",
-                                    "nSamples": "nSamples",
-                                    "xvalue": "xvalue" },
              "description": "z."}
             
 	]

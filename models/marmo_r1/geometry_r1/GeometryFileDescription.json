@@ -4,14 +4,10 @@
 	"type": "GeometryFileDescription",
 	"description": "Description of a geometry file model.",
 
-    "extends": ["marmo:basic:NamedEntityWithUnit"],
+    "extends": ["marmo:containers:File", "marmo:basic:NamedEntityWithUnit"],
 
 	"properties": [
 						
-	{"name": "type", 
-			"type": "string", "value": "",
-			"description": "geometry file type."},
-
 	{"name": "origin", 
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",

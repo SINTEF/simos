@@ -19,10 +19,14 @@
 	       "type": "WaterProperties",
 	       "description": "properties of water in the domain."},
 
-	{"name": "scale", 
+		{"name": "scale", 
 			"type": "double",
 			"value": "1.0",
-			"description": "Scale of the problem, fullScaleLength/PresentLength."}
+			"description": "Scale of the problem, fullScaleLength/PresentLength."},
+			
+		{"name": "decomposeConfig", 
+			"type": "marmo:cfd:domainDecompose:Config", 
+			"description": "configuration for different decomposition methods for parallel run."}
 	]
 	
 }

@@ -1,0 +1,19 @@
+
+{	
+	"name": "Config",
+	"type": "Config",
+	"description": "Different decomposition configurations for a domain parallel run.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "simple", 
+         "type": "Simple", 
+         "optional": "true",
+         "description": "simple decomposition method."
+         }
+	
+	]
+	
+}

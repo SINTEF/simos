@@ -53,7 +53,8 @@
 
     {"name": "application", 
             "type": "Application", 
-            "description": "Application to be used for running, executable filename."}	
+            "description": "Application to be used for running, executable filename."}
+            
 	]
 	
 }

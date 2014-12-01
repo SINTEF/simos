@@ -1,0 +1,32 @@
+
+{	
+	"name": "WaveInteractionScenario",
+	"type": "WaveInteractionScenario",
+	"description": "Wave interaction scenario of a vessel in wamit.",
+	
+    "extends": ["marmo:wamit:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "marmo:cfd:moonpool3d:Domain", 
+			"description": "Computational domain."},
+
+	{"name": "directions", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "s",  
+			"description": "wave directions."},
+			
+	{"name": "results", 
+			"type": "DirectionDependentResults",
+			"dim": "*",
+			"description": "a collection of direction dependent results."},
+    
+    {"name": "entityList", 
+            "type": "string",
+            "value": "all",
+            "description": "list of releavent entities in the geometry file."}     
+
+	]
+	
+}

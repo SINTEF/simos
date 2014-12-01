@@ -17,8 +17,12 @@
 			
 	   {"name": "water", 
 	       "type": "WaterProperties",
-	       "description": "properties of water in the domain."} 
+	       "description": "properties of water in the domain."},
 
+	{"name": "scale", 
+			"type": "double",
+			"value": "1.0",
+			"description": "Scale of the problem, fullScaleLength/PresentLength."}
 	]
 	
 }

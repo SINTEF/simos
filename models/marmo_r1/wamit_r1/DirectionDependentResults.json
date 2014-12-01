@@ -1,23 +1,24 @@
 
 {	
-	"name": "Results",
-	"type": "Results",
+	"name": "DirectionDependentResults",
+	"type": "DirectionDependentResults",
 	"description": "Description of WAMIT results.",
 
 	"extends": ["marmo:vessels:FloatingVessel"],
 	
 	"properties": [
-
-	   {"name": "addedMass", 
-			"type": "string",
-			"value": "all",
-			"description": "list of releavent entities in the geometry file."},
-
-       {"name": "damping", 
-            "type": "string",
-            "value": "all",
-            "description": "list of releavent entities in the geometry file."},
-
+	
+	   {"name": "waveDirection", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "deg",
+         "description": "incoming wave direction."
+         },
+      
+		{"name": "probes", 
+			"type": "Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+			
        {"name": "rao", 
             "type": "string",
             "value": "all",

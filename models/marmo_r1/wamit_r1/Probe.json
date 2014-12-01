@@ -13,12 +13,6 @@
          "unit": "m",
          "description": "Coordinate for probe location."
          },		 		
-
-	    {"name": "waveDirection", 
-         "type": "marmo:containers:DimensionalScalar", 
-         "unit": "deg",
-         "description": "Coordinate for probe location."
-         },
          	         	 
 		{"name": "scalars", 
 		 "type": "ComplexScalarResponse", 

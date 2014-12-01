@@ -17,7 +17,12 @@
              "type": "marmo:containers:DimensionalScalar", 
              "value": 1025.0,
              "unit": "kg/m^3",
-             "description": "water density."}
+             "description": "water density."},
+             
+	{"name": "scale", 
+			"type": "double",
+			"value": "1.0",
+			"description": "Scale of the problem, fullScaleLength/PresentLength."}
 
 	]
 	

@@ -8,6 +8,21 @@
 	
 	"properties": [
 			
+    {"name": "modelName", 
+            "type": "string",
+            "value":"temp", 
+            "description": "name for the wamit model."},
+            
+	{"name": "periods", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "s",  
+			"description": "wave periods."},
+
+    {"name": "entityList", 
+            "type": "string",
+            "value": "all",
+            "description": "list of relevant entities in the geometry file."},
+            			
 	{"name": "poten", 
 			"type": "PotenParameters", 
 			"description": "poten parameters."},
@@ -20,18 +35,12 @@
             "type": "ConfigParameters", 
             "description": "configuration."},
     
-    {"name": "results", 
-            "type": "Results", 
-            "description": "wamit results."},
-    
-                 
-	{"name": "probes", 
-			"type": "Probe",
-			"dim": "*",
-			"description": "a collection of probes."},
+    {"name": "addedMassDamping", 
+            "type": "marmo:wamit:CompleteAddedMassDamping",
+            "description": "all values for added mass and damping mode of motion."},
 
-	{"name": "postpro", 
-			"type": "marmo:containers:DataBundle",
+	{"name": "postProData", 
+			"type": "marmo:containers:PostProData",
 			"description": "a collection of post processed results interesting for this problem."},
 			
     {"name": "runConfig", 

@@ -11,7 +11,7 @@
 		{"name": "probes", 
 			"type": "Probe",
 			"dim": "*",
-			"description": "a collection of probes."},
+			"description": "a collection of probes."}
 
 	]
 	

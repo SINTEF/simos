@@ -10,7 +10,7 @@
             {"name": "modelFile", 
 	            "type": "marmo:geometry:GeometryFileDescription", 
 	            "unit": "m",
-	            "optinal": "true",
+	            "optional": "true",
 	            "description": "ship geometry file."},
         
 	       {"name": "porosity", 

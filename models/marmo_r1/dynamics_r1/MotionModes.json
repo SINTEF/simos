@@ -8,7 +8,12 @@
        {"name": "modeNames", 
             "type": "string", "dim":"6", 
             "value": ["surge","sway","heave","roll","pitch","yaw"],
-            "description": "list of modes of motions names."}
+            "description": "list of modes of motions names."},
+            
+        {"name": "modes", 
+             "type": "integer", 
+             "dim": "6",
+             "description": "radiation modes."}
  
 	]
 	

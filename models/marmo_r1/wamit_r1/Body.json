@@ -9,13 +9,6 @@
 	"properties": [
 
 
-			
-             
-       {"name": "modes", 
-             "type": "integer", 
-             "dim": "6",
-             "description": "radiation modes."}
-
 	]
 	
 }

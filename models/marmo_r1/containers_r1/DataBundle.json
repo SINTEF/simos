@@ -16,13 +16,23 @@
     {"name": "scalars", 
             "type": "marmo:containers:DimensionalScalar",  
             "dim": "*",
-            "description": "an array of dimensional scalaras."},
+            "description": "an array of dimensional scalars."},
 
+    {"name": "complexScalars", 
+            "type": "DimensionalComplexScalar",  
+            "dim": "*",
+            "description": "an array of complex dimensional scalars."},
+            
     {"name": "vectors", 
-            "type": "marmo:containers:Dimensional3DVector",  
+            "type": "Dimensional3DVector",  
             "dim": "*",
             "description": "an array of dimensional 3D vectors."},
 
+    {"name": "complexVectors", 
+            "type": "DimensionalComplex3DVector",  
+            "dim": "*",
+            "description": "an array of complex dimensional vectors."},
+            
     {"name": "scalarArrays", 
             "type": "marmo:containers:NonEquallySpacedSignal", 
             "dim": "*",

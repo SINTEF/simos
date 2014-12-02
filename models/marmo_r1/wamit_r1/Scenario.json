@@ -4,7 +4,7 @@
 	"type": "Scenario",
 	"description": "Description of a WAMIT scenario.",
 	
-    "extends": ["marmo:basic:NamedEntity"],
+    "extends": ["marmo:project:Scenario"],
 	
 	"properties": [
 			
@@ -38,10 +38,6 @@
     {"name": "addedMassDamping", 
             "type": "marmo:wamit:CompleteAddedMassDamping",
             "description": "all values for added mass and damping mode of motion."},
-
-	{"name": "postProData", 
-			"type": "marmo:containers:PostProData",
-			"description": "a collection of post processed results interesting for this problem."},
 			
     {"name": "runConfig", 
             "type": "RunConfig", 

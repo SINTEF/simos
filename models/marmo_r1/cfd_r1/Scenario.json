@@ -4,7 +4,7 @@
 	"type": "Scenario",
 	"description": "Description of a CFD scenario.",
 	
-    "extends": ["marmo:basic:NamedEntity"],
+    "extends": ["marmo:project:Scenario"],
 	
 	"properties": [
 
@@ -17,10 +17,6 @@
 			"type": "Probe",
 			"dim": "*",
 			"description": "a collection of probes."},
-
-	{"name": "postProData", 
-			"type": "marmo:containers:PostProData",
-			"description": "a collection of post processed results interesting for this problem."},
 									
 	{"name": "runConfig", 
 			"type": "RunConfig", 

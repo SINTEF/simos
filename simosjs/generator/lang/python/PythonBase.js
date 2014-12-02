@@ -1167,7 +1167,7 @@ PythonBase.prototype.loadFromHDF5Handle = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.getBlockSpace(bl) + 
-	'def _loadFromHDF5Handle(self, handle):');
+	'def loadFromHDF5Handle(self, handle):');
 
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'self._loadDataFromHDF5Handle(handle)' );
@@ -1378,12 +1378,14 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	 cmd.push(this.getBlockSpace(bl+4) + 
 					'obj = creFunc()');
 	 cmd.push(this.getBlockSpace(bl+3) + 
-			 	'obj._loadFromHDF5Handle(handle[varName])');
+			 	'obj.loadFromHDF5Handle(handle[varName])');
 	 cmd.push(this.getBlockSpace(bl+1) + 
 		'except :');
 	 cmd.push(this.getBlockSpace(bl+2) + 
-			 'raise Exception("was not possible to load " + varName)' );
-
+			 'print "Warning: %s was not loaded properly. "%varName' );
+	 /*cmd.push(this.getBlockSpace(bl+2) + 
+	 		 'raise Exception("was not possible to load " + varName)' );*/
+	 
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'pass');
 		
@@ -1424,7 +1426,7 @@ PythonBase.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 					'obj = creFunc(refObject)');
 			
 			cmd.push(this.getBlockSpace(bl+3) + 
-					'obj._loadFromHDF5Handle(handle[varName][refObject])');
+					'obj.loadFromHDF5Handle(handle[varName][refObject])');
 
 			cmd.push(this.getBlockSpace(bl+1) + 
 			'except :');
@@ -1468,7 +1470,7 @@ PythonBase.prototype.saveToHDF5Handle = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.getBlockSpace(bl) + 
-	'def _saveToHDF5Handle(self, handle):');
+	'def saveToHDF5Handle(self, handle):');
 
 	
 	cmd.push(this.getBlockSpace(bl+1) + 

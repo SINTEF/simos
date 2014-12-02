@@ -89,7 +89,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('');
 	cmd.push('        self._saved = {}');
 	cmd.push('        if self._storageBackEndType == \'hdf5\':');
-	cmd.push('            self._saveToHDF5Handle(dgrp)');
+	cmd.push('            self.saveToHDF5Handle(dgrp)');
 	cmd.push('        else:');
 	cmd.push('            raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
 	cmd.push('');        
@@ -115,7 +115,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('        grpHandle = self._storageBackEndServer.handle');
 	cmd.push('');     
 	cmd.push('        if self._storageBackEndType == \'hdf5\':');
-	cmd.push('            self._loadFromHDF5Handle(grpHandle[self.name])');
+	cmd.push('            self.loadFromHDF5Handle(grpHandle[self.name])');
 	cmd.push('        else:');
 	cmd.push('            raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
 	cmd.push('');

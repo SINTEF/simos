@@ -660,6 +660,7 @@ CommonLangBase.prototype.packagePath = function(pnames,pvers) {
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.typePath = function(model) {
+	/*marmo_r1.cfd_r1.moonpool3d_r1.Domain*/
 	if (model == undefined){
 		model = this.getModel();
 	}
@@ -669,6 +670,17 @@ CommonLangBase.prototype.typePath = function(model) {
 	var typeName = model.name;
 	
 	return this.makeTypePath(packages,versions,typeName);
+	
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.typeID = function(model) {
+	/*marmo:.cfd:moonpool3d:Domain*/
+	
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	return model["package"] + this.packageSep +  model.name;
 	
 };
 /*----------------------------------------------------------------------------*/

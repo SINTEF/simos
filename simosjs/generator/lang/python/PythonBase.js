@@ -1517,7 +1517,7 @@ PythonBase.prototype.saveDataToHDF5Handle = function(bl) {
 		'self.REF = handle.ref');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'handle.attrs["type"] = ' + this.stringify(this.typePath(this.getModel())) );
+		'handle.attrs["type"] = ' + this.stringify(this.typeID(this.getModel())) );
 
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'handle.attrs["ID"] = self.ID' );

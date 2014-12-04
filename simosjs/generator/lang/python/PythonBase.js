@@ -1952,12 +1952,14 @@ PythonBase.prototype.lookForEntityFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl) + 
 	'def _lookForEntity(self,name):');	
 	cmd.push(this.getBlockSpace(bl+1) + 
-			'objs = []');	     
+		'objs = []');	     
 		
 	var props = this.getNonAtomicArrayProperties();
 	for (var i=0; i<props.length; i++) {
 		var prop = props[i];
 		cmd.push(this.getBlockSpace(bl+1) + 
+		'if (self.' + prop.name + ' != None): ');	     
+		cmd.push(this.getBlockSpace(bl+2) + 
 			'objs = objs + [x for x in self.' + prop.name + ' if (x.name == name)] ');	     
 	}
 
@@ -1965,9 +1967,11 @@ PythonBase.prototype.lookForEntityFunc = function(bl) {
 	for (var i=0; i<props.length; i++) {
 		var prop = props[i];
 		cmd.push(this.getBlockSpace(bl+1) + 
-			'if (self.' + prop.name + '.name == name ):');	     
+			'if (self.' + prop.name + ' != None): ');
 		cmd.push(this.getBlockSpace(bl+2) + 
-				'objs.append(self.' + prop.name + ')');	     
+				'if (self.' + prop.name + '.name == name ):');	     
+		cmd.push(this.getBlockSpace(bl+3) + 
+					'objs.append(self.' + prop.name + ')');	     
 	}
 	
 	cmd.push(this.getBlockSpace(bl+1) + 

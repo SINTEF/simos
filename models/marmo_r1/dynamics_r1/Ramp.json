@@ -8,7 +8,7 @@
 	
 	"properties": [
 			
-	{"name": "function", 
+	{"name": "rampFunction", 
 			"type": "string", 
 			"value": "lin",
 			"description": "ramp function, can be either lin, cos, exp ...."

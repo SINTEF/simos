@@ -26,7 +26,7 @@
             "type": "marmo:containers:DimensionalScalar", 
 			"unit": "m",			
             "description": "wave maker stroke."},
-
+                        
     {"name": "nPeriods", 
             "type": "integer", 
             "description": "number of periods in steady part."},
@@ -44,10 +44,14 @@
             "dim": "*",
             "description": "an array of wave gauges."},
 
-    {"name": "waveMakerSignal", 
+    {"name": "waveMakerSignals", 
             "type": "marmo:containers:NonEquallySpacedSignal",  
             "dim": "*",
-            "description": "an array of wave maker signals."}
+            "description": "an array of wave maker signals."},
+            
+    {"name": "postProData", 
+            "type": "marmo:containers:PostProData",  
+            "description": "a bundle for post-processed data."}
     ]
     
 }

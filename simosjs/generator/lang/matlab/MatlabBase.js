@@ -205,6 +205,40 @@ MatlabBase.prototype.getPropertyValue = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+MatlabBase.prototype.assignPropertyValue = function(bl, assign, varName) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	for (a in assign) {
+		cmd.push(this.getBlockSpace(bl) + 
+		varName + '.' + a +	' = ' + this.stringify(assign[a]) + ';');
+	}		
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.assignPropSinglesValues = function(bl, prop) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	
+	var cmd = [];
+
+	if (this.isSingle(prop)) {
+		var assign = this.getAssignments(prop);
+		if (Object.getOwnPropertyNames(assign).length > 0) {
+			cmd.push(this.assignPropertyValue(bl, assign, this.objName() + '.' + prop.name));
+		}
+	}
+	else
+		throw "only single object can be handled here.";
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 MatlabBase.prototype.getArrayDimList = function(prop) {
 	
 	if (this.isArray(prop)){
@@ -529,8 +563,15 @@ MatlabBase.prototype.propSet = function(prop, bl) {
 			}
 			else if (this.isNumeric(prop)){
 				cmd.push(this.getBlockSpace(bl+1) + 
+				'if (ischar(val) == 1)');
+				cmd.push(this.getBlockSpace(bl+2) + 
+					'val = str2num(val);');
+				cmd.push(this.getBlockSpace(bl+1) + 
+				'end');
+				
+				cmd.push(this.getBlockSpace(bl+1) + 
 				this.objName() + '.' + this.makePrivate(prop.name) +' = ' + 
-				'(val);');
+				'val;');
 			}
 			else if (this.isString(prop)){
 				cmd.push(this.getBlockSpace(bl+1) + 
@@ -707,6 +748,11 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 						'end');		
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'end');
+
+				if (this.hasAssignments(prop))
+					cmd.push(
+						this.assignPropertyValue(bl+1,	this.getAssignments(prop), 'obj')
+						);
 				
 				cmd.push(this.getBlockSpace(bl+1) + 
 					this.objName() + '.' + prop.name + '{end+1} = obj;');
@@ -775,6 +821,11 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'obj = ' + this.objName() + '.' + prop.name + ';');
+
+				if (this.hasAssignments(prop))
+					cmd.push(
+					this.assignPropSinglesValues(bl+1,	prop)
+					);
 				
 				cmd.push(this.getBlockSpace(bl) + 
 				'end');	

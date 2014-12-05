@@ -289,17 +289,14 @@ CommonLangBase.prototype.getAssignments = function(prop) {
     		/*elements of array must have different names */
     		assign.name = prop.name;
     	}
-    	if ((prop.description != undefined) && !(this.isArray(prop))) {
+    	if ((prop.description != undefined) ) {
     		assign.description = prop.description;
     	}
     	if (prop.unit != undefined) {
     		assign.unit = prop.unit;
     	}
-    	if ((prop.value != undefined) && !(this.isArray(prop))) {
+    	if (prop.value != undefined) {
     		assign.value = prop.value;
-    	}
-    	if ((prop.valid != undefined) && !(this.isArray(prop))) {
-    		assign.valid = prop.valid;
     	}
     	
     	return assign;

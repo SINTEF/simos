@@ -1,17 +1,3 @@
 {
-  "marmo": "r1",
-  "basic": "r1",
-  "cfd": "r1",
-  "applications": "r1",
-  "domainDecompose": "r1",
-  "mesh": "r1",
-  "moonpool3d": "r1",
-  "containers": "r1",
-  "dynamics": "r1",
-  "geometry": "r1",
-  "modelTest": "r1",
-  "project": "r1",
-  "runTools": "r1",
-  "vessels": "r1",
-  "wamit": "r1"
+  "marmo": "r1"
 }

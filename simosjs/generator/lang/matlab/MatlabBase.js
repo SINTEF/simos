@@ -43,14 +43,18 @@ MatlabBase.prototype.makeInternal = function(str) {
 MatlabBase.prototype.initPublicProperties = function(bl) {
 	var cmd = [];
 
-	cmd.push(this.getBlockSpace(bl) + 
-		'storageBackEndType');	
 	
 	
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.initPublicConstantProperties = function(bl) {
+	var cmd = [];
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.initPublicConstantHiddenProperties = function(bl) {
 	var cmd = [];
 	/*
 	cmd.push(this.getBlockSpace(bl) + 
@@ -104,6 +108,9 @@ MatlabBase.prototype.initPublicHiddenProperties = function(bl) {
 	var cmd = [];
 
 	/*add one property for the filepath */
+
+	cmd.push(this.getBlockSpace(bl) + 
+		'storageBackEndType');	
 	
 	cmd.push(this.getBlockSpace(bl) + 
 			this.makeInternal('FilePath') + ' = \'\';');
@@ -267,7 +274,7 @@ MatlabBase.prototype.constructorFunc = function(bl) {
 		if (this.isSingle(prop) && (!this.isAtomic(prop)) && 
 			this.isContained(prop) && (!this.isOptional(prop)) ){
 				cmd.push(this.getBlockSpace(bl+1) + 
-				this.objName() + '.createSet' + this.firstToUpper(prop.name) + '();');				
+				this.objName() + '.renew' + this.firstToUpper(prop.name) + '();');				
 		
 		}
 		
@@ -576,7 +583,7 @@ MatlabBase.prototype.propSet = function(prop, bl) {
 			throw ('Illigal type for dependicy.',childProp);
 		}
 		else if (this.isArray(childProp)) {
-			var loopBlock = this.getLoopBlockForArray(bl+1, childProp);
+			var loopBlock = this.loopBlockForArray(bl+1, childProp);
 			cmd.push(loopBlock.cmd);
 			cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
 					this.objName() + '.' + childProp.name + '{' +loopBlock.indArray + '}' + '.' + this.getDependentChildFor(childProp,prop) 
@@ -663,13 +670,13 @@ MatlabBase.prototype.factoryFunc = function(bl) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
     		var propType = this.parseFullTypeName(prop.type).path;
-			
+					
 				cmd.push(this.getBlockSpace(bl) + 
-				'function obj = create' + this.firstToUpper(prop.name) +'(~,name)');
+				'function obj = makea' + this.firstToUpper(prop.name) +'(~,name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'if ~(exist(\'name\',\'var\')) ');
 				cmd.push(this.getBlockSpace(bl+2) + 
-						'name = ' + this.stringify(this.objName()) + '; ');	
+						'name = ' + this.stringify(prop.name) + '; ');	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'end ');
 
@@ -681,15 +688,25 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 			
 			if (this.isArray(prop)){
 				cmd.push(this.getBlockSpace(bl) + 
-				'function obj = createAppend' + this.firstToUpper(prop.name) +'(' + this.objName() + ',name)');
+				'function obj = append' + this.firstToUpper(prop.name) +'(' + this.objName() + ',name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'if ~(exist(\'name\',\'var\')) ');
 				cmd.push(this.getBlockSpace(bl+2) + 
-						'name = ' + this.stringify(this.objName()) + '; ');	
+						'name = [' + this.stringify(prop.name) + ' num2str(length(' + this.objName() + '.' + prop.name + '))]; ');	
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'end ');
 				cmd.push(this.getBlockSpace(bl+1) + 
 					'obj = ' + propType + '(name);');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'for i = 1:length(' + this.objName() + '.' + prop.name + ')');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'if (strcmp(' + this.objName() + '.' + prop.name + '{i}.name, name) == 1)');
+				cmd.push(this.getBlockSpace(bl+3) + 
+							'disp([\'warning:\' name \' already exist. \']);');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'end');		
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'end');
 				
 				cmd.push(this.getBlockSpace(bl+1) + 
 					this.objName() + '.' + prop.name + '{end+1} = obj;');
@@ -713,14 +730,51 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 						
 			}
 			else {
+				if (this.isOptional(prop)) {
+					cmd.push(this.getBlockSpace(bl) + 
+					'function obj = create' + this.firstToUpper(prop.name) +'(' + this.objName() + ', name)');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'if ~(isempty(' + this.objName() + '.' + prop.name + ')) ');
+					cmd.push(this.getBlockSpace(bl+2) + 
+							'error(\'object ' + prop.name + 
+							' already exist, use renew' + this.firstToUpper(prop.name) +
+							' to get a new one.\'); ');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'end ');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'if ~(exist(\'name\',\'var\')) ');
+					cmd.push(this.getBlockSpace(bl+2) + 
+							'name = ' + this.stringify(prop.name) + '; ');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'end ');
+
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'obj = ' + this.objName() + '.renew' + this.firstToUpper(prop.name) + '(name);');
+					cmd.push(this.getBlockSpace(bl) + 
+					'end ');
+					
+					cmd.push(this.getBlockSpace(bl) + 
+					'function delete' + this.firstToUpper(prop.name) +'(' + this.objName() + ')');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						this.objName() + '.' + this.makePrivate(prop.name) + ' = \'\'; ');
+					cmd.push(this.getBlockSpace(bl) + 
+					'end ');
+				
+				}
+				
 				cmd.push(this.getBlockSpace(bl) + 
-				'function obj = createSet' + this.firstToUpper(prop.name) +'(' + this.objName() + ')');	
+				'function obj = renew' + this.firstToUpper(prop.name) +'(' + this.objName() + ', name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
-					this.objName() + '.' + prop.name + ' = ' + propType
-						+ '(' + this.stringify(prop.name)+ ');');
+					'if ~(exist(\'name\',\'var\')) ');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'name = ' + this.stringify(prop.name) + '; ');	
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'end ');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					this.objName() + '.' + prop.name + ' = ' + propType + '(name);');
 
 				cmd.push(this.getBlockSpace(bl+1) + 
-						'obj = ' + this.objName() + '.' + prop.name + ';');
+					'obj = ' + this.objName() + '.' + prop.name + ';');
 				
 				cmd.push(this.getBlockSpace(bl) + 
 				'end');	

@@ -34,7 +34,7 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('%**************************************************************************');
 	cmd.push('classdef ' + entity.getClassName() + ' < handle');
 	cmd.push('    %***********************************************************************');
-    cmd.push('properties');
+    cmd.push('    properties');
 	cmd.push('');
 	cmd.push(entity.initPublicProperties(2));
     cmd.push('');
@@ -45,6 +45,12 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push(entity.initPublicConstantProperties(2));
     cmd.push('');
 	cmd.push('    end %properties (Constant)');
+	cmd.push('    %***********************************************************************');
+	cmd.push('    properties (Constant, Hidden)');
+	cmd.push('');
+	cmd.push(entity.initPublicConstantHiddenProperties(2));
+    cmd.push('');
+	cmd.push('    end %properties (Constant, Hidden)');
 	cmd.push('    %***********************************************************************');
 	cmd.push('    properties (Dependent)');
 	cmd.push('');

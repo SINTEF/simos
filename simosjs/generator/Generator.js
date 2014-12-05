@@ -240,6 +240,11 @@ Generator.prototype.collectVersions = function(packageID, versions) {
 		}
 	}
 		
+	/* adding the explicitly defined versions for interfacing other packages*/
+	var definedVersions = this.getLocalModelVersion(packageID);	
+	for (var key in definedVersions) {
+		versions[key] = definedVersions[key];
+	}
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.addPackageDataToModel = function(model, packages) {

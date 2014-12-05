@@ -1,0 +1,55 @@
+
+{   
+    "name": "TransferFunctionTest",
+    "type": "TransferFunctionTest",
+    "description": "A data bundle to describe tests for getting the wave maker transfer functin.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "H1d", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "desired first harmonic of wave height."},
+			
+     {"name": "T", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+			
+     {"name": "hh", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "water depth."},
+			
+    {"name": "stroke", 
+            "type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",			
+            "description": "wave maker stroke."},
+
+    {"name": "nPeriods", 
+            "type": "integer", 
+            "description": "number of periods in steady part."},
+			
+    {"name": "rampUp", 
+            "type": "marmo:dynamics:Ramp",  
+            "description": "ramp for wave."},
+			
+    {"name": "rampDown", 
+            "type": "marmo:dynamics:Ramp",  
+            "description": "ramp for wave."},
+			
+    {"name": "waveGauges", 
+            "type": "marmo:containers:NonEquallySpacedSignal",  
+            "dim": "*",
+            "description": "an array of wave gauges."},
+
+    {"name": "waveMakerSignal", 
+            "type": "marmo:containers:NonEquallySpacedSignal",  
+            "dim": "*",
+            "description": "an array of wave maker signals."}
+    ]
+    
+}
+
+

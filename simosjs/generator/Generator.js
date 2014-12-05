@@ -84,6 +84,9 @@ Generator.prototype.setLang = function(lang) {
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 Generator.prototype.splitPackageName = function(packageName) {
+	if (packageName.indexOf(this.lang.versionSep) == -1)
+		return {"name": packageName, "version":""};
+		
 	var parts = packageName.split(this.lang.versionSep);
 	
 	return {"name": parts.slice(0, parts.length-1).join(this.lang.versionSep),
@@ -225,7 +228,8 @@ Generator.prototype.collectVersions = function(packageID, versions) {
 	var packages = this.expandPackages(packageID);
 	var currentPackage = packages[packages.length-1];
 
-	versions[currentPackage.name] = currentPackage.version;
+	if (currentPackage.version != "")
+		versions[currentPackage.name] = currentPackage.version;
 	
 	var ppath = this.sourcePackageIDtoPath(packageID); 
 	

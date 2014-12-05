@@ -88,7 +88,6 @@ CommonLangBase.prototype.getModelWithOutPtoperties = function(){
 CommonLangBase.prototype.setModel = function(model){
 	this.model = model;
 };
-//exports.CommonLangBase.prototype.setModel = CommonLangBase.prototype.setModel;
 /*----------------------------------------------------------------------------*/
 
 CommonLangBase.prototype.getTargetType = function(){
@@ -136,6 +135,7 @@ CommonLangBase.prototype.getClassNameFromType = function(typeName) {
 	
 	return this.parseFullTypeName(typeName).name;
 };
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getClassPathFromType = function(typeName) {
 	var parsed = this.parseFullTypeName(typeName);
 	return (parsed.path + this.packagePathSep + parsed.name);
@@ -144,7 +144,7 @@ CommonLangBase.prototype.getClassPathFromType = function(typeName) {
 
 CommonLangBase.prototype.addVersion = function(typeName, version) {
 
-	if (version == undefined) {
+	if ((version == undefined) || (version == '')) {
 		return typeName;
 	}
 	else {
@@ -198,8 +198,13 @@ CommonLangBase.prototype.getVersion = function(p, model) {
 	
 	if (p == undefined)
 		return JSON.stringify(model.__versions__);
-	else
-		return model.__versions__[p];
+	else {
+		var ver = model.__versions__[p];
+		if (ver == undefined)
+			return '';
+		else
+			return ver;
+	}
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.getPackagesVersions = function(packages, model) {

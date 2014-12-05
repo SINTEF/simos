@@ -42,12 +42,12 @@
     {"name": "waveGauges", 
             "type": "marmo:containers:NonEquallySpacedSignal",  
             "dim": "*",
-            "description": "an array of wave gauges."},
+            "description": "an array of a wave gauge signal."},
 
     {"name": "waveMakerSignals", 
             "type": "marmo:containers:NonEquallySpacedSignal",  
             "dim": "*",
-            "description": "an array of wave maker signals."},
+            "description": "an array of the wave maker signal."},
             
     {"name": "postProData", 
             "type": "marmo:containers:PostProData",  

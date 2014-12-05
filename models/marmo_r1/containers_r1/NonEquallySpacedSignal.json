@@ -13,12 +13,12 @@
 			 "description": "number of data points."},
 
 	{"name": "xname", 
-			"type": "string", "value": "x",
-			"description": "name for the x value"},
+			"type": "string", "value": "t",
+			"description": "name for the x value."},
 
 	{"name": "xdescription", 
-			"type": "string", "value": "",
-			"description": "name for the x value"},
+			"type": "string", "value": "time",
+			"description": "description for the x value."},
 	 
 	{"name": "xunit", 
 			 "type": "string", "value": "s",
@@ -33,7 +33,7 @@
 	{"name": "value", 
 			 "type": "double", "dim": "nSamples", 
 			 "description": "data points.",
-			 "simaAttr": "ydata"}			 
+			 "simaAttr": "ydata."}			 
 
 	]
 	

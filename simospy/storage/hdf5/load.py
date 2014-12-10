@@ -39,6 +39,7 @@ def loadNewSimos(f):
     
         objs.append(obj)
         
+    f.close()
     return objs
     
 def makeTypePath(fullTypeName, versions):
@@ -56,7 +57,8 @@ def makeTypePath(fullTypeName, versions):
     type = ''
     for package in packages:
         if '_' in package:
-            if versions.has_key(package):
+            print package.split('_')[0]
+            if versions.has_key(package.split('_')[0]):
                 type = type + package + '.'
             else:
                 type = type + package.split('_')[0] + '.'

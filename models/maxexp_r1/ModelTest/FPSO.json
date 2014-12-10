@@ -1,0 +1,24 @@
+
+{   
+    "name": "FPSO",
+    "type": "FPSO",
+    "description": "Ship model.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "L", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "length."},
+			
+     {"name": "B", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "beam."}
+
+    ]
+    
+}
+
+

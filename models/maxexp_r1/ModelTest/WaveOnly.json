@@ -1,0 +1,38 @@
+
+{   
+    "name": "WaveOnly",
+    "type": "WaveOnly",
+    "description": "This is a model test data for wave only.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "wave height."},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+			
+     {"name": "seed", 
+            "type": "integer",  
+            "value":1,
+            "description": "wave seed."},
+            
+     {"name": "model", 
+            "type": "FPSO",  
+            "description": "model."},
+						
+    {"name": "waveGauges", 
+            "type": "WaveG",  
+            "dim": "*",
+            "description": "an array of a wave gauge signal."}
+
+    ]
+    
+}
+
+

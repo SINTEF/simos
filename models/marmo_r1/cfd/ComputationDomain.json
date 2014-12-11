@@ -9,7 +9,7 @@
 	"properties": [
 
 	   {"name": "mesh", 
-			"type": "marmo:cfd:mesh:MeshParticulars", 
+			"type": "marmo:cfd:mesh:Mesh", 
 			"unit": "m",
 			"__assign": {"dimension": "3"},
 			"__dependencies": { "unit": "unit" },

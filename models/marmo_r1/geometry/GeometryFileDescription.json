@@ -4,7 +4,7 @@
 	"type": "GeometryFileDescription",
 	"description": "Description of a geometry file model.",
 
-    "extends": ["marmo:containers:File", "marmo:basic:NamedEntityWithUnit"],
+    "extends": ["marmo:containers:File", "marmo:dynamics:LocalCartesianCoordinateSystem"],
 
 	"properties": [
 						

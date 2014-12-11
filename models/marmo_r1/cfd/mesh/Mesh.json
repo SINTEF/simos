@@ -1,0 +1,17 @@
+
+{	
+	"name": "Mesh",
+	"type": "Mesh",
+	"description": "CFD mesh.",
+	
+	"extends": ["MeshParticulars"],
+	
+	"properties": [
+			
+    {"name": "runConfig", 
+            "type": "MeshGenConfig", 
+            "description": "mesh generator running configuration."}
+    
+	]
+	
+}

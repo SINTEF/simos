@@ -4,7 +4,7 @@
 	"type": "Box",
 	"description": "Description of a 3D Box geometry.",
 	
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:dynamics:LocalCartesianCoordinateSystem"],
 	    
 	"properties": [
 
@@ -33,12 +33,7 @@
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },
-			 "description": "location of the box's center."},
-
-	{"name": "rot", 
-			 "type": "marmo:containers:Dimensional3DVector", 
-			 "unit": "deg",
-			 "description": "rotation vector of box around the center of the box."}
+			 "description": "location of the box's center in the local coordinate system attached to origin."}
 	]
 	
 }

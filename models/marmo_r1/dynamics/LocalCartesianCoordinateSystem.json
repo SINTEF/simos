@@ -1,0 +1,24 @@
+
+{	
+	"name": "LocalCartesianCoordinateSystem",
+	"type": "LocalCartesianCoordinateSystem",
+	"description": "Describes a cartezian coordinate system with respect to the Global coordinate system.",
+
+    "extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+
+	{"name": "origin", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "m",
+			 "__dependencies": { "unit": "unit" },
+			 "description": "location of the body origin (origin of the local coordinate system) in the global coordinate system."},
+
+	{"name": "rot", 
+			 "type": "marmo:containers:Dimensional3DVector", 
+			 "unit": "deg",
+			 "description": "rotation vector in the global coordinate system."}
+			 			 						
+	]
+	
+}

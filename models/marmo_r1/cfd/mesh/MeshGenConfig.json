@@ -1,0 +1,14 @@
+
+{	
+	"name": "MeshGenConfig",
+	"type": "MeshGenConfig",
+	"description": "CFD mesh generator configuration.",
+	
+	"extends": ["marmo:runTools:RunConfig"],
+	
+	"properties": [
+			
+
+	]
+	
+}

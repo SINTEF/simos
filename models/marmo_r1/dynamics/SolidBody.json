@@ -4,7 +4,7 @@
 	"type": "SolidBody",
 	"description": "Dynamic properties of a Solid Body.",
 	
-    "extends": ["Location"],
+    "extends": ["LocalCartesianCoordinateSystem"],
 	
 	"properties": [
 

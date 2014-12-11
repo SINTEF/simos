@@ -11,6 +11,7 @@
 	   {"name": "modelFile", 
 			"type": "marmo:geometry:GeometryFileDescription", 
 			"unit": "m",
+			"optional": "true",
 			"description": "geometry file."},
 			
 	   {"name": "l", 

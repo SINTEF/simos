@@ -1,0 +1,19 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of the computational domain for a 2dD ship section with bilge keel.",
+	
+	"extends": ["marmo:cfd:RectangularComputationDomain"],
+	
+	"properties": [
+
+	{"name": "ship", 
+			"type": "Ship", 
+			"__assign": { "unit": "m" }, 
+			"__dependencies": { "unit": "unit" },
+			"description": "ship geometry description."}
+
+	]
+	
+}

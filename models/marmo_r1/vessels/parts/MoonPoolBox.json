@@ -1,7 +1,7 @@
 
 {	
-	"name": "MoonPool",
-	"type": "MoonPool",
+	"name": "MoonPoolBox",
+	"type": "MoonPoolBox",
 	"description": "Description of a 3D moonpool geometry.",
 
     "extends": ["marmo:basic:NamedEntityWithUnit"],

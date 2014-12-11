@@ -2,7 +2,7 @@
 {	
 	"name": "ForcedMotionScenario",
 	"type": "ForcedMotionScenario",
-	"description": "Description of a 3D ship with moonpool forced motion scenario.",
+	"description": "Description of a 2D ship forced motion scenario.",
 	
     "extends": ["marmo:cfd:Scenario"],
 	
@@ -14,7 +14,12 @@
 
 	{"name": "oscillator", 
 			"type": "marmo:dynamics:SolidBodyOscillator", 
-			"description": "oscillators."}
+			"description": "oscillators."},
+			
+    {"name": "addedMassDamping", 
+            "type": "CompleteAddedMassDamping", 
+            "optional": "true",
+            "description": "added mass and damping values."}
 
 	]
 	

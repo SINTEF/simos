@@ -7,25 +7,12 @@
 	"extends": ["marmo:vessels:Ship"],
 	
 	"properties": [
-
-    {"name": "moonpool", 
-            "type": "MoonPool", 
+       {"name": "moonpool", 
+            "type": "marmo:vessels:parts:MoonPoolBox", 
             "unit": "m",
             "optional": "true",
              "__dependencies": { "unit": "unit" },
-            "description": "moonpool geometry description."},
-    
-    {"name": "bilgeKeelLeft", 
-            "type": "BilgeKeel", 
-            "optional": "true",
-            "__dependencies": { "unit": "unit" },
-            "description": "Left bilge keel"},
-            
-    {"name": "bilgeKeelRight", 
-            "type": "BilgeKeel", 
-            "optional": "true",
-            "__dependencies": { "unit": "unit" },
-            "description": "Right bilge keel"}
+            "description": "moonpool geometry description."}
             
 	]
 	

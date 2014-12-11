@@ -8,6 +8,19 @@
 	
 	"properties": [
 
+
+       {"name": "bilgeKeelPort", 
+            "type": "marmo:vessels:parts:BilgeKeel", 
+            "optional": "true",
+            "__dependencies": { "unit": "unit" },
+            "description": "Port side bilge keel"},
+            
+       {"name": "bilgeKeelStar", 
+            "type": "marmo:vessels:parts:BilgeKeel", 
+            "optional": "true",
+            "__dependencies": { "unit": "unit" },
+            "description": "Star-board side bilge keel"}
+
 	]
 	
 }

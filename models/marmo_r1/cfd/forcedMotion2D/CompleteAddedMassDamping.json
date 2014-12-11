@@ -2,7 +2,7 @@
 {	
 	"name": "CompleteAddedMassDamping",
 	"type": "CompleteAddedMassDamping",
-	"description": "Description of WAMIT added mass and damping results.",
+	"description": "Description of added mass and damping results.",
 
 	"extends": ["marmo:basic:NamedEntity","marmo:dynamics:MotionModes"],
 	

@@ -2089,6 +2089,11 @@ PythonBase.prototype.factoryFunc = function(bl) {
 					
 				cmd.push(this.getBlockSpace(bl+1) + 
 						'return obj');
+				
+				cmd.push(this.getBlockSpace(bl) + 
+					'def delete' + this.firstToUpper(prop.name) +'(self):');
+				cmd.push(this.getBlockSpace(bl+1) + 
+						'self.' + this.makePrivate(prop.name) + ' = [] ');
 						
 			}
 			else {

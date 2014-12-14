@@ -37,7 +37,7 @@
 
     {"name": "sources", 
             "type": "string",  
-            "dim": 6,
+            "dim": "6",
             "value": ["preF", "visF", "porF", "preM", "visM", "porM"],
             "description": "unit of time signal"
             },

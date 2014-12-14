@@ -35,6 +35,14 @@
 			 "description": "Array of times "
 			 },
 
+    {"name": "sources", 
+            "type": "string",  
+            "dim": 6,
+            "value": ["preF", "visF", "porF", "preM", "visM", "porM"],
+            "description": "unit of time signal"
+            },
+
+
 	{"name": "preF", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
 			 "__dependencies": {	"xunit": "timeUnit",

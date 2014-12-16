@@ -9,7 +9,10 @@
 			 
 	{"name": "value", 
 			 "type": "double", "value":"0.0",
-			 "description": "value"}			 
+			 "description": "value"},
+    {"name": "label", 
+             "type": "string", "value":"",
+             "description": "label for the value."}		 
 	]
 	
 }

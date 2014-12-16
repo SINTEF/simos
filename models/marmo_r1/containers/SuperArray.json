@@ -1,35 +1,29 @@
 
 {	
 	"name": "SuperArray",
-	"version": "1",
 	"type": "SuperArray",
 	"description": "An array of values with extra data.",
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
 	
 	"properties": [
-			
-	{"name": "name", 
-			"type": "string", "value": "array",
-			"description": "variable name for named accessing"
-			},
-
-	{"name": "description", 
-			"type": "string", "value": "a signal with equal spacing",
-			"description": "instance description"
-			},
 			
 	{"name": "len", 
 			 "type": "integer", "value": 1,
 			 "description": "number of data points."},
 			 			 
-	{"name": "unit", 
-			 "type": "string", "value": "",
-			 "description": "data unit."
-			 },
-			 	  
 	{"name": "value", 
 			 "type": "double", "dim": "len", 
 			 "description": "array of data."
-			 }			 
+			 },
+			 
+    {"name": "label", 
+            "type": "string", "value": "",
+            "description": "label for the value."},
+         
+    {"name": "legend", 
+            "type": "string", "value": "",
+            "description": "description of values to be used as legend."}
+
 	]
 	
 }

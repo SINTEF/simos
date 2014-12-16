@@ -4,11 +4,11 @@
 	"type": "SimpleHarmonicOscillator",
 	"description": "Properties of a simple harmonic oscillatory function.",
 	
-    "extends": ["marmo:basic:NamedEntityWithUnit"],
+    "extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
 			
-	{"name": "function", 
+	{"name": "formula", 
 			"type": "string", 
 			"value": "sin",
 			"description": "oscillatory function, can be either sin, or cos."
@@ -26,7 +26,6 @@
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Amplitude",
 			 "unit": "m",
-			 "__dependencies": {"unit": "unit"}
 			 },
 			 			 
 	{"name": "b", 

@@ -1,0 +1,17 @@
+
+{   
+    "name": "PostProData",
+    "type": "PostProData",
+    "description": "A bundle of post-processed data.",
+    
+    "extends": ["DataBundle"],
+    
+    "properties": [
+        {"name": "forces", 
+            "type": "Forces", 
+            "description": "extracted forces."}         
+        
+    ]
+    
+}
+

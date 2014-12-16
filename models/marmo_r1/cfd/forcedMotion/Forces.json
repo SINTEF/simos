@@ -1,0 +1,28 @@
+
+{	
+	"name": "Forces",
+	"type": "Forces",
+	"description": "Contain forces caused by fluid.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	   
+	"properties": [
+				 
+        {"name": "hull", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "description": "forces on hull."},         
+
+        {"name": "bilgeKeelStar", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "description": "forces on startboard bilge keel."},         
+    
+        {"name": "bilgeKeelPort", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "description": "forces on port bilge keel."}       
+
+	]
+	
+}

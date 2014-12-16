@@ -15,6 +15,10 @@
 	{"name": "oscillator", 
 			"type": "marmo:dynamics:SolidBodyOscillator", 
 			"description": "oscillators."},
+
+    {"name": "postProData", 
+            "type": "PostProData",
+            "description": "a collection of post processed results interesting for this problem."}
 			
     {"name": "addedMassDamping", 
             "type": "CompleteAddedMassDamping", 

@@ -8,7 +8,7 @@
 	
 	"properties": [
 			
-	{"name": "formula", 
+	{"name": "osciFunc", 
 			"type": "string", 
 			"value": "sin",
 			"description": "oscillatory function, can be either sin, or cos."

@@ -18,7 +18,7 @@
 
     {"name": "postProData", 
             "type": "PostProData",
-            "description": "a collection of post processed results interesting for this problem."}
+            "description": "a collection of post processed results interesting for this problem."},
 			
     {"name": "addedMassDamping", 
             "type": "CompleteAddedMassDamping", 

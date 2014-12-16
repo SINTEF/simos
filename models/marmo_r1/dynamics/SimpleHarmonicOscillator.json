@@ -25,7 +25,7 @@
 	{"name": "A", 
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Amplitude",
-			 "unit": "m",
+			 "unit": "m"
 			 },
 			 			 
 	{"name": "b", 

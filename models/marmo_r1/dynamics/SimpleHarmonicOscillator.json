@@ -19,7 +19,7 @@
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Period",
 			 "unit": "s",
-			 "__assign": {"value": "1.0"}
+			 "value": "1.0"
 			 },		
 			 
 	{"name": "A", 
@@ -36,8 +36,7 @@
 			 
 	{"name": "ramp", 
 			 "type": "Ramp", 
-			 "description": "oscillator ramp.",
-			 "__dependencies": {"endValue": "A"}
+			 "description": "oscillator ramp."
 			 }
 	 
 	]

@@ -24,7 +24,6 @@
 	{"name": "angle", 
 			"type": "marmo:containers:DimensionalScalar", 
 			"unit": "deg", "value": 0.0,
-			"__dependencies": { "unit": "unit" },
 			"description": "Bilge keel angle"},
 			
 	{"name": "height", 

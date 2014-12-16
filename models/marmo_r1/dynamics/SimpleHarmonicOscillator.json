@@ -8,36 +8,51 @@
 	
 	"properties": [
 			
-	{"name": "osciFunc", 
+	   {"name": "osciFunc", 
 			"type": "string", 
 			"value": "sin",
 			"description": "oscillatory function, can be either sin, or cos."
 			},
 
 			 	  
-	{"name": "T", 
+	   {"name": "T", 
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Period",
 			 "unit": "s",
 			 "value": "1.0"
 			 },		
 			 
-	{"name": "A", 
+	   {"name": "A", 
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Amplitude",
 			 "unit": "m"
 			 },
 			 			 
-	{"name": "b", 
+	   {"name": "b", 
 			 "type": "marmo:containers:DimensionalScalar", 
 			 "description": "Phase",
 			 "unit": "rad"
 			 },
 			 
-	{"name": "ramp", 
+	   {"name": "ramp", 
 			 "type": "Ramp", 
 			 "description": "oscillator ramp."
-			 }
+			 },
+			 
+       {"name": "pos", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "optional": "true",
+            "description": "position signal of the oscillator."},
+            
+       {"name": "vel", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "optional": "true",
+            "description": "velocity signal of the oscillator."},
+            
+       {"name": "acc", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "optional": "true",
+            "description": "acceleration signal of the oscillator."}            
 	 
 	]
 	

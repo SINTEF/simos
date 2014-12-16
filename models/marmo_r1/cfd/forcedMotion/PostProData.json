@@ -4,7 +4,7 @@
     "type": "PostProData",
     "description": "A bundle of post-processed data.",
     
-    "extends": ["DataBundle"],
+    "extends": ["marmo:containers:DataBundle"],
     
     "properties": [
         {"name": "forces", 

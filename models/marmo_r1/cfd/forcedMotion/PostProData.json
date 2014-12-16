@@ -7,9 +7,9 @@
     "extends": ["marmo:containers:DataBundle"],
     
     "properties": [
-        {"name": "forces", 
-            "type": "Forces", 
-            "description": "extracted forces."}         
+        {"name": "force", 
+	        "type": "SceForce", 
+	        "description": "extracted forces."}         
         
     ]
     

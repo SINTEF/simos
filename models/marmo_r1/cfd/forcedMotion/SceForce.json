@@ -1,7 +1,7 @@
 
 {	
-	"name": "Forces",
-	"type": "Forces",
+	"name": "SceForce",
+	"type": "SceForce",
 	"description": "Contain forces caused by fluid.",
 	
 	"extends": ["marmo:basic:NamedEntity"],

@@ -8,6 +8,12 @@
 	   
 	"properties": [
 				 
+				   
+        {"name": "root", 
+            "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
+            "optional": "true",
+            "description": "bilge keel root location."},         
+    
         {"name": "Ft", 
             "type": "marmo:containers:NonEquallySpacedSignal", 
             "optional": "true",

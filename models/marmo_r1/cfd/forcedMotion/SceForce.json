@@ -9,18 +9,18 @@
 	"properties": [
 				 
         {"name": "hull", 
-            "type": "marmo:containers:NonEquallySpacedSignal", 
-            "dim": "*",
+            "type": "BodyForce", 
+            "optional": "true"
             "description": "forces on hull."},         
 
         {"name": "bilgeKeelStar", 
-            "type": "marmo:containers:NonEquallySpacedSignal", 
-            "dim": "*",
+            "type": "BilgeKeelForce",
+            "optional": "true" 
             "description": "forces on startboard bilge keel."},         
     
         {"name": "bilgeKeelPort", 
-            "type": "marmo:containers:NonEquallySpacedSignal", 
-            "dim": "*",
+            "type": "BilgeKeelForce", 
+            "optional": "true"
             "description": "forces on port bilge keel."}       
 
 	]

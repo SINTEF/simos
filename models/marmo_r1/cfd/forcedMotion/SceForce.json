@@ -10,17 +10,17 @@
 				 
         {"name": "hull", 
             "type": "BodyForce", 
-            "optional": "true"
+            "optional": "true",
             "description": "forces on hull."},         
 
         {"name": "bilgeKeelStar", 
             "type": "BilgeKeelForce",
-            "optional": "true" 
+            "optional": "true",
             "description": "forces on startboard bilge keel."},         
     
         {"name": "bilgeKeelPort", 
             "type": "BilgeKeelForce", 
-            "optional": "true"
+            "optional": "true",
             "description": "forces on port bilge keel."}       
 
 	]

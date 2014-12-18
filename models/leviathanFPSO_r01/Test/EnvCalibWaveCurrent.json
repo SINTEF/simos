@@ -1,0 +1,38 @@
+
+{   
+    "name": "EnvCalibWaveCurrent",
+    "type": "EnvCalibWaveCurrent",
+    "description": "Wave with current calibration.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+			
+	{"name": "Wave with current", 
+            "type": "EnvWaveCurrent",  
+            "description": "wave with current"},
+			
+     {"name": "Wave1", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead of the bulls eye."},
+			
+     {"name": "Wave2", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead at the bulls eye."},
+			
+	{"name": "Wave3", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead left the bulls eye."},
+
+		{"name": "CurrentSensorBlink", 
+            "type": "InstrCurrentSensor",  
+            "description": "Current sensor at blink"},
+			
+	{"name": "CurrentSensorGondola", 
+            "type": "InstrCurrentSensor",  
+            "description": "Current sensor under fans"}
+    ]
+    
+}
+
+

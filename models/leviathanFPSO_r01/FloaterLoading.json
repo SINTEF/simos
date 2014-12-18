@@ -1,0 +1,68 @@
+
+{   
+    "name": "FloaterLoading",
+    "type": "FloaterLoading",
+    "description": "Loading of a FPSO",
+    
+	"extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "TF", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Draft Fore"},
+			
+     {"name": "TA", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Draft aft"},
+			
+	{"name": "D", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "tonn",
+            "description": "displacement total"},
+			
+	{"name": "KG", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "distance between keelline and COG"},
+			
+	{"name": "XCOG", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "x position of COG in local coord system"},
+			
+	{"name": "YCOG", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "y position of COG in local coord system"},
+			
+	{"name": "Rxx", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Radius of gyration in roll"},
+			
+	{"name": "Ryy", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Radius of gyration in pitch"},
+			
+	{"name": "Rzz", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Radius of gyration in yaw"},
+			
+	{"name": "GMxx", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Transverse GM"},
+			
+	{"name": "GMyy", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Longitudinal GM"}
+    ]
+    
+}
+
+

@@ -1,0 +1,32 @@
+
+{   
+    "name": "InstrRGWaveGauge",
+    "type": "InstrRGWaveGauge",
+    "description": "Relative or green water wave gauge.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "sn", 
+            "type": "marmo:containers:SimpleString",  
+            "description": "Serialnumber"},
+			
+	{"name": "xcoord", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "local x coord."},
+			
+     {"name": "ycoord", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "local y coord."},
+			
+    {"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a wave gauge signal."}
+
+     ]
+    
+}
+
+

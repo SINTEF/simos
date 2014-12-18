@@ -1,0 +1,50 @@
+
+{   
+    "name": "EnvWind",
+    "type": "EnvWind",
+    "description": "A wind",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "number", 
+            "type": "marmo:containers:integer",
+			"description": "Number of environment"},
+			
+	{"name": "spectrum", 
+            "type": "marmo:containers:SimpleString",
+			"description": "Type of spectrum"},
+			
+	{"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "wave height."},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+			
+     {"name": "seed", 
+            "type": "integer",  
+            "value": 1,
+            "description": "wave seed."},
+			
+	{"name": "heading", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "unit": "deg",
+            "description": "Wave heading in global coord"}
+			
+	{"name": "nFans", 
+            "type": "marmo:containers:integer",  
+            "description": "number of fans"}, 
+			
+	{"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a signal to the fans."}
+    ]
+    
+}
+
+
+

@@ -1,0 +1,28 @@
+
+{   
+    "name": "MooringFull",
+    "type": "MooringFull",
+    "description": "Full mooring system",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "n", 
+            "type": "marmo:containers:Scalar",  
+            "description": "number of lines."},
+			
+     {"name": "lines", 
+            "type": "MooringLine",  
+			"dim": "24"
+            "description": "Truncated mooring system as specified"},
+			
+	{"name": "Riser", 
+            "type": "MooringLine",  
+			"dim": "18"
+            "description": "Riser system as specified"}
+
+    ]
+    
+}
+
+

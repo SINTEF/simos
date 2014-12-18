@@ -1,0 +1,29 @@
+
+{   
+    "name": "EnvCalibWave",
+    "type": "EnvCalibWave",
+    "description": "Wave calibration",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "Wave", 
+            "type": "EnvWave",  
+            "description": "wave"},
+			
+     {"name": "Wave1", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead of the bulls eye."},
+			
+     {"name": "Wave2", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead at the bulls eye."},
+			
+	{"name": "Wave3", 
+            "type": "InstrWaveGauge",  
+            "description": "wave gauge ahead left the bulls eye."}
+    ]
+    
+}
+
+

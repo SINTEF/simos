@@ -1,0 +1,37 @@
+
+{   
+    "name": "MooringLine",
+    "type": "MooringLine",
+    "description": "Details of one mooring line",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "x1", 
+            "type": "marmo:containers:Dimensional3DVector",  
+            "description": "Position of the mooring line in global coordinates, anchor side"},
+			
+     {"name": "x2", 
+            "type": "marmo:containers:Dimensional3DVector",  
+            "description": "Position of the mooring line in global coordinates, floater side"},
+	
+	{"name": "L", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Mooring Line Length"},
+			
+	{"name": "k", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "kN/m",
+            "description": "Mooring Line stiffness"},
+			
+	{"name": "w", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "kN/m",
+            "description": "Weight per unit length"},
+
+    ]
+    
+}
+
+

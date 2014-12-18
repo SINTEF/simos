@@ -1,0 +1,32 @@
+
+{   
+    "name": "InstrWaveGauge",
+    "type": "InstrWaveGauge",
+    "description": "wave gauge.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	{"name": "sn", 
+            "type": "marmo:containers:SimpleString",  
+            "description": "Serialnumber"},
+	
+     {"name": "xcoord", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "global x coord."},
+			
+     {"name": "ycoord", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "global y coord."},
+			
+    {"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a wave gauge signal."}
+
+     ]
+    
+}
+
+

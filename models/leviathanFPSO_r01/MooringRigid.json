@@ -1,0 +1,14 @@
+
+{   
+    "name": "MooringRigid",
+    "type": "MooringRigid",
+    "description": "Rigidly connected to carriage",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     ]
+    
+}
+
+

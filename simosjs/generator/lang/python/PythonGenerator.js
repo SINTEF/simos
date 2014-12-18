@@ -106,6 +106,9 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('            else:');
 	cmd.push('                raise Exception("object needs name for loading.")');
 	cmd.push('');
+	cmd.push('        if not(os.path.isfile(filePath)):');
+	cmd.push('            raise Exception("file %s not found."%filePath)');
+	cmd.push('');
 	cmd.push('        self._storageBackEndType = dsType');
 	cmd.push('        self._storageBackEndServer = pyds.getDataStorageBackEndServer(self._storageBackEndType)');
 	cmd.push('        self._storageBackEndServer.filePath = filePath');

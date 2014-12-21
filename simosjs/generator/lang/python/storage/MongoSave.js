@@ -82,9 +82,15 @@ MongoSave.prototype.saveDataToMongo = function(bl) {
 		cmd.push(this.gbl(bl+1) + '');
 	}
 		
-	cmd.push(this.gbl(bl+1) + 	'if (storage.collection.find({"_id": self.ID}).count() == 0):');
-	cmd.push(this.gbl(bl+2) + 		'print "pushing %s:%s to MongoDB ..."%(self.name, self.ID)');
+	cmd.push(this.gbl(bl+1) + 	'foundID = storage.collection.find_one({"_id": self.ID})');
+
+	cmd.push(this.gbl(bl+1) + 	'if (foundID == None):');
+	cmd.push(this.gbl(bl+2) + 		'print "pushing %s to MongoDB ... (ID:%s)"%(self.name, self.ID)');
 	cmd.push(this.gbl(bl+2) + 		'storage.collection.insert(self.mongodbRepr(parent))');
+	cmd.push(this.gbl(bl+1) + 	'else:');
+	cmd.push(this.gbl(bl+2) + 		'print "adding %s to %s parents ..."%(parent, self.name)');
+	cmd.push(this.gbl(bl+2) + 		'foundID["__parents__"].append(parent)');
+	
 
 
 	/* writing properties */

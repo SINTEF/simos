@@ -11,7 +11,7 @@ Assign.prototype.assignPropertyValue = function(bl, assign, varName) {
 	var cmd = [];
 
 	for (a in assign) {
-		cmd.push(this.getBlockSpace(bl) + 
+		cmd.push(this.gbl(bl) + 
 		varName + '.' + a +	' = ' + JSON.stringify(assign[a]) );
 	}		
 	
@@ -80,7 +80,7 @@ Assign.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
 	
 	var cmd = [];
 
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 			varName + '.' + deptProp + 
 			' = ' + varNameRef );
 	
@@ -101,7 +101,7 @@ Assign.prototype.setPropSinglesRefs = function(bl, childProp, prop) {
 			for (var di = 0, dilen = deptProps.length; di < dilen; di++){
 				var extraTab = 0;
 				if (this.isOptional(childProp)) {
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 				'if not(self.' + childProp.name + '==None):'
 				);
 				extraTab = 1;
@@ -232,9 +232,9 @@ Assign.prototype.propSet = function(prop, bl) {
 	
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + '@ ' + prop.name +'.setter' );	
+	cmd.push(this.gbl(bl) + '@ ' + prop.name +'.setter' );	
 
-	cmd.push(this.getBlockSpace(bl) + 'def ' + prop.name + '(self, val):');
+	cmd.push(this.gbl(bl) + 'def ' + prop.name + '(self, val):');
 	
 	/* assign the value */
 	if (this.isAtomic(prop)) {
@@ -243,31 +243,31 @@ Assign.prototype.propSet = function(prop, bl) {
 			 * no chekcs here, TODO: add casting or checks for atomic type
 			 * arrays
 			 */
-			cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');			
+			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');			
 		}
 		else {
 			/* type casting between atomic types */
 			if (prop.type == "boolean") {
-				cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
+				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
 						this.changeType(prop.type) +
 						'(' + this.changeType("integer") + '(val)' + ')');
 			}
 			else {
 				if (this.isLimited(prop)) {
 					if (prop.from instanceof Array){ 
-						cmd.push(this.getBlockSpace(bl+1) + 
+						cmd.push(this.gbl(bl+1) + 
 						'if not(' + this.changeType(prop.type) + '(val) in ' + this.stringify(prop.from) + '): ' );
-						cmd.push(this.getBlockSpace(bl+2) + 
+						cmd.push(this.gbl(bl+2) + 
 							'raise Exception(str(val) + " must be in " + str(' + this.stringify(prop.from) + ') )');
 					}
 					else{
-						cmd.push(this.getBlockSpace(bl+1) + 
+						cmd.push(this.gbl(bl+1) + 
 						'if not(' + this.changeType(prop.type) + '(val) in self.' + this.makePrivate(prop.from) + '): ' );
-						cmd.push(this.getBlockSpace(bl+2) + 
+						cmd.push(this.gbl(bl+2) + 
 							'raise Exception(str(val) + " must be in " + str(self.' + this.makePrivate(prop.from) + ') )');
 					}
 				}
-				cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
+				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
 						this.changeType(prop.type) +'(val)');
 				
 			}
@@ -286,24 +286,29 @@ Assign.prototype.propSet = function(prop, bl) {
 		}
 		else {
 			/* check if it has the correct type */
-			cmd.push(this.getBlockSpace(bl+1) + 
+			cmd.push(this.gbl(bl+1) + 
 					'if not(isinstance(val, ' + this.getClassPathFromType(prop.type)  + ')):');
-			cmd.push(this.getBlockSpace(bl+2) + 
+			cmd.push(this.gbl(bl+2) + 
 					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
 
 		}
 		/* simple assignment */
-		cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');
+		cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');
 	}
 
 	/* change array sizes if prop is a dimension */
+	/*TODO: this functionality must be improved to work with automated data loading 
+	 * and improve efficiency.*/
 	if (this.isDimension(prop)){
 		/* find out the array which has prop as a dimension */
 		var arrays = this.getPropertiesWithDimension(prop);
 		/* resize the array accordingly */
+		/*
 		for (var i = 0; i<arrays.length; i++){
-			cmd.push(this.getBlockSpace(bl+1) + 'self.' + this.arrayUpdateSizeFuncName(arrays[i]) +'()' );
-		};	
+			cmd.push(this.gbl(bl+1) + 'if not(len(self.' + this.makePrivate(arrays[i].name) + ') == self.' + this.makePrivate(prop.name) +'):');
+			cmd.push(this.gbl(bl+2) + 		'self.' + this.arrayUpdateSizeFuncName(arrays[i]) +'()' );
+		};
+		*/	
 	}
 	
 	/* make relations between child and parrent data sets */
@@ -316,9 +321,9 @@ Assign.prototype.propSet = function(prop, bl) {
 	}
 	
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 			'if not(' + JSON.stringify(prop.name) + ' in self._sync.keys()):');
-	cmd.push(this.getBlockSpace(bl+2) + 
+	cmd.push(this.gbl(bl+2) + 
 			'self._sync[' + JSON.stringify(prop.name) + '] = 1');
 	
 	/* return the commands */
@@ -331,15 +336,14 @@ Assign.prototype.arrayUpdateSize = function(prop, bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 
-			'def ' + this.arrayUpdateSizeFuncName(prop) + '(self):');
+	cmd.push(this.gbl(bl) + 'def ' + this.arrayUpdateSizeFuncName(prop) + '(self):');
 	var arrName = 'self.' + this.getPropertyNameInClass(prop);
-	
+			
 	if (this.isAtomicType(prop.type)) {
-		cmd.push(this.getBlockSpace(bl+1) + arrName + ' = np.resize(' + arrName + ',' + this.getPythonArrayShape(prop) + ')');
+		cmd.push(this.gbl(bl+1) + arrName + ' = np.resize(' + arrName + ',' + this.getPythonArrayShape(prop) + ')');
 	}
 	else {
-		cmd.push(this.getBlockSpace(bl+1) + arrName + ' = ' + this.getInitObjectList(prop));
+		cmd.push(this.gbl(bl+1) + arrName + ' = ' + this.getInitObjectList(prop));
 	}
 
     return cmd.join('\n');

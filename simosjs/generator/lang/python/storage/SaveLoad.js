@@ -43,7 +43,8 @@ SaveLoad.prototype.saveHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+1) +		'else:');
 	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
 	cmd.push(this.gbl(bl));       
-	cmd.push(this.gbl(bl+1) +		'storage.close()');
+	cmd.push(this.gbl(bl+1) + 		'if storage.isOpen():');
+	cmd.push(this.gbl(bl+2) +			'storage.close()');
 	cmd.push(this.gbl(bl+1) +		'return storage');
 	
 	return cmd.join('\n');
@@ -72,8 +73,9 @@ SaveLoad.prototype.saveMDBFunc = function(bl) {
 	cmd.push(this.gbl(bl+2) +			'self.saveToMongo(storage)');
 	cmd.push(this.gbl(bl+1) +		'else:');
 	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + self._storageBackEndType + " is not defined for MongoDB.")');
-	cmd.push(this.gbl(bl));       
-	cmd.push(this.gbl(bl+1) +		'storage.disconnect()');
+	cmd.push(this.gbl(bl));    
+	cmd.push(this.gbl(bl+1) + 		'if storage.isConnected():');
+	cmd.push(this.gbl(bl+2) +			'storage.disconnect()');
 	cmd.push(this.gbl(bl+1) +		'return storage');
 	
 	return cmd.join('\n');

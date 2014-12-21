@@ -107,3 +107,35 @@ JSONLoad.prototype.loadFromJSONDict = function(bl) {
 	
 	return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+JSONLoad.prototype.loadJSONFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'def loadJSON(self,name = None, filePath = None):');
+	cmd.push(this.gbl(bl+1) + 	'if not(name == None):');
+	cmd.push(this.gbl(bl+2) +			'self.name = name');
+	cmd.push(this.gbl(bl+1) + 	'if (name == None) and not(filePath == None):');
+	cmd.push(this.gbl(bl+2) + 		'self.name = \'.\'.join(filePath.split(os.path.sep)[-1].split(\'.\')[0:-1])');
+	cmd.push(this.gbl(bl+1) + 	'if (filePath == None):');
+	cmd.push(this.gbl(bl+2) + 		'if hasattr(self, \'name\'):');
+	cmd.push(this.gbl(bl+3) + 			'filePath = self.name + \'.json\'');
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("object needs name for loading.")');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 	'if not(os.path.isfile(filePath)):');
+	cmd.push(this.gbl(bl+2) + 		'raise Exception("file %s not found."%filePath)');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
+	cmd.push(this.gbl(bl));       
+	cmd.push(this.gbl(bl+1) + 	'f = open(filePath,\'r\')');
+	cmd.push(this.gbl(bl+1) + 	'data = f.read()');
+	cmd.push(this.gbl(bl+1) + 	'f.close()');
+	cmd.push(this.gbl(bl+1) + 	'dd = json.loads(data)');
+	cmd.push(this.gbl(bl+1) + 	'self.loadFromJSONDict(dd)');
+	cmd.push(this.gbl(bl));
+	
+	return cmd.join('\n');
+};

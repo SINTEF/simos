@@ -203,8 +203,9 @@ Init.prototype.classInit = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 	'self.REF = None');
 	/* storage */
 	cmd.push(this.getBlockSpace(bl+1) +		'self._sync = {}');
-	cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE = pyds.getDataStorageBackEndServer("hdf5")');
-	cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE.filePath = str(name) + ".h5"');
+	cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE = None');
+	//cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE = pyds.getDataStorageBackEndServer("hdf5")');
+	//cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE.filePath = str(name) + ".h5"');
 
 	cmd.push(this.getBlockSpace(bl+1) + 	'self._loadedItems = []');
 	

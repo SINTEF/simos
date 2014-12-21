@@ -360,7 +360,7 @@ Assign.prototype.propGet = function(prop, bl) {
 		}
 		else {
 	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  self.STORAGE.isConnected() and not(name in self._loadedItems):');
+	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (len(self.' + this.makePrivate(prop.name) + ') == 0):');
 	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
 	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
 	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );			
@@ -369,14 +369,14 @@ Assign.prototype.propGet = function(prop, bl) {
 	else {
 		if(this.isArray(prop)){
 	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  self.STORAGE.isConnected() and not(name in self._loadedItems):');
+	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (len(self.' + this.makePrivate(prop.name) + ') == 0):');
 	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
 	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
 	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
 		}
 		else {
 	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  self.STORAGE.isConnected() and not(name in self._loadedItems) :');
+	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (self.' + this.makePrivate(prop.name) + ' == None):');
 	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
 	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
 	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
@@ -400,7 +400,7 @@ Assign.prototype.storageSetGet = function(bl) {
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl) +		'@ STORAGE.setter');	
 	cmd.push(this.gbl(bl) + 	'def STORAGE(self,val):');	
-	cmd.push(this.gbl(bl+1) +		'if val.backEnd == \'hdf5\':');
+	cmd.push(this.gbl(bl+1) +		'if (val.backEnd == \'hdf5\') or (val.backEnd == \'mongodb\'):');
 	cmd.push(this.gbl(bl+2) +			'self._STORAGE = val'); 
 	cmd.push(this.gbl(bl+1) +		'else:');
 	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + val.backEnd + " is not defined.")');

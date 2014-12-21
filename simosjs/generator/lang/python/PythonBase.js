@@ -17,10 +17,14 @@ packageParts = ['./storage/SaveLoad',
                     './storage/HDF5Load',
                     './storage/HDF5Save',
                     './storage/JSONLoad',
+                    './storage/JSONSave',
+                    './storage/MongoSave',
+                    './storage/MongoLoad',
                     
                     './properties/Query',
                     './properties/Init',
-                    './properties/Assign'];
+                    './properties/Assign',
+                    './properties/Representation'];
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {
 	var packPath = packageParts[ip];
@@ -70,11 +74,22 @@ PythonBase.prototype.importModules = function() {
 	
 	cmd.push('import numpy as np');
 	cmd.push('import os');
-	cmd.push('import h5py');
 	cmd.push('import json');
+	cmd.push('import bson');
 	cmd.push('import collections');
 	cmd.push('import uuid');
 	cmd.push('import pyfoma.dataStorage as pyds');
+	
+	cmd.push('try:');
+	cmd.push(this.gbl() + 'import h5py');
+	cmd.push('except:');
+	cmd.push(this.gbl() + 'print "WARNING: h5py is not installed."');
+
+	cmd.push('try:');
+	cmd.push(this.gbl() + 'import pymongo');
+	cmd.push('except:');
+	cmd.push(this.gbl() + 'print "WARNING: pymongo is not installed."');
+
 	
 	cmd.push(this.getSuperTypesImport());
 	
@@ -315,170 +330,6 @@ PythonBase.prototype.gbl = function(blockLevel) {
 	
 	return this.getBlockSpace(blockLevel);
 };
-/*----------------------------------------------------------------------------*/
-PythonBase.prototype.reprFunc = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-
-	cmd.push(this.getBlockSpace(bl) + 
-	'def __repr__(self):');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'return ( json.dumps(self.dictRepr(short=True, deep=False), ' + 
-			'indent=4, separators=(\',\', \': \')) )' );
-
-	cmd.push(this.getBlockSpace(bl+1));
-		
-	if (this.isDerived()) {
-		throw "not implemented for dervied types.";
-		
-		var superTypes = this.superTypes();
-		for (var i = 0; i<superTypes.length; i++){
-			var supType = superTypes[i];
-			cmd.push(this.getBlockSpace(bl+1) +
-			'outstr = outstr + ' + supType.name + '._represent(self)');
-				
-		}
-		
-		cmd.push(this.getBlockSpace(bl+1) + '');
-	}
-	
-	return cmd.join('\n');
-
-};
-/*----------------------------------------------------------------------------*/
-PythonBase.prototype.typeReprFunc = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-
-	cmd.push(this.getBlockSpace(bl) + 
-	'def typeRepr(self):');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep = collections.OrderedDict()' );
-
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["__type__"] = ' + this.stringify(this.typePath(this.getModel())));
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["__ID__"] = self.ID' );
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["name"] = self.name');
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["description"] = self.description');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-	'return rep');
-
-	return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-PythonBase.prototype.dictReprFunc = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-
-	cmd.push(this.getBlockSpace(bl) + 
-	'def dictRepr(self, allItems=False, short=False, deep = True):');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep = collections.OrderedDict()' );
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["__type__"] = ' + this.stringify(this.fullTypeName()));
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'if not(short):');
-	cmd.push(this.getBlockSpace(bl+2) + 
-			'rep["__versions__"] = ' + this.getVersion() );
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["__ID__"] = self.ID' );
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["name"] = self.name');
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'rep["description"] = self.description');
-	
-	if (this.isDerived()) {
-		throw "not implemented for dervied types.";
-	}
-	
-	var props = this.getProperties();
-
-	for (var i = 0; i<props.length; i++) {
-		var prop = props[i];
-		propCmd = '';
-		
-		if (this.isReferenced(prop))
-			throw "not working for not contained elements.";
-		
-		if (this.isAtomic(prop)){
-			if (this.isSingle(prop)){
-				cmd.push(this.getBlockSpace(bl+1) + 
-				'if (allItems or self.isSet("'+ prop.name +'")):');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'rep["'+ prop.name +'"] = self.' +  prop.name );
-			}
-			else if (this.isArray(prop)){
-				cmd.push(this.getBlockSpace(bl+1) + 
-				'if (allItems or self.isSet("'+ prop.name +'")):');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'if (short):');
-				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = str(self.' +  prop.name + '.shape)');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'else:');			
-				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = self.' +  prop.name + '.tolist()');
-
-			}
-			else
-				throw "atomic data is not single nor array !!";
-		}
-		else {
-			/*complex data type*/
-			if (this.isSingle(prop)){
-				cmd.push(this.getBlockSpace(bl+1) + 
-				'if (allItems or self.isSet("'+ prop.name +'")):');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'if (short and not(deep)):');
-				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = (self.' +  prop.name + '.typeRepr())');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'else:');			
-				cmd.push(this.getBlockSpace(bl+3) + 
-						'rep["'+ prop.name +'"] = self.' +  prop.name + '.dictRepr(allItems, short, deep)');
-			}
-			else if (this.isArray(prop)){
-				cmd.push(this.getBlockSpace(bl+1) + 
-				'if (allItems or self.isSet("'+ prop.name +'")):');
-				cmd.push(this.getBlockSpace(bl+2) + 
-					'rep["'+ prop.name +'"] = []');
-				var loopBlock = this.getLoopBlockForArray(bl+2,prop);
-				cmd.push(loopBlock.cmd);
-					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-						'if (short and not(deep)):');
-					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
-							'itemType = self.' + prop.name + loopBlock.indList + '.typeRepr()' );
-					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
-							'rep["'+ prop.name +'"].append( itemType )' );
-					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
-						'else:');			
-					cmd.push(this.getBlockSpace(loopBlock.bl+2) + 
-							'rep["'+ prop.name +'"].append( self.' + prop.name + loopBlock.indList + '.dictRepr(allItems, short, deep) )' );
-				
-			}
-			else
-				throw "complex data is not single nor array !!";
-		}		
-	} 
-	cmd.push(this.getBlockSpace(bl+1) + 
-			'return rep');
-	
-	return cmd.join('\n');
-
-};
 
 
 /*----------------------------------------------------------------------------*/
@@ -648,24 +499,22 @@ PythonBase.prototype.factoryFunc = function(bl) {
 						
 			}
 			else {
-				if (this.isOptional(prop)) {
-					cmd.push(this.getBlockSpace(bl) + 
-					'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
-					cmd.push(this.getBlockSpace(bl+1) + 
-						'if (self.' + prop.name + ' != None): ');
-					cmd.push(this.getBlockSpace(bl+2) + 
-							'raise Exception("object ' + prop.name + 
-							' already exist, use renew' + this.firstToUpper(prop.name) +
-							' to get a new one.") ');
-					cmd.push(this.getBlockSpace(bl+1) + 
-						'return self.renew' + this.firstToUpper(prop.name) + '(name)');
-					
-					cmd.push(this.getBlockSpace(bl) + 
-						'def delete' + this.firstToUpper(prop.name) +'(self):');
-						cmd.push(this.getBlockSpace(bl+1) + 
-							'self.' + this.makePrivate(prop.name) + ' = None ');
+				cmd.push(this.getBlockSpace(bl) + 
+				'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if (self.' + prop.name + ' != None): ');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'raise Exception("object ' + prop.name + 
+						' already exist, use renew' + this.firstToUpper(prop.name) +
+						' to get a new one.") ');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'return self.renew' + this.firstToUpper(prop.name) + '(name)');
 				
-				}
+				cmd.push(this.getBlockSpace(bl) + 
+					'def delete' + this.firstToUpper(prop.name) +'(self):');
+					cmd.push(this.getBlockSpace(bl+1) + 
+						'self.' + this.makePrivate(prop.name) + ' = None ');
+				
 				cmd.push(this.getBlockSpace(bl) + 
 				'def renew' + this.firstToUpper(prop.name) +'(self, name=None):');
 				cmd.push(this.getBlockSpace(bl+1) + 

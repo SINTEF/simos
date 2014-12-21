@@ -1,16 +1,16 @@
 /*----------------------------------------------------------------------------*/
-function HDF5Save(){
+function MongoSave(){
 };
-exports.HDF5Save = HDF5Save;
+exports.MongoSave = MongoSave;
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveVertionsToHDF5Handle = function(bl) {
+MongoSave.prototype.saveVertionsToMongo = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveVertionsToHDF5Handle(self, handle):');
+	'def _saveVertionsToMongo(self, handle):');
 
 	/* putting accessed package names into the main root attributes */
 	var packages = this.getPackages();
@@ -26,66 +26,66 @@ HDF5Save.prototype.saveVertionsToHDF5Handle = function(bl) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5Handle = function(bl) {
+MongoSave.prototype.saveToMongo = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 
-	'def saveToHDF5Handle(self, handle):');
+	cmd.push(this.gbl(bl) +	'def saveToMongo(self, storage = None, parent = None):');
 
 	
-	cmd.push(this.gbl(bl+1) + 
-		'#first pass to save all contained items' );	
-	cmd.push(this.gbl(bl+1) + 
-		'self._saveDataToHDF5Handle(handle)' );
-	
+	cmd.push(this.gbl(bl+1) + 	'if storage == None:');
+	cmd.push(this.gbl(bl+2) + 		'storage = self.STORAGE');
+	cmd.push(this.gbl(bl+1) + 	'if not(storage.isConnected()):');
+	cmd.push(this.gbl(bl+2) + 		'storage.connect()');
 
+	cmd.push(this.gbl(bl+1) + 	'#first pass to save all contained items' );	
+	cmd.push(this.gbl(bl+1) + 	'self._saveDataToMongo(storage, parent)' );
+	
 	/*
 	cmd.push(this.gbl(bl+1) + 
 		'#second pass to link referenced  items' );	
 	cmd.push(this.gbl(bl+1) + 
-		'self._saveDataToHDF5Handle(handle)' );
+		'self._saveDataToMongo(handle)' );
 	*/
+
+	cmd.push(this.gbl(bl+1) + 	'if storage.isConnected():');
+	cmd.push(this.gbl(bl+2) + 		'storage.disconnect()');
 	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	cmd.push(this.gbl(bl+1));
+	cmd.push(this.gbl(bl+1) + 	'pass');
+	cmd.push(this.gbl(bl));
 	
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
+MongoSave.prototype.saveDataToMongo = function(bl) {
 	
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	/* ================================================== */
-	cmd.push(this.gbl(bl) + 
-	'def _saveDataToHDF5Handle(self, handle):');
+	cmd.push(this.gbl(bl) + 'def _saveDataToMongo(self, storage = None, parent=None):');
 	
+	/* for derived classes.*/
 	if (this.isDerived()) {
+		throw "support for drived classes is susspended.";
 		var superTypes = this.superTypes();
 		for (var i = 0; i<superTypes.length; i++){
 			var supType = superTypes[i];
 			cmd.push(this.gbl(bl+1) +
-					supType.name + '._saveDataToHDF5Handle(self,handle)');
+					supType.name + '._saveDataToMongo(self,storage, parent)');
 				
 		}
 
 		cmd.push(this.gbl(bl+1) + '');
 	}
-	
-	cmd.push(this.gbl(bl+1) + 
-		'self.REF = handle.ref');
-	
-	cmd.push(this.gbl(bl+1) + 
-		'handle.attrs["type"] = ' + this.stringify(this.typeID(this.getModel())) );
+		
+	cmd.push(this.gbl(bl+1) + 	'if (storage.collection.find({"_id": self.ID}).count() == 0):');
+	cmd.push(this.gbl(bl+2) + 		'print "pushing %s:%s to MongoDB ..."%(self.name, self.ID)');
+	cmd.push(this.gbl(bl+2) + 		'storage.collection.insert(self.mongodbRepr(parent))');
 
-	cmd.push(this.gbl(bl+1) + 
-		'handle.attrs["ID"] = self.ID' );
 
 	/* writing properties */
 	var properties = this.getProperties();
@@ -96,17 +96,7 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 
 		
 		/* writing the value */
-		if (this.isAtomicType(prop.type)) {
-			if(this.isArray(prop)){
-				/* array of atomic type */
-				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "AtomicArray")' );
-			 }
-			 else{
-				 /* single atomic type value */
-				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "AtomicSingle")' );
-			 }
+		if (this.isAtomic(prop)) {
 		}
 		else {
 			/*
@@ -118,14 +108,17 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 
 			if(this.isArray(prop)){
 				/* array non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "NonAtomicArray")' );
-				 
+	var loopBlock = this.getLoopBlockForArray(bl+1,prop);
+	cmd.push(loopBlock.cmd);
+	cmd.push(this.gbl(loopBlock.bl+1) + 'item = self.' + prop.name + loopBlock.indList );
+	cmd.push(this.gbl(loopBlock.bl+1) + 'newStorage = storage.clone()');
+	cmd.push(this.gbl(loopBlock.bl+1) + 'item.saveToMongo(storage=newStorage, parent=self.ID)' );
 			 }
 			 else{
 				 /* single non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "NonAtomicSingle")' );
+	cmd.push(this.gbl(bl+1) + 	'if self.isSet(' + this.stringify(prop.name) + '):' );
+	cmd.push(this.gbl(bl+2) + 		'newStorage = storage.clone()');
+	cmd.push(this.gbl(bl+2) + 		'self.' + prop.name + '.saveToMongo(storage=newStorage, parent=self.ID)' );
 			 }
 
 		}
@@ -139,14 +132,14 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItem = function(bl) {
+MongoSave.prototype.saveToMongoItem = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItem(self, handle, varName, myType):');
+	'def _saveToMongoItem(self, handle, varName, myType):');
 	
 	cmd.push(this.gbl(bl+1) + 
 		'saveFlag = True');
@@ -156,19 +149,19 @@ HDF5Save.prototype.saveToHDF5HandleItem = function(bl) {
 	cmd.push(this.gbl(bl+2) + 
 			'if (myType == "AtomicSingle"):');
 	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemAtomicSingle(handle, varName)' );
+				'self._saveToMongoItemAtomicSingle(handle, varName)' );
 	cmd.push(this.gbl(bl+2) + 
 			'if (myType == "AtomicArray"):');
 	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemAtomicArray(handle, varName)' );
+				'self._saveToMongoItemAtomicArray(handle, varName)' );
 	cmd.push(this.gbl(bl+2) + 
 			'if (myType == "NonAtomicArray"):');
 	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemNonAtomicArray(handle, varName)' );
+				'self._saveToMongoItemNonAtomicArray(handle, varName)' );
 	cmd.push(this.gbl(bl+2) + 
 			'if (myType == "NonAtomicSingle"):');
 	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemNonAtomicSingle(handle, varName)' );
+				'self._saveToMongoItemNonAtomicSingle(handle, varName)' );
 	
 	cmd.push(this.gbl(bl+2) + 
 			'self._sync[varName] = -1' );
@@ -182,14 +175,14 @@ HDF5Save.prototype.saveToHDF5HandleItem = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemAtomicSingle = function(bl) {
+MongoSave.prototype.saveToMongoItemAtomicSingle = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemAtomicSingle(self, handle, varName):');
+	'def _saveToMongoItemAtomicSingle(self, handle, varName):');
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 
@@ -207,14 +200,14 @@ HDF5Save.prototype.saveToHDF5HandleItemAtomicSingle = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemAtomicArray = function(bl) {
+MongoSave.prototype.saveToMongoItemAtomicArray = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemAtomicArray(self, handle, varName):');
+	'def _saveToMongoItemAtomicArray(self, handle, varName):');
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) + 
@@ -231,14 +224,14 @@ HDF5Save.prototype.saveToHDF5HandleItemAtomicArray = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
+MongoSave.prototype.saveToMongoItemNonAtomicSingle = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemNonAtomicSingle(self, handle, varName):');
+	'def _saveToMongoItemNonAtomicSingle(self, handle, varName):');
 
 	/* reference */
 	cmd.push(this.gbl(bl+1) + 
@@ -260,7 +253,7 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+4) + 
 					'dgrp = handle[varName]' );
 	cmd.push(this.gbl(bl+3) + 
-				'getattr(self, varName)._saveDataToHDF5Handle(dgrp)');
+				'getattr(self, varName)._saveDataToMongo(dgrp)');
 	cmd.push(this.gbl(bl+2) + 
 			'elif not(getattr(self, varName).REF == None ):');
 	cmd.push(this.gbl(bl+3) +
@@ -286,14 +279,14 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
+MongoSave.prototype.saveToMongoItemNonAtomicArray = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemNonAtomicArray(self, handle, varName):');
+	'def _saveToMongoItemNonAtomicArray(self, handle, varName):');
 
 	/* array of non-atomic type */
 	cmd.push(this.gbl(bl+1) + 
@@ -343,7 +336,7 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 					'dgrp = maindgrp[item.name]' );
 			
 		cmd.push(this.gbl(loopBlock.bl+1) + 
-				 'self.' + prop.name + loopBlock.indList + '._saveDataToHDF5Handle(dgrp)');
+				 'self.' + prop.name + loopBlock.indList + '._saveDataToMongo(dgrp)');
 
 		cmd.push(this.gbl(bl+3) + 
 			'maindgrp.attrs["order"] =  itemNames');

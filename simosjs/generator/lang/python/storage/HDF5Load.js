@@ -12,6 +12,7 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 'def loadFromHDF5Handle(self, storage=None):');
+	cmd.push(this.gbl(bl+1) + 	'self._loadInit()');
 	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
 	cmd.push(this.gbl(bl+1) + 	'if storage != None:' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE = storage' );
@@ -67,6 +68,7 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 				 /* single atomic type value */
 				cmd.push(this.gbl(bl+1) + 
 						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
+				cmd.push(this.gbl(bl+1) + 	'self._loadedItems.append(' + this.stringify(prop.name) + ')');
 			 }
 		}
 	}
@@ -140,6 +142,84 @@ HDF5Load.prototype.loadDataItemFromHDF5 = function(bl) {
 				 /* single non-atomic type reference */
 				 cmd.push(this.gbl(bl+2) + 
 					'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
+			 }
+
+		}
+
+		
+
+	}
+	cmd.push(this.gbl(bl+1));
+	
+	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isOpen():');
+	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.close()');
+	
+    return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	/* ================================================== */
+	cmd.push(this.gbl(bl) + 'def _loadAllDataFromHDF5(self):');
+	
+	/* for inheritence */
+	/*
+	if (this.isDerived()) {
+		var superTypes = this.superTypes();
+		for (var i = 0; i<superTypes.length; i++){
+			var supType = superTypes[i];
+			cmd.push(this.gbl(bl+1) +
+					supType.name + '._loadDataFromHDF5Handle(self,handle)');
+				
+		}
+		cmd.push(this.gbl(bl+1) + '');
+	}
+	*/
+	
+	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):');
+	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.openRead()');
+        
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];  
+
+		cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
+
+		cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
+
+		/* writing the value */
+		if (this.isAtomic(prop)) {
+			if(this.isArray(prop)){
+				/* array of atomic type */
+				
+		cmd.push(this.gbl(bl+2) + 		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray")' );
+			 }
+			 else{
+				 /* single atomic type value */
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
+			 }
+		}
+		else {
+			/*
+			 * creating references and saving other complex types 'value' will
+			 * be a or an array of references
+			 */
+			
+			/* create a subgroup for the contained values */
+
+			if(this.isArray(prop)){
+				/* array non-atomic type reference */
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray")' );
+				 
+			 }
+			 else{
+				 /* single non-atomic type reference */
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
 			 }
 
 		}

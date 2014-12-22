@@ -74,12 +74,20 @@ PythonBase.prototype.importModules = function() {
 	
 	cmd.push('import numpy as np');
 	cmd.push('import os');
-	cmd.push('import json');
-	cmd.push('import bson');
 	cmd.push('import collections');
 	cmd.push('import uuid');
 	cmd.push('import pyfoma.dataStorage as pyds');
-	
+
+	cmd.push('try:');
+	cmd.push(this.gbl() + 'import json');
+	cmd.push('except:');
+	cmd.push(this.gbl() + 'print "WARNING: json is not installed."');
+
+	cmd.push('try:');
+	cmd.push(this.gbl() + 'import bson');
+	cmd.push('except:');
+	cmd.push(this.gbl() + 'print "WARNING: bson is not installed."');
+
 	cmd.push('try:');
 	cmd.push(this.gbl() + 'import h5py');
 	cmd.push('except:');

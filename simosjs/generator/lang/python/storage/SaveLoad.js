@@ -90,7 +90,7 @@ SaveLoad.prototype.loadFunc = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 	'def load(self,name=None, filePath=None, dsType = \'hdf5\'):');
-	cmd.push(this.gbl(bl+1) + 		'loadHDF5(self,name, filePath, dsType)');
+	cmd.push(this.gbl(bl+1) + 		'self.loadHDF5(self,name, filePath, dsType)');
 	
 	return cmd.join('\n');
 };

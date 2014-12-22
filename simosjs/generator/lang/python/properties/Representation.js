@@ -187,7 +187,8 @@ Representation.prototype.mongodbReprFunc = function(bl) {
 			/*complex data type*/
 			if (this.isSingle(prop)){
 				cmd.push(this.gbl(bl+1) +	'if (self.isSet("'+ prop.name +'")):');
-				cmd.push(this.gbl(bl+2) +		'rep["'+ prop.name +'"] = self.' +  prop.name + '.ID');
+				//cmd.push(this.gbl(bl+2) +		'rep["'+ prop.name +'"] = self.' +  prop.name + '.ID');
+				cmd.push(this.gbl(bl+2) +		'rep["'+ prop.name +'"] = self.' +  prop.name + '.mongodbRepr(self.ID)');
 			}
 			else if (this.isArray(prop)){
 				cmd.push(this.gbl(bl+1) +	'if (self.isSet("'+ prop.name +'")):');

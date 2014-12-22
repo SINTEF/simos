@@ -122,9 +122,11 @@ MongoSave.prototype.saveDataToMongo = function(bl) {
 			 }
 			 else{
 				 /* single non-atomic type reference */
+				 /*
 	cmd.push(this.gbl(bl+1) + 	'if self.isSet(' + this.stringify(prop.name) + '):' );
 	cmd.push(this.gbl(bl+2) + 		'newStorage = storage.clone()');
 	cmd.push(this.gbl(bl+2) + 		'self.' + prop.name + '.saveToMongo(storage=newStorage, parent=self.ID)' );
+	*/
 			 }
 
 		}

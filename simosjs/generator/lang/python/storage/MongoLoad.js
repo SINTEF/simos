@@ -255,8 +255,10 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+4) + 				'creFunc = getattr(self,"create"+varName[0].capitalize()+varName[1:])');
 	cmd.push(this.gbl(bl+4) + 				'obj = creFunc()');
 	cmd.push(this.gbl(bl+3) + 		 	'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+3) + 		 	'subStor.id = handle[varName]');
+//	cmd.push(this.gbl(bl+3) + 		 	'subStor.id = handle[varName]');
+	cmd.push(this.gbl(bl+3) + 		 	'subStor.path.append(varName)');
 	cmd.push(this.gbl(bl+3) + 		 	'obj.loadFromMongo(subStor)');
+
 	cmd.push(this.gbl(bl+1) + 	'except :');
 	cmd.push(this.gbl(bl+2) + 		 'print "Warning: %s was not loaded properly. "%varName' );
 	/*cmd.push(this.getBlockSpace(bl+2) + 

@@ -35,7 +35,7 @@ SaveLoad.prototype.saveHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+1) +		'self._saveVertionsToHDF5Handle(grpHandle)');
 	cmd.push(this.gbl(bl+1) +		'dgrp = grpHandle.create_group(self.name)' );
 	cmd.push(this.gbl(bl));     
-	cmd.push(this.gbl(bl+1) + 		'storage.path = self.STORAGE.path + self.name');
+	cmd.push(this.gbl(bl+1) + 		'storage.appendPath(self.name)');
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) +		'self._saved = {}');
 	cmd.push(this.gbl(bl+1) +		'if storage.backEnd == \'hdf5\':');
@@ -142,7 +142,7 @@ SaveLoad.prototype.loadMDBFunc = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE = storage');
 	cmd.push(this.gbl(bl+1) + 	'else:');
 	cmd.push(this.gbl(bl+2) + 		'if (db == None) or (collection == None):');
-	cmd.push(this.gbl(bl+3) + 			'raise Excemption("storage, or, db and collection must be defined. ")');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("storage, or, db and collection must be defined. ")');
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'self.STORAGE = pyds.getDataStorageBackEndServer("mongodb")');
 	cmd.push(this.gbl(bl+3) + 			'self.STORAGE.dbName = db');

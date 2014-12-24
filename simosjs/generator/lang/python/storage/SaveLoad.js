@@ -29,9 +29,9 @@ SaveLoad.prototype.saveHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s ..."%(self.name, filePath)');
 	cmd.push(this.gbl(bl));
-	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
-	cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
-	cmd.push(this.gbl(bl+3) + 				'self.loadAll()');
+	//cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
+	//cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
+	//cmd.push(this.gbl(bl+3) + 				'self.loadAll()');
 	cmd.push(this.gbl(bl+1) +		'storage = pyds.getDataStorageBackEndServer(dsType)');
 	cmd.push(this.gbl(bl+1) +		'storage.filePath = filePath');
 	cmd.push(this.gbl(bl+1) +		'storage.openWrite()');
@@ -72,9 +72,9 @@ SaveLoad.prototype.saveMDBFunc = function(bl) {
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s.%s on %s:%s..."%(self.name, db, collection, server, str(port))');
 	cmd.push(this.gbl(bl));
-	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'mongodb\'):');
-	cmd.push(this.gbl(bl+2) + 			'if (collection == self.STORAGE.collectionName) and (db == self.STORAGE.dbName):');
-	cmd.push(this.gbl(bl+3) + 				'self.loadAll()');
+	//cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'mongodb\'):');
+	//cmd.push(this.gbl(bl+2) + 			'if (collection == self.STORAGE.collectionName) and (db == self.STORAGE.dbName):');
+	//cmd.push(this.gbl(bl+3) + 				'self.loadAll()');
 	cmd.push(this.gbl(bl+1) +		'storage.dbName = db');
 	cmd.push(this.gbl(bl+1) +		'storage.collectionName = collection');
 	cmd.push(this.gbl(bl+1) +		'storage.connect(server, port)');

@@ -322,7 +322,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
 	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+2) +			'setattr(self, "_"+varName, handle[varName].value)' );		
+	cmd.push(this.gbl(bl+3) +			'setattr(self, "_"+varName, handle[varName].value)' );		
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
 	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');

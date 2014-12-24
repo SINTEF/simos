@@ -353,8 +353,8 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	
 	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
 
-	cmd.push(this.gbl(bl+2) + 		'else:');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, None)');
+	//cmd.push(this.gbl(bl+2) + 		'else:');
+	//cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, None)');
 
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
@@ -392,8 +392,8 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	
 	cmd.push(this.gbl(bl+4) +	 			'obj.loadFromHDF5Handle(subStor, deep)');
 	
-	cmd.push(this.gbl(bl+2) + 		'else:');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, [])');
+	//cmd.push(this.gbl(bl+2) + 		'else:');
+	//cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, [])');
 	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');

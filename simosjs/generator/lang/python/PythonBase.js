@@ -74,6 +74,8 @@ PythonBase.prototype.importModules = function() {
 	
 	cmd.push('import numpy as np');
 	cmd.push('import os');
+	cmd.push('import traceback');
+	
 	cmd.push('import collections');
 	cmd.push('import uuid');
 	cmd.push('import pyfoma.dataStorage as pyds');

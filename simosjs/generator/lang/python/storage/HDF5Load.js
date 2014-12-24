@@ -260,6 +260,12 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	// cmd.push(this.getBlockSpace(bl+3) +
 	// 'saveFlag = True');
 
+	cmd.push(this.gbl(bl+1) + 	'if not(self.STORAGE.isConnected()):');
+	cmd.push(this.gbl(bl+1) + 	'    raise Exception("item is not connected to any HDF file.")');
+
+	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):');
+	cmd.push(this.gbl(bl+1) + 	'    self.STORAGE.openRead()');
+	
 	cmd.push(this.gbl(bl+1) + 	'handle = self.STORAGE.data');
 	cmd.push(this.gbl(bl+1) + 	'if (loadFlag):');
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicSingle"):');
@@ -293,8 +299,11 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
-	cmd.push(this.gbl(bl+2) + 		'setattr(self,varName, handle[varName][...])' );
-	cmd.push(this.gbl(bl+1) + 	'except :');
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, handle[varName][...])' );
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 	cmd.push(this.gbl(bl+2) + 		'pass' );
 
 	cmd.push(this.gbl(bl+1) + 	'pass');
@@ -312,8 +321,11 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) +		'setattr(self, "_"+varName, handle[varName].value)' );		
-	cmd.push(this.gbl(bl+1) +	'except :');
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+2) +			'setattr(self, "_"+varName, handle[varName].value)' );		
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 	cmd.push(this.gbl(bl+2) +		'pass' );
 	
 	cmd.push(this.gbl(bl+1) +	'pass');
@@ -341,8 +353,9 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	
 	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
 	
-	cmd.push(this.gbl(bl+1) + 	'except :');
-	cmd.push(this.gbl(bl+2) + 		 'print "Warning: %s was not loaded properly. "%varName' );
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 	/*cmd.push(this.getBlockSpace(bl+2) + 
 	'raise Exception("was not possible to load " + varName)' );*/
 	 
@@ -375,7 +388,9 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	
 	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
 	
-	cmd.push(this.gbl(bl+1) + 	'except :');
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 	cmd.push(this.gbl(bl+2) + 		'pass' );
 
 	cmd.push(this.gbl(bl+1) + 'pass');

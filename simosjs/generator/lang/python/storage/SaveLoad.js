@@ -215,10 +215,10 @@ SaveLoad.prototype.loadInitFunc = function(bl) {
 	var properties = this.getProperties();
 	var propNum = properties.length;
 	
-
+	cmd.push(this.gbl(bl+2) + 		'self._loadedItems = []');
+	
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
-		cmd.push(this.gbl(bl+2) + 		'self._loadedItems = []');
 			
 		if (this.isAtomic(prop)) {
 			if(this.isArray(prop)){

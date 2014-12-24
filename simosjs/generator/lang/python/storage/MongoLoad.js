@@ -262,7 +262,7 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+3) + 		 	'obj.loadFromMongo(subStor)');
 
 	cmd.push(this.gbl(bl+2) + 		'else:');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, None)');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, None)');
 	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
@@ -300,7 +300,7 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+4) + 				'obj.loadFromMongo(subStor)');
 
 	cmd.push(this.gbl(bl+2) + 		'else:');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, [])');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, [])');
 	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');

@@ -21,9 +21,9 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.openRead()' );
 
 	cmd.push(this.gbl(bl+1) + 	'if deep:');
-	cmd.push(this.gbl(bl+2) +		'obj._loadAllDataFromHDF5()');
+	cmd.push(this.gbl(bl+2) +		'self._loadAllDataFromHDF5()');
 	cmd.push(this.gbl(bl+1) + 	'else:');
-	cmd.push(this.gbl(bl+2) +		'obj._loadDataFromHDF5Handle()');
+	cmd.push(this.gbl(bl+2) +		'self._loadDataFromHDF5Handle()');
 		
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isOpen():' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.close()' );

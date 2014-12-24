@@ -11,7 +11,7 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def loadFromHDF5Handle(self, storage=None):');
+	cmd.push(this.gbl(bl) + 'def loadFromHDF5Handle(self, storage=None, deep=False):');
 	cmd.push(this.gbl(bl+1) + 	'self._loadInit()');
 	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
 	cmd.push(this.gbl(bl+1) + 	'if storage != None:' );
@@ -19,9 +19,12 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.openRead()' );
-	
-	cmd.push(this.gbl(bl+1) + 	'self._loadDataFromHDF5Handle()' );
-	
+
+	cmd.push(this.gbl(bl+1) + 	'if deep:');
+	cmd.push(this.gbl(bl+2) +		'obj._loadAllDataFromHDF5()');
+	cmd.push(this.gbl(bl+1) + 	'else:');
+	cmd.push(this.gbl(bl+2) +		'obj._loadDataFromHDF5Handle()');
+		
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isOpen():' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.close()' );
 	
@@ -66,8 +69,7 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 		if (this.isAtomic(prop)) {
 			if (this.isSingle(prop)){
 				 /* single atomic type value */
-				cmd.push(this.gbl(bl+1) + 
-						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
+				cmd.push(this.gbl(bl+1) + 	'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
 				cmd.push(this.gbl(bl+1) + 	'self._loadedItems.append(' + this.stringify(prop.name) + ')');
 			 }
 		}
@@ -197,11 +199,11 @@ HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
 			if(this.isArray(prop)){
 				/* array of atomic type */
 				
-		cmd.push(this.gbl(bl+2) + 		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray")' );
+		cmd.push(this.gbl(bl+2) + 		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray", deep=True)' );
 			 }
 			 else{
 				 /* single atomic type value */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle", deep=True)' );
 			 }
 		}
 		else {
@@ -214,12 +216,12 @@ HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
 
 			if(this.isArray(prop)){
 				/* array non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray")' );
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", deep=True)' );
 				 
 			 }
 			 else{
 				 /* single non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", deep=True)' );
 			 }
 
 		}
@@ -242,7 +244,7 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _loadFromHDF5HandleItem(self, varName, myType):');
+	'def _loadFromHDF5HandleItem(self, varName, myType, deep = False):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'loadFlag = True');
@@ -257,13 +259,13 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'handle = self.STORAGE.data');
 	cmd.push(this.gbl(bl+1) + 	'if (loadFlag):');
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicSingle(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicSingle(handle, varName, deep)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicArray(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicArray(handle, varName, deep)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName, deep)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName, deep)' );
 	
 	cmd.push(this.gbl(bl+2) + 		'self._sync[varName] = -1' );
 		
@@ -283,7 +285,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicSingle(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicSingle(self, handle, varName, deep=False):');
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
@@ -302,7 +304,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicArray(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicArray(self, handle, varName, deep=False):');
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
@@ -321,7 +323,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicSingle(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicSingle(self, handle, varName, deep=False):');
 
 	/* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
@@ -332,7 +334,9 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+4) + 				'obj = creFunc()');
 	cmd.push(this.gbl(bl+3) + 		 	'subStor = self.STORAGE.clone()');
 	cmd.push(this.gbl(bl+3) + 		 	'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+3) + 		 	'obj.loadFromHDF5Handle(subStor)');
+	
+	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
+	
 	cmd.push(this.gbl(bl+1) + 	'except :');
 	cmd.push(this.gbl(bl+2) + 		 'print "Warning: %s was not loaded properly. "%varName' );
 	/*cmd.push(this.getBlockSpace(bl+2) + 
@@ -349,7 +353,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArray(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArray(self, handle, varName, deep=False):');
 
 	/* array of non-atomic type */
 
@@ -365,8 +369,8 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+3) + 			'subStor.appendPath(varName)');
 	cmd.push(this.gbl(bl+3) + 			'subStor.appendPath(refObject)');
 	
-	cmd.push(this.gbl(bl+3) + 			'obj.loadFromHDF5Handle(subStor)');
-
+	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
+	
 	cmd.push(this.gbl(bl+1) + 	'except :');
 	cmd.push(this.gbl(bl+2) + 		'pass' );
 

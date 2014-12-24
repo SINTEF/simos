@@ -320,11 +320,9 @@ Assign.prototype.propSet = function(prop, bl) {
 		cmd.push(this.setChildPropsRefs(bl+1, prop));
 	}
 	
-	
-	cmd.push(this.gbl(bl+1) + 
-			'if not(' + JSON.stringify(prop.name) + ' in self._sync.keys()):');
+	cmd.push(this.gbl(bl+1) +	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
 	cmd.push(this.gbl(bl+2) + 
-			'self._sync[' + JSON.stringify(prop.name) + '] = 1');
+			'self._loadedItems.append(' + this.stringify(prop.name) + ')');
 	
 	/* return the commands */
     return cmd.join('\n');

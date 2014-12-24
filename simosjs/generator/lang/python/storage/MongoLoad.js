@@ -211,7 +211,8 @@ MongoLoad.prototype.loadFromMongoItemAtomicSingle = function(bl) {
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
-	cmd.push(this.gbl(bl+2) + 		'setattr(self,varName, handle[varName])' );
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, handle[varName])' );
 	cmd.push(this.gbl(bl+1) + 	'except :');
 	cmd.push(this.gbl(bl+2) + 		'pass' );
 
@@ -230,7 +231,8 @@ MongoLoad.prototype.loadFromMongoItemAtomicArray = function(bl) {
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) +		'setattr(self, "_"+varName, np.array(handle[varName]))' );		
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+3) +			'setattr(self, "_"+varName, np.array(handle[varName]))' );		
 	cmd.push(this.gbl(bl+1) +	'except :');
 	cmd.push(this.gbl(bl+2) +		'pass' );
 	
@@ -259,8 +261,12 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+3) + 		 	'subStor.path.append(varName)');
 	cmd.push(this.gbl(bl+3) + 		 	'obj.loadFromMongo(subStor)');
 
-	cmd.push(this.gbl(bl+1) + 	'except :');
-	cmd.push(this.gbl(bl+2) + 		 'print "Warning: %s was not loaded properly. "%varName' );
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, None)');
+	
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 	/*cmd.push(this.getBlockSpace(bl+2) + 
 	'raise Exception("was not possible to load " + varName)' );*/
 	 
@@ -281,19 +287,24 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicArray = function(bl) {
 
 					
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) + 		'num = len(handle[varName])');
-	cmd.push(this.gbl(bl+2) + 		'setattr(self,varName,[])');
-	cmd.push(this.gbl(bl+2) + 		'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
-	cmd.push(this.gbl(bl+2) + 		'for i in range(num):');
-	cmd.push(this.gbl(bl+3) + 			'refObject = handle[varName][i]' );
-	cmd.push(this.gbl(bl+3) + 			'obj = creFunc(refObject)');
-	cmd.push(this.gbl(bl+3) + 			'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+3) + 			'subStor.id = refObject');
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+3) + 			'num = len(handle[varName])');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName,[])');
+	cmd.push(this.gbl(bl+3) + 			'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
+	cmd.push(this.gbl(bl+3) + 			'for i in range(num):');
+	cmd.push(this.gbl(bl+4) + 				'refObject = handle[varName][i]' );
+	cmd.push(this.gbl(bl+4) + 				'obj = creFunc(refObject)');
+	cmd.push(this.gbl(bl+4) + 				'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+4) + 				'subStor.id = refObject');
 	
-	cmd.push(this.gbl(bl+3) + 			'obj.loadFromMongo(subStor)');
+	cmd.push(this.gbl(bl+4) + 				'obj.loadFromMongo(subStor)');
 
-	cmd.push(this.gbl(bl+1) + 	'except :');
-	cmd.push(this.gbl(bl+2) + 		'pass' );
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, [])');
+	
+	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
+	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
+	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 
 	cmd.push(this.gbl(bl+1) + 'pass');
 	

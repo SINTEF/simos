@@ -352,7 +352,10 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+3) + 		 	'subStor.appendPath(varName)');
 	
 	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
-	
+
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, None)');
+
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
 	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
@@ -376,17 +379,21 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 
 					
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) + 		'num = len(handle[varName].attrs["order"])');
-	cmd.push(this.gbl(bl+2) + 		'setattr(self,varName,[])');
-	cmd.push(this.gbl(bl+2) + 		'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
-	cmd.push(this.gbl(bl+2) + 		'for i in range(num):');
-	cmd.push(this.gbl(bl+3) + 			'refObject = handle[varName].attrs["order"][i]' );
-	cmd.push(this.gbl(bl+3) + 			'obj = creFunc(refObject)');
-	cmd.push(this.gbl(bl+3) + 			'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+3) + 			'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+3) + 			'subStor.appendPath(refObject)');
+	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+3) + 			'num = len(handle[varName].attrs["order"])');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName,[])');
+	cmd.push(this.gbl(bl+3) + 			'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
+	cmd.push(this.gbl(bl+3) + 			'for i in range(num):');
+	cmd.push(this.gbl(bl+4) + 				'refObject = handle[varName].attrs["order"][i]' );
+	cmd.push(this.gbl(bl+4) + 				'obj = creFunc(refObject)');
+	cmd.push(this.gbl(bl+4) + 				'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+4) + 				'subStor.appendPath(varName)');
+	cmd.push(this.gbl(bl+4) + 				'subStor.appendPath(refObject)');
 	
-	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
+	cmd.push(this.gbl(bl+4) +	 			'obj.loadFromHDF5Handle(subStor, deep)');
+	
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, [])');
 	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');

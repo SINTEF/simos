@@ -27,6 +27,8 @@ SaveLoad.prototype.saveHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+2) + 			'else:');
 	cmd.push(this.gbl(bl+3) + 				'raise Exception("object needs name for saving.")');
 	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s ..."%(self.name, filePath)');
+	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
 	cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
 	cmd.push(this.gbl(bl+3) + 				'self.loadAll()');
@@ -67,6 +69,9 @@ SaveLoad.prototype.saveMDBFunc = function(bl) {
 	cmd.push(this.gbl(bl+3) +				'raise Exception("db must be defined.")');
 	cmd.push(this.gbl(bl+1) +		'if collection == None:');
 	cmd.push(this.gbl(bl+3) +			'collection = self.name');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s.%s on %s:%s..."%(self.name, db, collection, server, str(port))');
+	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'mongodb\'):');
 	cmd.push(this.gbl(bl+2) + 			'if (collection == self.STORAGE.collectionName) and (db == self.STORAGE.dbName):');
 	cmd.push(this.gbl(bl+3) + 				'self.loadAll()');

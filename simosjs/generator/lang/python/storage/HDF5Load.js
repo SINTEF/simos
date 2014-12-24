@@ -190,12 +190,12 @@ HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 
-		cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-
-		cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
-
 		/* writing the value */
 		if (this.isAtomic(prop)) {
+			cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
+
+			cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
+			
 			if(this.isArray(prop)){
 				/* array of atomic type */
 				
@@ -214,14 +214,18 @@ HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
 			
 			/* create a subgroup for the contained values */
 
+			cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
+
+			cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
+			
 			if(this.isArray(prop)){
 				/* array non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", deep=True)' );
+		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", deep=True)' );
 				 
 			 }
 			 else{
 				 /* single non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", deep=True)' );
+		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", deep=True)' );
 			 }
 
 		}

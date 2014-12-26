@@ -13,7 +13,7 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	
 	cmd.push(this.gbl(bl) + 	'def loadHDF5(self,name=None, filePath=None, dsType = \'hdf5\', action="init"):');
 	cmd.push(this.gbl(bl+1) + 	'if not(name == None):');
-	cmd.push(this.gbl(bl+2) +			'self.name = name');
+	cmd.push(this.gbl(bl+2) +		'self.name = name');
 	cmd.push(this.gbl(bl+1) + 	'if (name == None) and not(filePath == None):');
 	cmd.push(this.gbl(bl+2) + 		'self.name = \'.\'.join(filePath.split(os.path.sep)[-1].split(\'.\')[0:-1])');
 	cmd.push(this.gbl(bl+1) + 	'if (filePath == None):');
@@ -279,13 +279,19 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
-	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "detach") or (stat == "sync"):');
+	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
 	cmd.push(this.gbl(bl+3) + 			'else:');
 	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
-	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+3) + 			'if not(varName in  self._loadedItems):');
+	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()) and not(varName in  self._loadedItems):');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
+
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
 
@@ -458,7 +464,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+6) + 						'subStor.appendPath(varName)');
 	cmd.push(this.gbl(bl+6) + 						'subStor.appendPath(refObject)');
 	
-	cmd.push(this.gbl(bl+5) +	 					'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
+	cmd.push(this.gbl(bl+6) +	 					'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
 
 	cmd.push(this.gbl(bl+4) + 				'else:');
 	cmd.push(this.gbl(bl+5) + 					'#object are alreasy created, just invoke the load command.');

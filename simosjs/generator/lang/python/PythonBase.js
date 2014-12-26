@@ -310,7 +310,7 @@ PythonBase.prototype.getPropertyName = function(i) {
 // exports.PythonBase.prototype.getPropertyName =
 // PythonBase.prototype.getPropertyName;
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.gbl = function(blockLevel) {
+PythonBase.prototype.getBlockSpace = function(blockLevel) {
 	if (blockLevel == undefined) {
 		blockLevel = 1;
 	}
@@ -325,7 +325,7 @@ PythonBase.prototype.gbl = function(blockLevel) {
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.gbl = function(blockLevel) {
 	
-	return this.gbl(blockLevel);
+	return this.getBlockSpace(blockLevel);
 };
 
 

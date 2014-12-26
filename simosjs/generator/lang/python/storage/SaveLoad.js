@@ -24,8 +24,8 @@ SaveLoad.prototype.loadFunc = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 	'def load(self,name=None, filePath=None, dsType = \'hdf5\'):');
-	cmd.push(this.gbl(bl+1) + 		'self.loadHDF5(name, filePath, dsType)');
+	cmd.push(this.gbl(bl) + 	'def load(self,name=None, filePath=None, dsType = \'hdf5\', action="init"):');
+	cmd.push(this.gbl(bl+1) + 		'self.loadHDF5(name, filePath, dsType, action)');
 	
 	return cmd.join('\n');
 };

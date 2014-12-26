@@ -394,7 +394,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+5) + 					'obj = creFunc()');
 	cmd.push(this.gbl(bl+5) + 		 			'subStor = self.STORAGE.clone()');
 	cmd.push(this.gbl(bl+5) + 		 			'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+5) +	 				'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
+	cmd.push(this.gbl(bl+5) +	 				'obj.loadFromHDF5Handle(storage=subStor, action="sync")');
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
 	
@@ -465,7 +465,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+6) + 						'subStor.appendPath(varName)');
 	cmd.push(this.gbl(bl+6) + 						'subStor.appendPath(refObject)');
 	
-	cmd.push(this.gbl(bl+6) +	 					'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
+	cmd.push(this.gbl(bl+6) +	 					'obj.loadFromHDF5Handle(storage=subStor, action="sync")');
 
 	cmd.push(this.gbl(bl+4) + 				'else:');
 	cmd.push(this.gbl(bl+5) + 					'#object are alreasy created, just invoke the load command.');

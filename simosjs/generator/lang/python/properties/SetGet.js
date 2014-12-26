@@ -292,7 +292,7 @@ SetGet.prototype.propGet = function(prop, bl) {
 		}
 		else {
 	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (len(self.' + this.makePrivate(prop.name) + ') == 0):');
+	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) :');
 	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
 	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
 	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );			

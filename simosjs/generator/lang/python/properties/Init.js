@@ -375,8 +375,8 @@ Init.prototype.classInit = function(bl) {
 		 * JSON.stringify(prop[propAttrs[j]])); }
 		 */
 		
-		//cmd.push(this.gbl(bl+1) + 
-		//		'self.' + this.modelDesAtt(prop) + ' = ' + this.stringify(prop) );
+		cmd.push(this.gbl(bl+1) + 
+				'self.' + this.modelDesAtt(prop) + ' = ' + this.stringify(prop) );
 		
 		cmd.push(this.gbl(bl+1));
 

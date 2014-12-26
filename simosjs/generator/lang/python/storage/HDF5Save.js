@@ -140,12 +140,12 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 			if(this.isArray(prop)){
 				/* array of atomic type */
 				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "AtomicArray")' );
+						'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "AtomicArray")' );
 			 }
 			 else{
 				 /* single atomic type value */
 				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "AtomicSingle")' );
+						'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "AtomicSingle")' );
 			 }
 		}
 		else {
@@ -159,13 +159,13 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 			if(this.isArray(prop)){
 				/* array non-atomic type reference */
 				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "NonAtomicArray")' );
+					'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "NonAtomicArray")' );
 				 
 			 }
 			 else{
 				 /* single non-atomic type reference */
 				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + JSON.stringify(prop.name) + ', "NonAtomicSingle")' );
+					'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
 			 }
 
 		}

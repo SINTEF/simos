@@ -196,39 +196,25 @@ PythonBase.prototype.getPythonArrayShape = function(prop) {
 PythonBase.prototype.isSetFunc = function(bl) {
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 
-	'def isSet(self, varName):');
+	cmd.push(this.gbl(bl) + 'def isSet(self, varName):');
 
-	cmd.push(this.getBlockSpace(bl+1) + 
- 		'if (isinstance(getattr(self,varName),list) ):');
-	cmd.push(this.getBlockSpace(bl+2) + 
- 			'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
-	cmd.push(this.getBlockSpace(bl+3) + 
-				'return True');
-	cmd.push(this.getBlockSpace(bl+2) + 
-			'else :');
-	cmd.push(this.getBlockSpace(bl+3) + 
-				'return False');
+	cmd.push(this.gbl(bl+1) + 	'if (isinstance(getattr(self,varName),list) ):');
+	cmd.push(this.gbl(bl+2) + 		'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
+	cmd.push(this.gbl(bl+3) + 			'return True');
+	cmd.push(this.gbl(bl+2) + 		'else :');
+	cmd.push(this.gbl(bl+3) + 			'return False');
 		
-	cmd.push(this.getBlockSpace(bl+1) + 
-	 	'if (isinstance(getattr(self,varName),np.ndarray) ):');
-	cmd.push(this.getBlockSpace(bl+2) + 
-	 		'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
-	cmd.push(this.getBlockSpace(bl+3) + 
-				'return True');
-	cmd.push(this.getBlockSpace(bl+2) + 
-			'else :');
-	cmd.push(this.getBlockSpace(bl+3) + 
-				'return False');
+	cmd.push(this.gbl(bl+1) + 	'if (isinstance(getattr(self,varName),np.ndarray) ):');
+	cmd.push(this.gbl(bl+2) +  		'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
+	cmd.push(this.gbl(bl+3) + 			'return True');
+	cmd.push(this.gbl(bl+2) + 		'else :');
+	cmd.push(this.gbl(bl+3) + 			'return False');
 	
 	 /* single atomic type value */
-	cmd.push(this.getBlockSpace(bl+1) + 
-	 	'if (getattr(self,varName) != None):');
-	cmd.push(this.getBlockSpace(bl+2) + 
-			 'return True');
+	cmd.push(this.gbl(bl+1) +  	'if (getattr(self,varName) != None):');
+	cmd.push(this.gbl(bl+2) + 		 'return True');
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
- 		'return False');
+	cmd.push(this.gbl(bl+1) + 	'return False');
 	
 	return cmd.join('\n');
 };
@@ -236,20 +222,20 @@ PythonBase.prototype.isSetFunc = function(bl) {
 PythonBase.prototype.isContainedFunc = function(bl) {
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 	'def isContained(self, varName):');
 
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 	 	'MODEL = self.getPropModel(varName)');
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
  		'if ("containment" in MODEL.keys()):');
-	cmd.push(this.getBlockSpace(bl+2) + 
+	cmd.push(this.gbl(bl+2) + 
 			'if (MODEL["containment"] == "false"):');	
-	cmd.push(this.getBlockSpace(bl+3) + 
+	cmd.push(this.gbl(bl+3) + 
  				'return False');
 
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 		'return True');
 	
 	return cmd.join('\n');
@@ -258,34 +244,34 @@ PythonBase.prototype.isContainedFunc = function(bl) {
 PythonBase.prototype.getPropModelFunc = function(bl) {
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 	'def getPropModel(self, varName):');
 
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 	 	'props = self.' + this.modelDesAtt() + '["properties"]');
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
  		'for prop in props:');
-	cmd.push(this.getBlockSpace(bl+2) + 
+	cmd.push(this.gbl(bl+2) + 
 			'if (prop["name"] == varName):');	
-	cmd.push(this.getBlockSpace(bl+3) + 
+	cmd.push(this.gbl(bl+3) + 
  				'return prop');
 	
 	if (this.isDerived()) {
 		var superTypes = this.superTypes();
 		
-		cmd.push(this.getBlockSpace(bl) + 
+		cmd.push(this.gbl(bl) + 
 				'#calling supers');
 		for (var i = 0; i<superTypes.length; i++){
 			var supType = superTypes[i];
-			cmd.push(this.getBlockSpace(bl+1) +
+			cmd.push(this.gbl(bl+1) +
 				'return ' + supType.name +'().getPropModel(varName)');
 				
 		}
-		cmd.push(this.getBlockSpace(bl+1) + '');
+		cmd.push(this.gbl(bl+1) + '');
 	}
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 		'raise Exception("property " + varName + " was not found.")');
 	
 	return cmd.join('\n');
@@ -324,7 +310,7 @@ PythonBase.prototype.getPropertyName = function(i) {
 // exports.PythonBase.prototype.getPropertyName =
 // PythonBase.prototype.getPropertyName;
 /*----------------------------------------------------------------------------*/
-PythonBase.prototype.getBlockSpace = function(blockLevel) {
+PythonBase.prototype.gbl = function(blockLevel) {
 	if (blockLevel == undefined) {
 		blockLevel = 1;
 	}
@@ -339,7 +325,7 @@ PythonBase.prototype.getBlockSpace = function(blockLevel) {
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.gbl = function(blockLevel) {
 	
-	return this.getBlockSpace(blockLevel);
+	return this.gbl(blockLevel);
 };
 
 
@@ -357,7 +343,7 @@ PythonBase.prototype.getLoopBlockForArray = function(bl, prop) {
 		for (var level = 0; level < di; level++){
 			levelInd = levelInd + '[0]';
 		}
-		cmd.push(this.getBlockSpace(bl+ (dimList.length-1)-di ) + 
+		cmd.push(this.gbl(bl+ (dimList.length-1)-di ) + 
 				 'for ' + indName + ' in range(0,len(self.' + prop.name +levelInd +')):' );
 
 	}
@@ -378,60 +364,60 @@ PythonBase.prototype.cloneFunc = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 	'def clone(self):');	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 			'newObj = ' + this.getClassName() + '()' );	     
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 			'return self._cloneTo(newObj)' );	     
 
-	cmd.push(this.getBlockSpace(bl+1));
+	cmd.push(this.gbl(bl+1));
 	/* =============================================== */
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 	'def _cloneTo(self,newObj):');	    
 
 	if (this.isDerived()) {
 		var superTypes = this.superTypes();
 		for (var i = 0; i<superTypes.length; i++){
 			var supType = superTypes[i];
-			cmd.push(this.getBlockSpace(bl+1) +
+			cmd.push(this.gbl(bl+1) +
 					supType.name + '._cloneTo(self,newObj)');			
 		}
-		cmd.push(this.getBlockSpace(bl+1) + '');
+		cmd.push(this.gbl(bl+1) + '');
 	}
 	
 	var props = this.getProperties();
 	
 	for (var i=0; i<props.length; i++) {
 		var prop = props[i];
-		cmd.push(this.getBlockSpace(bl+1) + 
+		cmd.push(this.gbl(bl+1) + 
 				'if (self.isSet(' + this.stringify(prop.name) +')):' );	     
 
 		if (this.isAtomicType(prop.type)) {
 			if (this.isArray(prop)) {
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = np.copy(self.' + this.makePrivate(prop.name) + ')' );	     
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = self.' + this.makePrivate(prop.name) );	     				
 			}
 		}
 		else {
 			if (this.isArray(prop)) {
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = []' );	     	
 				var loopBlock = this.getLoopBlockForArray(bl+2,prop);
 				cmd.push(loopBlock.cmd);
-					cmd.push(this.getBlockSpace(loopBlock.bl+1) + 
+					cmd.push(this.gbl(loopBlock.bl+1) + 
 							'newObj.' + this.makePrivate(prop.name) + '.append(' +
 							' self.' + this.makePrivate(prop.name) + loopBlock.indList + '.clone() )' );    
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
 						' = self.' + this.makePrivate(prop.name) + '.clone()');	     				
 			}
@@ -439,7 +425,7 @@ PythonBase.prototype.cloneFunc = function(bl) {
 		}
 	}
 	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 	'return newObj' );	     
 	
 	
@@ -453,9 +439,9 @@ PythonBase.prototype.factoryFunc = function(bl) {
 	}	
 	var cmd = [];
 		
-	cmd.push(this.getBlockSpace(bl) + 
+	cmd.push(this.gbl(bl) + 
 	'def create(self,name):');	
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 		'return ' + this.getModel().type + '(name)');
 
 	var props = this.getProperties();
@@ -464,30 +450,30 @@ PythonBase.prototype.factoryFunc = function(bl) {
     		var prop = props[i];
 			var propType = this.getClassPathFromType(prop.type) ;
 			
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 				'def makea' + this.firstToUpper(prop.name) +'(self,name):');	
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'return ' + propType + '(name)');
 			
 			
 			if (this.isArray(prop)){
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 				'def append' + this.firstToUpper(prop.name) +'(self,name=None):');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'objs = [x for x in self.' + prop.name + ' if (x.name == name)]' );
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'if len(objs) > 1:' );			
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'raise Exception(" more than one " + name + " is found in ' + prop.name + '")' );
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'elif len(objs) == 1:' );			
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'print ("warning: object %s already exist."%(name))' );	
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'return objs[0]' );	
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'obj = ' + propType + '(name)');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'self.' + prop.name + '.append(obj)');
 				if (this.hasAssignments(prop))
 					cmd.push(
@@ -500,44 +486,44 @@ PythonBase.prototype.factoryFunc = function(bl) {
 				if (this.hasDependents(prop))
 					throw "array can not have dependents.";
 					
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 						'return obj');
 				
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 					'def delete' + this.firstToUpper(prop.name) +'(self):');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 						'self.' + this.makePrivate(prop.name) + ' = [] ');
 						
 			}
 			else {
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 				'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'if (self.' + prop.name + ' != None): ');
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'raise Exception("object ' + prop.name + 
 						' already exist, use renew' + this.firstToUpper(prop.name) +
 						' to get a new one.") ');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'return self.renew' + this.firstToUpper(prop.name) + '(name)');
 				
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 					'def delete' + this.firstToUpper(prop.name) +'(self):');
-					cmd.push(this.getBlockSpace(bl+1) + 
+					cmd.push(this.gbl(bl+1) + 
 						'self.' + this.makePrivate(prop.name) + ' = None ');
 				
-				cmd.push(this.getBlockSpace(bl) + 
+				cmd.push(this.gbl(bl) + 
 				'def renew' + this.firstToUpper(prop.name) +'(self, name=None):');
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'self.' + prop.name + ' = ' + propType 
 							+ '('+ this.stringify(prop.name) +')');
 				if (this.hasAssignments(prop))
 					cmd.push(
 					this.assignPropSinglesValues(bl+1,	prop)
 					);
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'if name != None:');
-				cmd.push(this.getBlockSpace(bl+2) + 
+				cmd.push(this.gbl(bl+2) + 
 						'self.' + prop.name + '.name = name' );
 				if (this.hasDependencies(prop))
 					cmd.push(
@@ -548,10 +534,10 @@ PythonBase.prototype.factoryFunc = function(bl) {
 					this.setChildPropsRefs(bl+1, prop)
 					);
 				}
-				cmd.push(this.getBlockSpace(bl+1) + 
+				cmd.push(this.gbl(bl+1) + 
 					'return self.' + prop.name);
 			}
-			cmd.push(this.getBlockSpace(bl));
+			cmd.push(this.gbl(bl));
     	}
 		
 	}

@@ -5,6 +5,32 @@ function MongoLoad(){
 };
 exports.MongoLoad = MongoLoad;
 /*----------------------------------------------------------------------------*/
+MongoLoad.prototype.loadMDBFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'def loadMDB(self,id=None, storage=None, server="localhost", port = 27017, db = None, collection = None):');
+	cmd.push(this.gbl(bl+1) + 	'if not(storage == None):');
+	cmd.push(this.gbl(bl+2) + 		'self.STORAGE = storage');
+	cmd.push(this.gbl(bl+1) + 	'else:');
+	cmd.push(this.gbl(bl+2) + 		'if (db == None) or (collection == None):');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("storage, or, db and collection must be defined. ")');
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'self.STORAGE = pyds.getDataStorageBackEndServer("mongodb")');
+	cmd.push(this.gbl(bl+3) + 			'self.STORAGE.dbName = db');
+	cmd.push(this.gbl(bl+3) + 			'self.STORAGE.collectionName = collection');
+	cmd.push(this.gbl(bl+1) + 	'if not(id == None):');
+	cmd.push(this.gbl(bl+2) +		'self.ID = id');
+	cmd.push(this.gbl(bl+1) +	'self.STORAGE.id = self.ID');
+	cmd.push(this.gbl(bl));       
+	cmd.push(this.gbl(bl+1) + 	'self.loadFromMongo()');
+	cmd.push(this.gbl(bl));
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 MongoLoad.prototype.loadFromMongo = function(bl) {
 	if (bl == undefined) {
 		bl = 0;

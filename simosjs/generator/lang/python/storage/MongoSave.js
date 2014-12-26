@@ -3,6 +3,44 @@ function MongoSave(){
 };
 exports.MongoSave = MongoSave;
 /*----------------------------------------------------------------------------*/
+MongoSave.prototype.saveMDBFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	cmd.push(this.gbl(bl) + 	'def saveMDB(self,server="localhost", port = 27017, db = None, collection = None):');
+	cmd.push(this.gbl(bl+1) +		'storage = pyds.getDataStorageBackEndServer("mongodb")');
+	cmd.push(this.gbl(bl+1) +		'if db == None:');
+	cmd.push(this.gbl(bl+2) +			'if hasattr(self,"project"):');
+	cmd.push(this.gbl(bl+3) +				'db = self.project.name');
+	cmd.push(this.gbl(bl+2) +			'else:');
+	cmd.push(this.gbl(bl+3) +				'raise Exception("db must be defined.")');
+	cmd.push(this.gbl(bl+1) +		'if collection == None:');
+	cmd.push(this.gbl(bl+3) +			'collection = self.name');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s.%s on %s:%s..."%(self.name, db, collection, server, str(port))');
+	cmd.push(this.gbl(bl));
+	//cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'mongodb\'):');
+	//cmd.push(this.gbl(bl+2) + 			'if (collection == self.STORAGE.collectionName) and (db == self.STORAGE.dbName):');
+	//cmd.push(this.gbl(bl+3) + 				'self.loadFromMongo(action="detach")');
+	cmd.push(this.gbl(bl+1) +		'storage.dbName = db');
+	cmd.push(this.gbl(bl+1) +		'storage.collectionName = collection');
+	cmd.push(this.gbl(bl+1) +		'storage.connect(server, port)');
+	cmd.push(this.gbl(bl));    
+	cmd.push(this.gbl(bl+1) +		'self._saved = {}');
+	cmd.push(this.gbl(bl+1) +		'if storage.backEnd == \'mongodb\':');
+	cmd.push(this.gbl(bl+2) +			'self.saveToMongo(storage)');
+	cmd.push(this.gbl(bl+1) +		'else:');
+	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + self._storageBackEndType + " is not defined for MongoDB.")');
+	cmd.push(this.gbl(bl));    
+	cmd.push(this.gbl(bl+1) + 		'if storage.isConnected():');
+	cmd.push(this.gbl(bl+2) +			'storage.disconnect()');
+	cmd.push(this.gbl(bl+1) +		'return storage');
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
 MongoSave.prototype.saveVertionsToMongo = function(bl) {
 	if (bl == undefined) {
 		bl = 0;

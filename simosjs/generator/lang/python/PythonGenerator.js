@@ -73,14 +73,14 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.getPropModelFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.propInitValueFuncs(1));
+	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.factoryFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.saveFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadFunc(1));
 	cmd.push(entity.loadInitFunc(1));
-	cmd.push('    #---------------------------------------------------------------------------');
-	cmd.push(entity.loadAllFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadDataItemFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
@@ -91,7 +91,6 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadHDF5Func(1));
 	cmd.push(entity.loadFromHDF5Handle(1));
-	cmd.push(entity.loadAllDataFromHDF5(1));
 	cmd.push(entity.loadDataItemFromHDF5(1));
 	cmd.push(entity.loadDataFromHDF5Handle(1));
 	cmd.push(entity.loadFromHDF5HandleItem(1));
@@ -117,7 +116,6 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadMDBFunc(1));
 	cmd.push(entity.loadFromMongo(1));
-	cmd.push(entity.loadAllDataFromMongo(1));
 	cmd.push(entity.loadDataFromMongo(1));
 	cmd.push(entity.loadDataItemFromMongo(1));
 	cmd.push(entity.loadFromMongoItem(1));

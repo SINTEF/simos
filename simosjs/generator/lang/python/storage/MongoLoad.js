@@ -11,7 +11,7 @@ MongoLoad.prototype.loadFromMongo = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def loadFromMongo(self, storage=None):');
+	cmd.push(this.gbl(bl) + 'def loadFromMongo(self, storage=None, action="init"):');
 	cmd.push(this.gbl(bl+1) + 	'self._loadInit()');
 	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
 	cmd.push(this.gbl(bl+1) + 	'if storage != None:' );
@@ -20,7 +20,7 @@ MongoLoad.prototype.loadFromMongo = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'if not(self.STORAGE.isConnected()):' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.connect()' );
 	
-	cmd.push(this.gbl(bl+1) + 	'self._loadDataFromMongo()' );
+	cmd.push(this.gbl(bl+1) + 	'self._loadDataFromMongo(action=action)' );
 	
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isConnected():' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.disconnect()' );
@@ -36,7 +36,7 @@ MongoLoad.prototype.loadDataFromMongo = function(bl) {
 	}	
 	var cmd = [];
 	/* ================================================== */
-	cmd.push(this.gbl(bl) + 'def _loadDataFromMongo(self):');
+	cmd.push(this.gbl(bl) + 'def _loadDataFromMongo(self, action="init"):');
 	
 	/* for inheritence */
 	/*
@@ -69,8 +69,7 @@ MongoLoad.prototype.loadDataFromMongo = function(bl) {
 		if (this.isAtomic(prop)) {
 			if (this.isSingle(prop)){
 				 /* single atomic type value */
-	cmd.push(this.gbl(bl+1) + 	'self._loadFromMongoItem(data, ' + this.stringify(prop.name) + ', "AtomicSingle")' );
-	cmd.push(this.gbl(bl+1) + 	'self._loadedItems.append(' + this.stringify(prop.name) + ')');
+	cmd.push(this.gbl(bl+1) + 	'self._loadFromMongoItem(data, ' + this.stringify(prop.name) + ', "AtomicSingle", action=action)' );
 			 }
 		}
 	}
@@ -167,7 +166,7 @@ MongoLoad.prototype.loadFromMongoItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _loadFromMongoItem(self, handle, varName, myType):');
+	'def _loadFromMongoItem(self, handle, varName, action):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'loadFlag = True');
@@ -181,13 +180,13 @@ MongoLoad.prototype.loadFromMongoItem = function(bl) {
 
 	cmd.push(this.gbl(bl+1) + 	'if (loadFlag):');
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemAtomicSingle(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemAtomicSingle(handle, varName, stat = action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemAtomicArray(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemAtomicArray(handle, varName, stat = action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemNonAtomicArray(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemNonAtomicArray(handle, varName, stat = action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemNonAtomicSingle(handle, varName)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromMongoItemNonAtomicSingle(handle, varName, stat = action)' );
 	
 	cmd.push(this.gbl(bl+2) + 		'self._sync[varName] = -1' );
 		
@@ -207,7 +206,7 @@ MongoLoad.prototype.loadFromMongoItemAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemAtomicSingle(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemAtomicSingle(self, handle, varName, stat):');
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
@@ -227,7 +226,7 @@ MongoLoad.prototype.loadFromMongoItemAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemAtomicArray(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemAtomicArray(self, handle, varName, stat):');
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
@@ -247,7 +246,7 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemNonAtomicSingle(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemNonAtomicSingle(self, handle, varName, stat):');
 
 	/* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
@@ -281,7 +280,7 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemNonAtomicArray(self, handle, varName):');
+	cmd.push(this.gbl(bl) + 'def _loadFromMongoItemNonAtomicArray(self, handle, varName, stat):');
 
 	/* array of non-atomic type */
 
@@ -307,86 +306,6 @@ MongoLoad.prototype.loadFromMongoItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
 
 	cmd.push(this.gbl(bl+1) + 'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-MongoLoad.prototype.loadAllDataFromMongo = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	/* ================================================== */
-	cmd.push(this.gbl(bl) + 'def _loadAllDataFromMongo(self):');
-	
-	/* for inheritence */
-	/*
-	if (this.isDerived()) {
-		var superTypes = this.superTypes();
-		for (var i = 0; i<superTypes.length; i++){
-			var supType = superTypes[i];
-			cmd.push(this.gbl(bl+1) +
-					supType.name + '._loadDataFromMongoHandle(self,handle)');
-				
-		}
-		cmd.push(this.gbl(bl+1) + '');
-	}
-	*/
-	
-	cmd.push(this.gbl(bl+1) + 'if not(self.STORAGE.isConnected()):');
-	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.connect()');
-       
-	cmd.push(this.gbl(bl+1) + 	'data = self.STORAGE.data' );
-	
-	var properties = this.getProperties();
-	var propNum = properties.length;
-	
-	for(var i = 0; i < propNum; i++) {
-		var prop = properties[i];  
-
-		cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-
-		cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(data, ' + this.stringify(prop.name) + ')');
-
-		/* writing the value */
-		if (this.isAtomic(prop)) {
-			if(this.isArray(prop)){
-				/* array of atomic type */
-				
-		cmd.push(this.gbl(bl+2) + 		'self._loadFromMongoHandleItem(data, ' + this.stringify(prop.name) + ', "AtomicArray")' );
-			 }
-			 else{
-				 /* single atomic type value */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromMongoHandleItem(data, ' + this.stringify(prop.name) + ', "AtomicSingle")' );
-			 }
-		}
-		else {
-			/*
-			 * creating references and saving other complex types 'value' will
-			 * be a or an array of references
-			 */
-			
-			/* create a subgroup for the contained values */
-
-			if(this.isArray(prop)){
-				/* array non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromMongoHandleItem(data, ' + this.stringify(prop.name) + ', "NonAtomicArray")' );
-				 
-			 }
-			 else{
-				 /* single non-atomic type reference */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromMongoHandleItem(data, ' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
-			 }
-
-		}
-
-		
-
-	}
-	cmd.push(this.gbl(bl+1));
-	
-	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isConnected():');
-	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.disconnect()');
 	
     return cmd.join('\n');
 };

@@ -11,19 +11,16 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def loadFromHDF5Handle(self, storage=None, deep=False):');
-	cmd.push(this.gbl(bl+1) + 	'self._loadInit()');
-	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
+	cmd.push(this.gbl(bl) + 'def loadFromHDF5Handle(self, storage=None, action="init"):');
+	cmd.push(this.gbl(bl+1) + 	'if (action == "init") or (action == "sync"):');
+	cmd.push(this.gbl(bl+2) + 		'self._loadInit()');
 	cmd.push(this.gbl(bl+1) + 	'if storage != None:' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE = storage' );
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.openRead()' );
 
-	cmd.push(this.gbl(bl+1) + 	'if deep:');
-	cmd.push(this.gbl(bl+2) +		'self._loadAllDataFromHDF5()');
-	cmd.push(this.gbl(bl+1) + 	'else:');
-	cmd.push(this.gbl(bl+2) +		'self._loadDataFromHDF5Handle()');
+	cmd.push(this.gbl(bl+2) +		'self._loadDataFromHDF5Handle(action=action)');
 		
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isOpen():' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.close()' );
@@ -39,7 +36,7 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	}	
 	var cmd = [];
 	/* ================================================== */
-	cmd.push(this.gbl(bl) + 'def _loadDataFromHDF5Handle(self):');
+	cmd.push(this.gbl(bl) + 'def _loadDataFromHDF5Handle(self, action):');
 	
 	/* for inheritence */
 	/*
@@ -55,6 +52,9 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	}
 	*/
 	
+	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):' );
+	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.openRead()' );
+	
 	cmd.push(this.gbl(bl+1) + 	'handle = self.STORAGE.data' );
 	cmd.push(this.gbl(bl+1) + 	'self.ID = str(handle.attrs["ID"])' );
 	
@@ -64,17 +64,44 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 
-
 		/* writing the value */
-		if (this.isAtomic(prop)) {
-			if (this.isSingle(prop)){
-				 /* single atomic type value */
-				cmd.push(this.gbl(bl+1) + 	'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
-				cmd.push(this.gbl(bl+1) + 	'self._loadedItems.append(' + this.stringify(prop.name) + ')');
+		if (this.isAtomic(prop)) {			
+			if(this.isArray(prop)){
+				/* array of atomic type */
+				
+		cmd.push(this.gbl(bl+1) + 		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray", action=action)' );
 			 }
+			 else{
+				 /* single atomic type value */
+		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle", action=action)' );
+			 }
+		}
+		else {
+			/*
+			 * creating references and saving other complex types 'value' will
+			 * be a or an array of references
+			 */
+			
+			/* create a subgroup for the contained values */
+			
+			if(this.isArray(prop)){
+				/* array non-atomic type reference */
+		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", action=action)' );
+				 
+			 }
+			 else{
+				 /* single non-atomic type reference */
+		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", action=action)' );
+			 }
+
 		}
 	}
 	cmd.push(this.gbl(bl+1));
+	
+	
+	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isOpen():');
+	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.close()');
+	
 	
 	cmd.push(this.gbl(bl+1) + 'pass');
     return cmd.join('\n');
@@ -118,12 +145,12 @@ HDF5Load.prototype.loadDataItemFromHDF5 = function(bl) {
 				/* array of atomic type */
 				
 				cmd.push(this.gbl(bl+2) + 
-						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray")' );
+						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray", "detach")' );
 			 }
 			 else{
 				 /* single atomic type value */
 				cmd.push(this.gbl(bl+2) + 
-						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle")' );
+						'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle", "detach")' );
 			 }
 		}
 		else {
@@ -159,88 +186,6 @@ HDF5Load.prototype.loadDataItemFromHDF5 = function(bl) {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Load.prototype.loadAllDataFromHDF5 = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	/* ================================================== */
-	cmd.push(this.gbl(bl) + 'def _loadAllDataFromHDF5(self):');
-	
-	/* for inheritence */
-	/*
-	if (this.isDerived()) {
-		var superTypes = this.superTypes();
-		for (var i = 0; i<superTypes.length; i++){
-			var supType = superTypes[i];
-			cmd.push(this.gbl(bl+1) +
-					supType.name + '._loadDataFromHDF5Handle(self,handle)');
-				
-		}
-		cmd.push(this.gbl(bl+1) + '');
-	}
-	*/
-	
-	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isConnected() and not(self.STORAGE.isOpen()):');
-	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.openRead()');
-        
-	var properties = this.getProperties();
-	var propNum = properties.length;
-	
-	for(var i = 0; i < propNum; i++) {
-		var prop = properties[i];  
-
-		/* writing the value */
-		if (this.isAtomic(prop)) {
-			cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-
-			cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
-			
-			if(this.isArray(prop)){
-				/* array of atomic type */
-				
-		cmd.push(this.gbl(bl+2) + 		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicArray", deep=True)' );
-			 }
-			 else{
-				 /* single atomic type value */
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "AtomicSingle", deep=True)' );
-			 }
-		}
-		else {
-			/*
-			 * creating references and saving other complex types 'value' will
-			 * be a or an array of references
-			 */
-			
-			/* create a subgroup for the contained values */
-
-			cmd.push(this.gbl(bl+1) + 	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-
-			cmd.push(this.gbl(bl+2) + 		'self._loadedItems.append(' + this.stringify(prop.name) + ')');
-			
-			if(this.isArray(prop)){
-				/* array non-atomic type reference */
-		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", deep=True)' );
-				 
-			 }
-			 else{
-				 /* single non-atomic type reference */
-		cmd.push(this.gbl(bl+1) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", deep=True)' );
-			 }
-
-		}
-
-		
-
-	}
-	cmd.push(this.gbl(bl+1));
-	
-	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isOpen():');
-	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.close()');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
 HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
@@ -248,7 +193,7 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _loadFromHDF5HandleItem(self, varName, myType, deep = False):');
+	'def _loadFromHDF5HandleItem(self, varName, myType, action = "init"):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'loadFlag = True');
@@ -269,13 +214,13 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'handle = self.STORAGE.data');
 	cmd.push(this.gbl(bl+1) + 	'if (loadFlag):');
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicSingle(handle, varName, deep)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicSingle(handle, varName, action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "AtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicArray(handle, varName, deep)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemAtomicArray(handle, varName, action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName, deep)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName, action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName, deep)' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName, action)' );
 	
 	cmd.push(this.gbl(bl+2) + 		'self._sync[varName] = -1' );
 		
@@ -295,12 +240,20 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicSingle(self, handle, varName, deep=False):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicSingle(self, handle, varName, stat="init"):');
 
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
-	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName, handle[varName][...])' );
+	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "detach") or (stat == "sync"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+3) + 			'else:');
+	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
+
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
 	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
@@ -317,12 +270,34 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicArray(self, handle, varName, deep=False):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicArray(self, handle, varName, stat="init"):');
 
 	/* array of atomic type */
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+3) +			'setattr(self, "_"+varName, handle[varName].value)' );		
+	cmd.push(this.gbl(bl+2) + 		'if (stat == "init"):');
+	//cmd.push(this.gbl(bl+3) + 			'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	//cmd.push(this.gbl(bl+3) + 			'setattr(self,"_"+varName, initFunc())' );
+	cmd.push(this.gbl(bl+3) + 			'setattr(self,"_"+varName,  np.array([]))' );
+	cmd.push(this.gbl(bl+3) + 			'if (varName in  self._loadedItems):');
+	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.pop(self._loadedItems.index(varName))');
+		
+	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
+	cmd.push(this.gbl(bl+3) + 			'if not(varName in  self._loadedItems):');
+	cmd.push(this.gbl(bl+4) +	 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+5) + 					'setattr(self,"_"+varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
+	
+	cmd.push(this.gbl(bl+2) + 		'elif (stat == "sync"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+3) + 			'else:');
+	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
+	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
+	
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
+	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
 	cmd.push(this.gbl(bl+2) +		'traceback.print_exc()');
@@ -339,22 +314,39 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicSingle(self, handle, varName, deep=False):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicSingle(self, handle, varName, stat="init"):');
 
 	/* single atomic type value */
-	cmd.push(this.gbl(bl+1) + 	'try :');
-	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+3) +			'obj = getattr(self,varName)');
-	cmd.push(this.gbl(bl+3) +			'if (obj == None):');
-	cmd.push(this.gbl(bl+4) + 				'creFunc = getattr(self,"create"+varName[0].capitalize()+varName[1:])');
-	cmd.push(this.gbl(bl+4) + 				'obj = creFunc()');
-	cmd.push(this.gbl(bl+3) + 		 	'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+3) + 		 	'subStor.appendPath(varName)');
-	
-	cmd.push(this.gbl(bl+3) +	 		'obj.loadFromHDF5Handle(subStor, deep)');
+	cmd.push(this.gbl(bl+1) +	'obj = getattr(self,"_"+varName)');
 
-	//cmd.push(this.gbl(bl+2) + 		'else:');
-	//cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, None)');
+	cmd.push(this.gbl(bl+1) + 	'try :');
+	
+	cmd.push(this.gbl(bl+2) + 		'if not(varName in self._loadedItems):');
+	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
+	
+	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+4) +				'if (obj == None):');
+	cmd.push(this.gbl(bl+5) + 					'creFunc = getattr(self,"renew"+varName[0].capitalize()+varName[1:])');
+	cmd.push(this.gbl(bl+5) + 					'obj = creFunc()');
+	cmd.push(this.gbl(bl+4) + 		 		'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+4) + 		 		'subStor.appendPath(varName)');
+	cmd.push(this.gbl(bl+4) +	 			'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
+	
+	cmd.push(this.gbl(bl+3) + 			'else:');
+	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
+	
+	
+	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()) and (obj != None):');
+	cmd.push(this.gbl(bl+4) +	 			'obj.loadFromHDF5Handle(action=stat)');
+
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
+	
+
+	
 
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');
@@ -373,27 +365,48 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArray(self, handle, varName, deep=False):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArray(self, handle, varName, stat="init"):');
 
 	/* array of non-atomic type */
 
 					
 	cmd.push(this.gbl(bl+1) +	'try :');
-	cmd.push(this.gbl(bl+2) + 		'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+3) + 			'num = len(handle[varName].attrs["order"])');
-	cmd.push(this.gbl(bl+3) + 			'setattr(self,varName,[])');
-	cmd.push(this.gbl(bl+3) + 			'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
-	cmd.push(this.gbl(bl+3) + 			'for i in range(num):');
-	cmd.push(this.gbl(bl+4) + 				'refObject = handle[varName].attrs["order"][i]' );
-	cmd.push(this.gbl(bl+4) + 				'obj = creFunc(refObject)');
-	cmd.push(this.gbl(bl+4) + 				'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+4) + 				'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+4) + 				'subStor.appendPath(refObject)');
+	cmd.push(this.gbl(bl+2) + 		'if not(varName in self._loadedItems):');
+	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
 	
-	cmd.push(this.gbl(bl+4) +	 			'obj.loadFromHDF5Handle(subStor, deep)');
+	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync") :');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
 	
-	//cmd.push(this.gbl(bl+2) + 		'else:');
-	//cmd.push(this.gbl(bl+3) + 			'setattr(self,\'_\'+varName, [])');
+	cmd.push(this.gbl(bl+4) + 				'num = len(handle[varName].attrs["order"])');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName,[])');
+	cmd.push(this.gbl(bl+4) + 				'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
+	cmd.push(this.gbl(bl+4) + 				'for i in range(num):');
+	cmd.push(this.gbl(bl+5) + 					'refObject = handle[varName].attrs["order"][i]' );
+	cmd.push(this.gbl(bl+5) + 					'obj = creFunc(refObject)');
+	cmd.push(this.gbl(bl+5) + 					'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+5) + 					'subStor.appendPath(varName)');
+	cmd.push(this.gbl(bl+5) + 					'subStor.appendPath(refObject)');
+	
+	cmd.push(this.gbl(bl+5) +	 				'obj.loadFromHDF5Handle(storage=subStor, action=stat)');
+	
+	cmd.push(this.gbl(bl+3) + 			'else:');
+	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
+	
+	
+	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+4) + 				'objs = getattr(self,"_"+varName)');
+	cmd.push(this.gbl(bl+4) + 				'handles = handle[varName].attrs["order"]');
+
+	cmd.push(this.gbl(bl+4) + 				'for obj in objs:');
+	cmd.push(this.gbl(bl+5) +	 				'if (obj.name in handles):');
+	cmd.push(this.gbl(bl+6) +	 					'obj.loadFromHDF5Handle(action=stat)');
+
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
+	
+
 	
 	cmd.push(this.gbl(bl+1) +	'except AttributeError:');
 	cmd.push(this.gbl(bl+2) +		'print "Warning: %s was not loaded properly. "%varName');

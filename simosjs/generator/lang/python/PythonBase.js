@@ -24,6 +24,7 @@ packageParts = ['./storage/SaveLoad',
                     './properties/Query',
                     './properties/Init',
                     './properties/Assign',
+                    './properties/SetGet',
                     './properties/Representation'];
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {

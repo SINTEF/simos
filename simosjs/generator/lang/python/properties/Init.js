@@ -49,11 +49,11 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 		if (this.isArray(prop)) {
 			if (this.isAtomic(prop)){
 				var cmds = [];
-				cmds.push(this.getBlockSpace(bl) + 
+				cmds.push(this.gbl(bl) + 
 					'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.empty(shape=(' + 
 						this.getPythonArrayDimList(prop).join() + 
 						'), dtype=' + this.changeType(prop.type) + ')' );
-				cmds.push(this.getBlockSpace(bl) + 
+				cmds.push(this.gbl(bl) + 
 						'self.' + this.getPropertyPrivateName(prop) + 
 							'.fill(' + this.getAtomicInitValue(prop)+ ')' );
 				return cmds.join('\n');
@@ -61,11 +61,11 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 			else {
 				if (this.isContained(prop)){
 					// return this.getInitObjectList(prop);
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '= []');
 				}
 				else {
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '= []');
 				}
 				
@@ -74,12 +74,12 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 		else if (!(this.isAtomic(prop)) && 
 				  (this.isContained(prop)) && 
 				 !(this.isOptional(prop))){
-			return (this.getBlockSpace(bl) +
+			return (this.gbl(bl) +
 					'self.' + this.getPropertyPrivateName(prop) + '=' + 
 						this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 		}
 		else {
-			return (this.getBlockSpace(bl) +
+			return (this.gbl(bl) +
 					'self.' + this.getPropertyPrivateName(prop) + '= None' );
 		}
 	}
@@ -87,12 +87,12 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 		if (this.isAtomic(prop)){
 			if (this.isSingle(prop)) {
 				if (prop.type == "boolean") {
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '=' + 
 								this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + JSON.stringify(prop.value) + ')' + ')');
 				}
 				else {
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '=' + 
 								this.changeType(prop.type) + '(' + JSON.stringify(prop.value) + ')');
 				}
@@ -104,17 +104,17 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 				 * with correct type*/
 				
 				if (prop.value instanceof Array)
-					return (this.getBlockSpace(bl) + 
+					return (this.gbl(bl) + 
 						'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.array(' + this.stringify(prop.value) +
 							', dtype=' + this.changeType(prop.type) + ')' );
 				else{
 					/*initialize all elements with a single value */
 					var cmds = [];
-					cmds.push(this.getBlockSpace(bl) + 
+					cmds.push(this.gbl(bl) + 
 						'self.' + this.getPropertyPrivateName(prop) + '=' + 'np.empty(shape=(' + 
 							this.getPythonArrayDimList(prop).join() + 
 							'), dtype=' + this.changeType(prop.type) + ')' );
-					cmds.push(this.getBlockSpace(bl) + 
+					cmds.push(this.gbl(bl) + 
 							'self.' + this.getPropertyPrivateName(prop) + 
 								'.fill(' + this.changeType(prop.type) +'(' + this.stringify(prop.value) + '))' );
 					return cmds.join('\n');
@@ -127,12 +127,12 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 				if (!(this.isAtomic(prop)) && 
 					 (this.isContained(prop)) && 
 					!(this.isOptional(prop)) ){
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '=' + 
 								this.getClassPathFromType(prop.type) + '(' + JSON.stringify(prop.name) +')');
 				}
 				else {
-					return (this.getBlockSpace(bl) +
+					return (this.gbl(bl) +
 							'self.' + this.getPropertyPrivateName(prop) + '=' + 'None');
 				}
 			}
@@ -147,47 +147,179 @@ Init.prototype.getPropertyInit = function(bl, prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+Init.prototype.propInitValueFuncs = function(bl, prop) {
+	/*
+	 * return properties default value, if property is an object (complex type),
+	 * it returns the command to instantiate that object.
+	 */
+	
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	var properties = this.getProperties();
+	
+	for(var i = 0, len = properties.length; i < len; i++) {
+		var prop = properties[i];
+		
+	cmd.push(this.gbl(bl) + 'def _getInitValue' + this.firstToUpper(prop.name) + '(self):');
+	
+	if(prop.value == undefined){
+		if (this.isArray(prop)) {
+			if (this.isAtomic(prop)){
+				
+				cmd.push(this.gbl(bl+1) + 
+					'val = np.empty(shape=(' + 
+						this.getPythonArrayDimList(prop).join() + 
+						'), dtype=' + this.changeType(prop.type) + ')' );
+				cmd.push(this.gbl(bl+1) + 
+						'val.fill(' + this.getAtomicInitValue(prop)+ ')' );
+				
+			}
+			else {
+				if (this.isContained(prop)){
+					// return this.getInitObjectList(prop);
+					cmd.push(this.gbl(bl+1) +
+							'val = []');
+				}
+				else {
+					cmd.push(this.gbl(bl+1) +
+							'val = []');
+				}
+				
+			}
+		}
+		else if (!(this.isAtomic(prop)) && 
+				  (this.isContained(prop)) && 
+				 !(this.isOptional(prop))){
+			cmd.push(this.gbl(bl+1) +
+					'val =' + 
+						this.getClassPathFromType(prop.type) + '(' + this.stringify(prop.name) +')');
+		}
+		else {
+			cmd.push(this.gbl(bl+1) +
+					'val = None' );
+		}
+	}
+	else {
+		if (this.isAtomic(prop)){
+			if (this.isSingle(prop)) {
+				if (prop.type == "boolean") {
+					cmd.push(this.gbl(bl+1) +
+							'val =' + 
+								this.changeType(prop.type) + '(' + this.changeType("integer") + '(' + this.stringify(prop.value) + ')' + ')');
+				}
+				else {
+					cmd.push(this.gbl(bl+1) +
+							'val =' + 
+								this.changeType(prop.type) + '(' + this.stringify(prop.value) + ')');
+				}
+			}
+			else {
+				/* array with predefined values and fixed dimension,
+				 * check for dimensions
+				 * cast value types, must be presented as an array in JSON
+				 * with correct type*/
+				
+				if (prop.value instanceof Array)
+					cmd.push(this.gbl(bl+1) +
+						'val = np.array(' + this.stringify(prop.value) +
+							', dtype=' + this.changeType(prop.type) + ')' );
+				else{
+					/*initialize all elements with a single value */
+					cmd.push(this.gbl(bl+1) +
+						'val = np.empty(shape=(' + 
+							this.getPythonArrayDimList(prop).join() + 
+							'), dtype=' + this.changeType(prop.type) + ')' );
+					cmd.push(this.gbl(bl+1) + 
+							'val.fill(' + this.changeType(prop.type) +'(' + this.stringify(prop.value) + '))' );
+				}
+
+			}
+		}
+		else {
+			if (this.isSingle(prop)) {
+				if (!(this.isAtomic(prop)) && 
+					 (this.isContained(prop)) && 
+					!(this.isOptional(prop)) ){
+					cmd.push(this.gbl(bl+1) +
+							'val =' + 
+								this.getClassPathFromType(prop.type) + '(' + this.stringify(prop.name) +')');
+				}
+				else {
+					cmd.push(this.gbl(bl+1) +
+							'val = None');
+				}
+			}
+			else {
+				/* array */
+				throw "array of objects can not be predefined.";
+			}
+
+		}
+
+		
+	}
+	
+	if (!this.isAtomic(prop) 		&&  this.isContained(prop) && 
+			 this.hasAssignments(prop)  && !this.isOptional(prop) && this.isSingle(prop)){
+		var assign = this.getAssignments(prop);
+		cmd.push(this.assignPropertyValue(bl+1, assign, 'val'));
+	}
+	
+	cmd.push(this.gbl(bl+1) + 
+			'return val' );
+	
+	cmd.push(this.gbl(bl));
+			
+	}
+	
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
 Init.prototype.classInit = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
-	cmd.push(this.getBlockSpace(bl) + 	'def __init__(self,name=None):');
+	cmd.push(this.gbl(bl) + 	'def __init__(self,name=None):');
 
 	/* call super class init function if any */
 	if (this.isDerived()) {
 		/* new class method */
-		// cmd.push(this.getBlockSpace(bl+1) +
+		// cmd.push(this.gbl(bl+1) +
 		// 'super(' + this.getClassName() + ', self).__init__()');
-		// cmd.push(this.getBlockSpace(bl+1) + '');
+		// cmd.push(this.gbl(bl+1) + '');
 		
 		var superTypes = this.superTypes();
 		
-		cmd.push(this.getBlockSpace(bl) + 
+		cmd.push(this.gbl(bl) + 
 				'#calling super inits');
 		for (var i = 0; i<superTypes.length; i++){
 			var supType = superTypes[i];
-			cmd.push(this.getBlockSpace(bl+1) +
+			cmd.push(this.gbl(bl+1) +
 				supType.name +'.__init__(self, name)');
 				
 		}
-		cmd.push(this.getBlockSpace(bl+1) + '');
+		cmd.push(this.gbl(bl+1) + '');
 	}
 	
 	/* init main attributes */
 	/*
 	 * var attrs = this.getPropertyStorableAttrs(this.getModel());
-	 * cmd.push(this.getBlockSpace(bl+1) + 'self.attrs = dict()'); for(var i =
+	 * cmd.push(this.gbl(bl+1) + 'self.attrs = dict()'); for(var i =
 	 * 0; i < attrs.length; i++) { var attr = attrs[i];
-	 * cmd.push(this.getBlockSpace(bl+1) + 'self.attrs[' + JSON.stringify(attr) + '] = ' +
+	 * cmd.push(this.gbl(bl+1) + 'self.attrs[' + JSON.stringify(attr) + '] = ' +
 	 * JSON.stringify(this.getModel()[attr]) ); }
 	 */
 	
-	// cmd.push(this.getBlockSpace(bl+1) +
+	// cmd.push(this.gbl(bl+1) +
 	// 'self.' + this.modelDesAtt() + ' = ' +
 	// JSON.stringify(this.getModelWithOutPtoperties()) );
-	cmd.push(this.getBlockSpace(bl+1) + 
+	cmd.push(this.gbl(bl+1) + 
 		'self.' + this.modelDesAtt() + ' = ' + this.stringify(this.getModel(),  null, '\t') );
 	/*
 	 * this is a dictionary which keep track of synchronizing the data in object
@@ -198,16 +330,16 @@ Init.prototype.classInit = function(bl) {
 	 * written to storage
 	 */
 	
-	cmd.push(this.getBlockSpace(bl+1) + 	'self.ID = str(uuid.uuid4())');
-	cmd.push(this.getBlockSpace(bl+1) + 	'self._saved = {}');
-	cmd.push(this.getBlockSpace(bl+1) + 	'self.REF = None');
+	cmd.push(this.gbl(bl+1) + 	'self.ID = str(uuid.uuid4())');
+	cmd.push(this.gbl(bl+1) + 	'self._saved = {}');
+	cmd.push(this.gbl(bl+1) + 	'self.REF = None');
 	/* storage */
-	cmd.push(this.getBlockSpace(bl+1) +		'self._sync = {}');
-	cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE = None');
-	//cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE = pyds.getDataStorageBackEndServer("hdf5")');
-	//cmd.push(this.getBlockSpace(bl+1) +		'self._STORAGE.filePath = str(name) + ".h5"');
+	cmd.push(this.gbl(bl+1) +		'self._sync = {}');
+	cmd.push(this.gbl(bl+1) +		'self._STORAGE = None');
+	//cmd.push(this.gbl(bl+1) +		'self._STORAGE = pyds.getDataStorageBackEndServer("hdf5")');
+	//cmd.push(this.gbl(bl+1) +		'self._STORAGE.filePath = str(name) + ".h5"');
 
-	cmd.push(this.getBlockSpace(bl+1) + 	'self._loadedItems = []');
+	cmd.push(this.gbl(bl+1) + 	'self._loadedItems = []');
 	
 	/* initializing properties */
 	var properties = this.getProperties();
@@ -218,35 +350,35 @@ Init.prototype.classInit = function(bl) {
 		if (prop.name == "name") {
 			/* initializing name */		
 			cmd.push(this.getPropertyInit(bl+1, prop));			
-			cmd.push(this.getBlockSpace(bl+1) + 
+			cmd.push(this.gbl(bl+1) + 
 					'if not(name == None):');			
-			cmd.push(this.getBlockSpace(bl+2) + 
+			cmd.push(this.gbl(bl+2) + 
 						'self.' + this.getPropertyPrivateName(prop) + ' = name ');			
 		}
 		else {
 			/* initializing other properties */
-			cmd.push(this.getPropertyInit(bl+1, prop));
+			cmd.push(this.gbl(bl+1) + 
+					'self.' + this.getPropertyPrivateName(prop) + '= self._getInitValue' +
+					this.firstToUpper(prop.name) + '()');
 			
-			if (!this.isAtomic(prop) 		&&  this.isContained(prop) && 
-				 this.hasAssignments(prop)  && !this.isOptional(prop) ){
-				cmd.push(this.assignPropValues(bl+1, prop));
-			}
+
 		}
 		
 		/* storing, storable property attributes */
 		/*
 		 * var propAttrs = this.getPropertyStorableAttrs(prop);
-		 * cmd.push(this.getBlockSpace(bl+1) + 'self.' +
+		 * cmd.push(this.gbl(bl+1) + 'self.' +
 		 * this.getPropertyAttrsHolderName(prop) + ' = dict()'); for(var j = 0;
-		 * j < propAttrs.length; j++) { cmd.push(this.getBlockSpace(bl+1) +
+		 * j < propAttrs.length; j++) { cmd.push(this.gbl(bl+1) +
 		 * 'self.' + this.getPropertyAttrsHolderName(prop) + '[' +
 		 * JSON.stringify(propAttrs[j]) + '] = ' +
 		 * JSON.stringify(prop[propAttrs[j]])); }
 		 */
 		
-		cmd.push(this.getBlockSpace(bl+1) + 
-				'self.' + this.modelDesAtt(prop) + ' = ' + JSON.stringify(prop) );
-		cmd.push(this.getBlockSpace(bl+1));
+		//cmd.push(this.gbl(bl+1) + 
+		//		'self.' + this.modelDesAtt(prop) + ' = ' + this.stringify(prop) );
+		
+		cmd.push(this.gbl(bl+1));
 
 	}
 

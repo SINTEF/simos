@@ -3,6 +3,46 @@ function HDF5Save(){
 };
 exports.HDF5Save = HDF5Save;
 /*----------------------------------------------------------------------------*/
+HDF5Save.prototype.saveHDF5Func = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	cmd.push(this.gbl(bl) + 	'def saveHDF5(self,filePath=None, dsType = \'hdf5\'):');
+	cmd.push(this.gbl(bl+1) + 		'if (filePath == None):');
+	cmd.push(this.gbl(bl+2) + 			'if hasattr(self, \'name\'):');
+	cmd.push(this.gbl(bl+3) + 				'filePath = self.name + \'.h5\'');
+	cmd.push(this.gbl(bl+2) + 			'else:');
+	cmd.push(this.gbl(bl+3) + 				'raise Exception("object needs name for saving.")');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s ..."%(self.name, filePath)');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
+	cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
+	cmd.push(this.gbl(bl+3) + 				'self.loadFromHDF5Handle(action="detach")');
+	cmd.push(this.gbl(bl+1) +		'storage = pyds.getDataStorageBackEndServer(dsType)');
+	cmd.push(this.gbl(bl+1) +		'storage.filePath = filePath');
+	cmd.push(this.gbl(bl+1) +		'storage.openWrite()');
+	cmd.push(this.gbl(bl));    
+	cmd.push(this.gbl(bl+1) +		'grpHandle = storage.handle');
+	cmd.push(this.gbl(bl+1) +		'self._saveVertionsToHDF5Handle(grpHandle)');
+	cmd.push(this.gbl(bl+1) +		'dgrp = grpHandle.create_group(self.name)' );
+	cmd.push(this.gbl(bl));     
+	cmd.push(this.gbl(bl+1) + 		'storage.appendPath(self.name)');
+	cmd.push(this.gbl(bl));
+	cmd.push(this.gbl(bl+1) +		'self._saved = {}');
+	cmd.push(this.gbl(bl+1) +		'if storage.backEnd == \'hdf5\':');
+	cmd.push(this.gbl(bl+2) +			'self.saveToHDF5Handle(dgrp)');
+	cmd.push(this.gbl(bl+1) +		'else:');
+	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
+	cmd.push(this.gbl(bl));       
+	cmd.push(this.gbl(bl+1) + 		'if storage.isOpen():');
+	cmd.push(this.gbl(bl+2) +			'storage.close()');
+	cmd.push(this.gbl(bl+1) +		'return storage');
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 HDF5Save.prototype.saveVertionsToHDF5Handle = function(bl) {
 	if (bl == undefined) {
 		bl = 0;

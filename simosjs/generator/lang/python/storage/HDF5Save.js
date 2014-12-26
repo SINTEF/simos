@@ -19,7 +19,9 @@ HDF5Save.prototype.saveHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl));
 	//cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
 	//cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
-	cmd.push(this.gbl(bl+1) + 		'self.loadFromHDF5Handle(action="detach")');
+	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE):');
+	cmd.push(this.gbl(bl+2) + 			'if (self.STORAGE.backEnd == \'hdf5\'):');
+	cmd.push(this.gbl(bl+3) + 				'self.loadFromHDF5Handle(action="detach")');
 	cmd.push(this.gbl(bl+1) +		'storage = pyds.getDataStorageBackEndServer(dsType)');
 	cmd.push(this.gbl(bl+1) +		'storage.filePath = filePath');
 	cmd.push(this.gbl(bl+1) +		'storage.openWrite()');

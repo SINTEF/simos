@@ -376,8 +376,11 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
 	cmd.push(this.gbl(bl+4) + 				'if (obj != None):');
-	cmd.push(this.gbl(bl+5) + 		 			'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+5) + 		 			'subStor.appendPath(varName)');
+	cmd.push(this.gbl(bl+5) + 					'if (obj.STORAGE != None):');
+	cmd.push(this.gbl(bl+6) + 						'subStor = obj.STORAGE');
+	cmd.push(this.gbl(bl+5) + 					'else:');
+	cmd.push(this.gbl(bl+6) + 		 				'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+6) + 		 				'subStor.appendPath(varName)');
 	cmd.push(this.gbl(bl+5) +	 				'obj.loadFromHDF5Handle(storage=subStor,action=stat)');
 	cmd.push(this.gbl(bl+4) + 				'else:');
 	cmd.push(this.gbl(bl+5) + 					'creFunc = getattr(self,"renew"+varName[0].capitalize()+varName[1:])');
@@ -462,9 +465,12 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 
 	cmd.push(this.gbl(bl+5) + 					'for obj in objs:');
 	cmd.push(this.gbl(bl+6) +	 					'if (obj.name in handles):');
-	cmd.push(this.gbl(bl+7) + 							'subStor = self.STORAGE.clone()');
-	cmd.push(this.gbl(bl+7) + 							'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+7) + 							'subStor.appendPath(obj.name)');
+	cmd.push(this.gbl(bl+7) + 							'if (obj.STORAGE != None):');
+	cmd.push(this.gbl(bl+8) + 								'subStor = obj.STORAGE');
+	cmd.push(this.gbl(bl+7) + 							'else:');
+	cmd.push(this.gbl(bl+8) + 								'subStor = self.STORAGE.clone()');
+	cmd.push(this.gbl(bl+8) + 								'subStor.appendPath(varName)');
+	cmd.push(this.gbl(bl+8) + 								'subStor.appendPath(obj.name)');
 	cmd.push(this.gbl(bl+7) +	 						'obj.loadFromHDF5Handle(storage=subStor,action=stat)');
 
 	cmd.push(this.gbl(bl+2) + 		'else:');

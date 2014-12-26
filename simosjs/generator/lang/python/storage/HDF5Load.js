@@ -334,7 +334,8 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+3) + 			'else:');
 	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
-	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+3) + 			'if not(varName in  self._loadedItems):');
+	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
 	
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');

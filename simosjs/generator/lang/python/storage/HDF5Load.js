@@ -464,7 +464,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+6) +	 					'if (obj.name in handles):');
 	cmd.push(this.gbl(bl+7) + 							'subStor = self.STORAGE.clone()');
 	cmd.push(this.gbl(bl+7) + 							'subStor.appendPath(varName)');
-	cmd.push(this.gbl(bl+7) + 							'subStor.appendPath(refObject)');
+	cmd.push(this.gbl(bl+7) + 							'subStor.appendPath(obj.name)');
 	cmd.push(this.gbl(bl+7) +	 						'obj.loadFromHDF5Handle(storage=subStor,action=stat)');
 
 	cmd.push(this.gbl(bl+2) + 		'else:');

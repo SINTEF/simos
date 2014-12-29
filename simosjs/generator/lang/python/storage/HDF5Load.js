@@ -280,17 +280,17 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	 /* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
 	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync"):');
-	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
-	cmd.push(this.gbl(bl+3) + 			'else:');
-	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, initFunc())' );
 	cmd.push(this.gbl(bl+3) + 			'if not(varName in  self._loadedItems):');
 	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+3) + 			'else:');
+	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, initFunc())' );
 	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()) and not(varName in  self._loadedItems):');
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName, handle[varName].value)' );
 	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, handle[varName].value)' );
 
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');

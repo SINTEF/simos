@@ -277,21 +277,26 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	
 	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemAtomicSingle(self, handle, varName, stat="init"):');
 
-	 /* single atomic type value */
+	/* single atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'try :');
 	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync"):');
 	cmd.push(this.gbl(bl+3) + 			'if not(varName in  self._loadedItems):');
 	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, handle[varName].value)' );
+	cmd.push(this.gbl(bl+4) + 				'val = handle[varName].value' );
+	cmd.push(this.gbl(bl+4) + 				'if isinstance(val,np.ndarray):' );
+	cmd.push(this.gbl(bl+5) + 					'val = val[0]' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, val)' );
 	cmd.push(this.gbl(bl+3) + 			'else:');
 	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, initFunc())' );
 	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()) and not(varName in  self._loadedItems):');
 	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, handle[varName].value)' );
-
+	cmd.push(this.gbl(bl+4) + 				'val = handle[varName].value' );
+	cmd.push(this.gbl(bl+4) + 				'if isinstance(val,np.ndarray):' );
+	cmd.push(this.gbl(bl+5) + 					'val = val[0]' );
+	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, val)' );
 	cmd.push(this.gbl(bl+2) + 		'else:');
 	cmd.push(this.gbl(bl+3) + 			'raise Exception("action %s is not known."%stat)');
 
@@ -430,11 +435,15 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'if (stat == "init") or (stat == "sync") :');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
 	
-	cmd.push(this.gbl(bl+4) + 				'num = len(handle[varName].attrs["order"])');
+	cmd.push(this.gbl(bl+4) + 				'order = handle[varName].attrs["order"]');	
+	cmd.push(this.gbl(bl+4) + 				'if not(isinstance(order,np.ndarray)):');	
+	cmd.push(this.gbl(bl+5) + 					'order = np.array(order.split(","))');	
+
+	cmd.push(this.gbl(bl+4) + 				'num = len(order)');
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,"_"+varName,[])');
 	cmd.push(this.gbl(bl+4) + 				'creFunc = getattr(self,"append"+varName[0].capitalize()+varName[1:])');
 	cmd.push(this.gbl(bl+4) + 				'for i in range(num):');
-	cmd.push(this.gbl(bl+5) + 					'refObject = handle[varName].attrs["order"][i]' );
+	cmd.push(this.gbl(bl+5) + 					'refObject = order[i]' );
 	cmd.push(this.gbl(bl+5) + 					'obj = creFunc(refObject)');
 	cmd.push(this.gbl(bl+5) + 					'subStor = self.STORAGE.clone()');
 	cmd.push(this.gbl(bl+5) + 					'subStor.appendPath(varName)');
@@ -450,7 +459,10 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()):');
 	cmd.push(this.gbl(bl+4) + 				'objs = getattr(self,"_"+varName)');
-	cmd.push(this.gbl(bl+4) + 				'handles = handle[varName].attrs["order"]');
+	
+	cmd.push(this.gbl(bl+4) + 				'handles = handle[varName].attrs["order"]');	
+	cmd.push(this.gbl(bl+4) + 				'if not(isinstance(handles,np.ndarray)):');	
+	cmd.push(this.gbl(bl+5) + 					'handles = np.array(handles.split(","))');	
 
 	cmd.push(this.gbl(bl+4) + 				'if (len(objs) == 0):');
 	cmd.push(this.gbl(bl+5) + 					'#object are not created, first create then invoke the load command.');

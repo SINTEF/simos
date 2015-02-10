@@ -1,0 +1,27 @@
+
+{	
+	"name": "ModelTest",
+	"type": "ModelTest",
+	"description": "Model test data.",
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+            {"name": "TModelScale", 
+	            "type": "double",
+	            "dim": "*",
+	            "description": "periods in seconds."},
+        
+            {"name": "posAmpModelScale", 
+	            "type": "double",
+	            "dim": "*",
+	            "description": "position in meters."},
+
+            {"name": "velAmpModelScale", 
+	            "type": "double",
+	            "dim": "*",
+	            "description": "Velocity in meters per second."}
+	                            
+	]
+	
+}

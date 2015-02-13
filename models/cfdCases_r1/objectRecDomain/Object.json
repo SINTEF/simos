@@ -1,0 +1,24 @@
+
+{	
+	"name": "Object",
+	"type": "Object",
+	"description": "Description of a 3D Box geometry with porosity.",
+	"extends": ["marmo:geometry:Box"],
+	
+	"properties": [
+
+            {"name": "modelFile", 
+	            "type": "marmo:geometry:GeometryFileDescription", 
+	            "unit": "m",
+	            "optional": "true",
+	            "description": "ship geometry file."},
+        
+	       {"name": "porosity", 
+				"type": "marmo:containers:DimensionalScalar", 
+                "unit": "",
+                "value": 0.0,
+				"description": "porosity value."}
+                
+	]
+	
+}

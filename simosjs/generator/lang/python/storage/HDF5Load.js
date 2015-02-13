@@ -90,7 +90,11 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.openRead()' );
 	
 	cmd.push(this.gbl(bl+1) + 	'handle = self.STORAGE.data' );
-	cmd.push(this.gbl(bl+1) + 	'self.ID = str(handle.attrs["ID"])' );
+	cmd.push(this.gbl(bl+1) + 	'if "ID" in handle.attrs.keys():' );
+	cmd.push(this.gbl(bl+2) + 		'self.ID = str(handle.attrs["ID"])' );
+	cmd.push(this.gbl(bl+1) + 	'else:' );
+	cmd.push(this.gbl(bl+2) + 		'self.ID = str(uuid.uuid4())' );
+	
 	
 	var properties = this.getProperties();
 	var propNum = properties.length;

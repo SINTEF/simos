@@ -1,0 +1,30 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of an object forced motion scenario.",
+	
+    "extends": ["marmo:cfd:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "Domain", 
+			"description": "Computational domain."},
+
+	{"name": "oscillator", 
+			"type": "marmo:dynamics:SolidBodyOscillator", 
+			"description": "oscillators."},
+
+    {"name": "postProData", 
+            "type": "PostProData",
+            "description": "a collection of post processed results interesting for this problem."},
+			
+    {"name": "addedMassDamping", 
+            "type": "marmo:cfd:forcedMotion:CompleteAddedMassDamping", 
+            "optional": "true",
+            "description": "added mass and damping values."}
+
+	]
+	
+}

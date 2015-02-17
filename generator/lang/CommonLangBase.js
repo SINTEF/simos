@@ -1,4 +1,4 @@
-var njs = require('../../njs')();
+var njs = require('../njs')();
 
 function CommonLangBase(model){
 	this.constructor(model);

@@ -1,5 +1,8 @@
+var path = require('path');
+var fs = require('fs');
 
-var CommonLangBase = require('../CommonLangBase').CommonLangBase;
+var simosPath = require('./config.js').simosPath;
+var CommonLangBase = require(path.join(simosPath, 'generator/lang/CommonLangBase.js')).CommonLangBase;
 
 /*----------------------------------------------------------------------------*/
 function MatlabBase(model){

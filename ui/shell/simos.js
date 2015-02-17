@@ -1,12 +1,15 @@
 var repl = require("repl");
 
 /*start the server*/
+var simosPath = require('./config.js').simosPath;
+
+var config = require(simosPath + '/config.js');
+
 var replServer = repl.start({
 prompt: "simos > ",
 useColors: true,
 useGlobal: true,
-ignoreUndefined: false,
-});
+ignoreUndefined: false});
 
 /* load system packages */
 replServer.context.fs =  require('fs');
@@ -16,18 +19,17 @@ replServer.context.path =  require('path');
 replServer.context.loadGenerators = function() {
 	replServer.context.pygen = '';
 	replServer.context.matgen = '';
-	var Generator = replServer.context.require('../generator');
+	var Generator = replServer.context.require(replServer.context.path.join(simosPath, 'generator'));
 	
-	replServer.context.pygen =  new Generator();
-	replServer.context.pygen.setLang('python');
-	replServer.context.pygen.outPath = 
-		replServer.context.path.join(replServer.context.pygen.simosPath,'simospy','models','generated');
-	
-	replServer.context.matgen =  new Generator();
-	replServer.context.matgen.setLang('matlab');
-	
-	replServer.context.matgen.outPath = 
-		replServer.context.path.join(replServer.context.matgen.simosPath,'simosmat','models','generated');
+	for (lang in config.langs) {
+		var genName = config.langs[lang].id+'gen';
+		replServer.context[genName] =  new Generator();
+		replServer.context[genName].setSimosPath(simosPath);
+		replServer.context[genName].setLang(lang);
+		replServer.context[genName].outPath = 
+			replServer.context.path.join(simosPath,config.langs[lang].interp, 'models');
+		
+	}
 
 };
 

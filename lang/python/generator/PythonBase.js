@@ -1,6 +1,8 @@
-//var njs = require('../../njs')();
-var CommonLangBase = require('../CommonLangBase.js').CommonLangBase;
+var path = require('path');
 var fs = require('fs');
+
+var simosPath = require('./config.js').simosPath;
+var CommonLangBase = require(path.join(simosPath, 'generator','lang','CommonLangBase.js')).CommonLangBase;
 
 /*----------------------------------------------------------------------------*/
 function PythonBase(model){

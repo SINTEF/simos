@@ -1,9 +1,11 @@
-//var njs = require('../njs')();
-//var CommonLangBase = require('./commonLangBase.js').CommonLangBase;
 
 var fs = require('fs');
 var path = require('path');
-var njs = require('../njs')();
+var njs = require('./njs')();
+
+var simosPath = require('./config.js').simosPath;
+
+var config = require(path.join(simosPath,'config.js'));
 
 fs.mkdirPathSync = function(dirPath, mode) {
 	  //Call the standard fs.mkdir
@@ -27,9 +29,11 @@ function Generator(lang){
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.constructor = function(lang) {
-	this.simosPath = path.join('..','..');
-	this.modelsPath = path.join(this.simosPath, 'models');
-		
+	
+	this.setSimosPath(simosPath)
+	
+	this.langs = config.langs;
+			
 	this.outPath = undefined;
 	
 	this.lang = undefined;
@@ -46,6 +50,12 @@ Generator.prototype.constructor = function(lang) {
 	
 	this.flatModel = true;
 };
+/*----------------------------------------------------------------------------*/
+Generator.prototype.setSimosPath = function(p) {
+	this.simosPath = path.resolve(p);
+	
+	this.modelsPath = path.join(this.simosPath, 'models');
+}
 /*----------------------------------------------------------------------------*/
 Generator.prototype.toString = function(){
 	return "Generator";
@@ -68,15 +78,17 @@ Generator.prototype.getOutPath = function() {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.setLang = function(lang) {
-	if (lang.toLowerCase() == 'python') {
-		this.lang = require('./lang/python').generator;
-	}
-	else if (lang.toLowerCase() == 'matlab'){
-		this.lang = require('./lang/matlab').generator;
-	}
-	else {
-		throw(lang + ' language is not defined.');
-	}
+	
+    var langName = lang.toLowerCase();
+    
+    if (this.langs[langName] != undefined){
+		this.lang = require(path.join(this.simosPath, 'lang', langName, 'generator')).generator;
+		//console.log("generator created");
+    }
+    else{
+        throw(lang + ' language is not defined.');
+    }
+
 };
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/

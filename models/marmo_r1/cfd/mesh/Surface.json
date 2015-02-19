@@ -1,7 +1,6 @@
 
 {	
 	"name": "Surface",
-	"version": "1",
 	"type": "Surface",
 	"description": "Description of a surface (face) in CFD mesh.",
 	
@@ -38,7 +37,12 @@
 			
 	{"name": "trimming", 
 			"type": "integer", "value": "0",
-			"description": "1: trim the mesh, 0: don't trim the mesh."}
+			"description": "1: trim the mesh, 0: don't trim the mesh."},
+			
+	{"name": "viscousLayer", 
+				"type": "ViscousLayer",
+				"optional": "true",
+				"description": "Viscous layer parameters."}
 
 	]
 	

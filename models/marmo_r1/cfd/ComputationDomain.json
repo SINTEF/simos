@@ -14,7 +14,12 @@
 			"__assign": {"dimension": "3"},
 			"__dependencies": { "unit": "unit" },
 			"description": "mesh properties."},
-			
+
+	   {"name": "dampingZone", 
+			"type": "DampingZone",
+			"optional": "true",
+			"description": "damping zone."},
+			       
 	   {"name": "water", 
 	       "type": "WaterProperties",
 	       "description": "properties of water in the domain."},

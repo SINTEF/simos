@@ -16,18 +16,18 @@
 	         	 
 		{"name": "startR", 
 		 "type": "marmo:containers:DimensionalScalar", 
-		 "unit": "m"
+		 "unit": "m",
 		 "description": "start radius of damping zone."
 		 },
 				 			 
 		{"name": "l", 
 		 "type": "marmo:containers:DimensionalScalar", 
-		 "unit": "m"
+		 "unit": "m",
 		 "description": "length of damping zone."},
 		 
 		{"name": "nu", 
 			 "type": "marmo:containers:DimensionalScalar", 
-			 "unit": ""
+			 "unit": "",
 			 "description": "cooling factor."
 			 }
 	

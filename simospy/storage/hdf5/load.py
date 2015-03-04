@@ -26,6 +26,7 @@ def loadNewSimos(f):
     versions = getVersions(f)
     objs = [];
     
+    fileName = f.filename
     for entityName,entity in f.iteritems():
         print("\t loading a %s"%entity.attrs["type"])
         
@@ -35,7 +36,7 @@ def loadNewSimos(f):
     
         obj = Obj(entityName)
     
-        obj.loadFromHDF5Handle(entity)
+        obj.load(filePath = fileName)
     
         objs.append(obj)
         
@@ -64,7 +65,10 @@ def makeTypePath(fullTypeName, versions):
                 type = type + package.split('_')[0] + '.'
         else:
             if versions.has_key(package):
-                type = type + package + '_' + versions[package] + '.'
+                if versions[package] == '':
+                    type = type + package + '.'
+                else:
+                    type = type + package + '_' + versions[package] + '.'
             else:
                 type = type + package + '.'
     

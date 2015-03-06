@@ -274,7 +274,11 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
 	
 	cmd.push(this.gbl(bl) + 'function loadFromHDF5HandleItemNonAtomicArray(' + this.objName() + ', handle, varName)');
-	cmd.push(this.gbl(bl+1) + 	'order = h5readatt(' + filePath + ',[handle \'/\' varName],\'order\');' );
+	cmd.push(this.gbl(bl+1) + 	'order = {};');
+	cmd.push(this.gbl(bl+1) + 	'try');
+	cmd.push(this.gbl(bl+2) + 		'order = h5readatt(OBJ.INTFilePath,[handle varName],\'order\');');
+	cmd.push(this.gbl(bl+1) + 	'catch');
+	cmd.push(this.gbl(bl+1) + 	'end');
 	cmd.push(this.gbl(bl+1) + 	'if (iscell(order) ~= 1)' );
 	cmd.push(this.gbl(bl+2) + 		'order = strsplit(order, \',\');' );
 	cmd.push(this.gbl(bl+1) + 	'end');
@@ -282,7 +286,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArray = function(bl) {
 
 	cmd.push(this.gbl(bl+1) + 	'for i = 1:length(order)' );
 	cmd.push(this.gbl(bl+2) + 		'funcName = [\'append\' upper(varName(1))  varName(2:end)];');
-	cmd.push(this.gbl(bl+2) + 		'item = ' + this.objName() + '.(funcName)(order{i});');
+	cmd.push(this.gbl(bl+2) + 		'item = ' + this.objName() + '.(funcName)(deblank(order{i}));');
 
 	cmd.push(this.gbl(bl+2) + 		'item.' + this.makeInternal("FilePath") + ' = ' + 
 									this.objName() + '.' + this.makeInternal("FilePath") + ';');

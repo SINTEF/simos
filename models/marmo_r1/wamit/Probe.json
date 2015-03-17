@@ -15,13 +15,13 @@
          },		 		
          	         	 
 		{"name": "scalars", 
-		 "type": "ComplexScalarResponse", 
+		 "type": "marmo:dynamics:freqDomain:ComplexScalarResponse", 
 		 "dim":"*",
 		 "description": "scalar output probes."
 		 },
 				 			 
 		{"name": "vectors", 
-		 "type": "ComplexVectorResponse", 
+		 "type": "marmo:dynamics:freqDomain:ComplexVectorResponse", 
 		 "dim":"*",
 		 "description": "3D vector output probes."}
 	

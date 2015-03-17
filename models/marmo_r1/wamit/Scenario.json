@@ -36,7 +36,7 @@
             "description": "configuration."},
     
     {"name": "addedMassDamping", 
-            "type": "marmo:wamit:CompleteAddedMassDamping",
+            "type": "marmo:dynamics:freqDomain:CompleteAddedMassDamping",
             "description": "all values for added mass and damping mode of motion."},
 			
     {"name": "runConfig", 

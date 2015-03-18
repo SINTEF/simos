@@ -4,27 +4,10 @@
 	"type": "Probe",
 	"description": "data model for a probe in fluid.",
 
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:hydro:freq:Probe"],
 	
 	"properties": [
 
-	    {"name": "location", 
-         "type": "Point", 
-         "unit": "m",
-         "description": "Coordinate for probe location."
-         },		 		
-         	         	 
-		{"name": "scalars", 
-		 "type": "marmo:dynamics:freqDomain:ComplexScalarResponse", 
-		 "dim":"*",
-		 "description": "scalar output probes."
-		 },
-				 			 
-		{"name": "vectors", 
-		 "type": "marmo:dynamics:freqDomain:ComplexVectorResponse", 
-		 "dim":"*",
-		 "description": "3D vector output probes."}
-	
 	]
 	
 }

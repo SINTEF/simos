@@ -1,0 +1,43 @@
+
+{	
+	"name": "WaveHeadingDependentResults",
+	"type": "WaveHeadingDependentResults",
+	"description": "Description of wave heading depenedent results.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+	
+	   {"name": "waveDirection", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "deg",
+         "description": "incoming wave direction."
+         },
+      
+		{"name": "probes", 
+			"type": "Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+
+		{"name": "excitation", 
+	            "type": "marmo:hydro:freq:diffraction:Excitation",
+	            "optinal": "true",
+	            "description": "first order waves excitation forces."},
+
+		{"name": "postProData", 
+			"type": "marmo:containers:PostProData",
+			"description": "a collection of post processed results interesting for this problem."},
+			
+       {"name": "rao", 
+            "type": "string",
+            "optinal": "true",
+            "description": "linear response amplitude operators."},
+
+       {"name": "driftCoeff", 
+            "type": "string",
+            "optinal": "true",
+            "description": "mean drift coefficients."}	
+
+	]
+	
+}

@@ -1,0 +1,19 @@
+
+{	
+	"name": "Point",
+	"type": "Point",
+	"description": "data model for a field point.",
+
+	"extends": ["marmo:containers:Dimensional3DVector"],
+	
+	"properties": [
+
+	    {"name": "index", 
+         "type": "integer", 
+         "unit": "1",
+         "description": "point index."
+         }
+	
+	]
+	
+}

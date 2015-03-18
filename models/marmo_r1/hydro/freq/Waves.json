@@ -16,7 +16,7 @@
 	{"name": "directions", 
 		"type": "marmo:containers:EquallySpacedSignal",
 		"unit": "deg",  
-		"description": "wave periods."},
+		"description": "wave headings."},
 		
 	{"name": "amplitude", 
 		"type": "marmo:containers:DimensionalScalar",

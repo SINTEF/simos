@@ -1,0 +1,32 @@
+
+{	
+	"name": "Excitation",
+	"type": "Excitation",
+	"description": "Description the linear excitation forces.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+    
+	   {"name": "total", 
+			"type": "ExcitationComponent", 
+			"description": "total excitaion force."},
+            
+       {"name": "fk", 
+            "type": "ExcitationComponent",
+            "optional": "true",
+            "description": "Froude-Kriloff excitaion component."},
+            
+        {"name": "scattering", 
+            "type": "ExcitationComponent",
+            "optional": "true",
+            "description": "Scattering excitaion component."}, 
+            
+        {"name": "haskind", 
+            "type": "ExcitationComponent",
+            "optional": "true",
+            "description": "Scattering excitaion component by Haskind relation."}
+            
+	]
+	
+}

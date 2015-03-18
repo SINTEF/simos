@@ -13,7 +13,7 @@
             "description": "ship model."},
             
 	{"name": "waves", 
-			"type": "Waves",
+			"type": "marmo:hydro:freq:Waves",
 			"description": "wave spec."},
 
 			

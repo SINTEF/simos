@@ -13,10 +13,6 @@
             "value":"temp", 
             "description": "name for the wamit model."},
             
-	{"name": "periods", 
-			"type": "marmo:containers:EquallySpacedSignal",
-			"unit": "s",  
-			"description": "wave periods."},
 
     {"name": "entityList", 
             "type": "string",
@@ -34,10 +30,6 @@
     {"name": "config", 
             "type": "ConfigParameters", 
             "description": "configuration."},
-    
-    {"name": "addedMassDamping", 
-            "type": "marmo:dynamics:freqDomain:CompleteAddedMassDamping",
-            "description": "all values for added mass and damping mode of motion."},
 			
     {"name": "runConfig", 
             "type": "RunConfig", 

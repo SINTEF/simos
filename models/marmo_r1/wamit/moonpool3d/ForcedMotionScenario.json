@@ -11,11 +11,20 @@
 	{"name": "domain", 
 			"type": "marmo:cfd:moonpool3d:Domain", 
 			"description": "Computational domain."},  
-               
+            
+	{"name": "periods", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "s",  
+			"description": "wave periods."},
+				
 	{"name": "probes", 
-			"type": "marmo:wamit:Probe",
+			"type": "marmo:hydro:freq:Probe",
 			"dim": "*",
-			"description": "a collection of probes."}
+			"description": "a collection of probes."},
+			
+    {"name": "addedMassDamping", 
+        "type": "marmo:hydro:freq:CompleteAddedMassDamping",
+        "description": "all values for added mass and damping mode of motion."}
 	]
 	
 }

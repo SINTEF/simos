@@ -1,0 +1,17 @@
+
+{	
+	"name": "DomainStudy",
+	"type": "DomainStudy",
+	"description": "A study on meshes and domains.",
+	
+	"extends": ["marmo:cfd:Study"],
+	   
+	"properties": [
+
+	{"name": "scenarios", 
+			"type": "Domain", 
+			"dim": "*",
+			"description": "a list of domains"}
+	]
+	
+}

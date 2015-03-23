@@ -4,44 +4,9 @@
 	"type": "FloatingVessel",
 	"description": "Description of a general floating vessel.",
 
-	"extends": ["marmo:dynamics:FloatingSolidBody"],
+	"extends": ["marmo:dynamics:FloatingSolidBody","FloatingVesselGeometry"],
 	
 	   "properties": [
-
-	   {"name": "modelFile", 
-			"type": "marmo:geometry:GeometryFileDescription", 
-			"unit": "m",
-			"optional": "true",
-			"description": "geometry file."},
-			
-	   {"name": "l", 
-			"type": "marmo:containers:DimensionalScalar", 
-			"unit": "m",
-			"value": "0.0",
-			"__dependencies": { "unit": "unit" },
-			"description": "length"},
-						
-    	{"name": "h", 
-			"type": "marmo:containers:DimensionalScalar", 
-			"unit": "m",
-			"value": "0.0",
-			"__dependencies": { "unit": "unit" },
-			"description": "height"},
-
-	   {"name": "d", 
-			"type": "marmo:containers:DimensionalScalar", 
-			"unit": "m",
-			"value": "0.0",
-			"__dependencies": { "unit": "unit" },
-			"description": "draft"},
-			
-    	{"name": "b", 
-			"type": "marmo:containers:DimensionalScalar", 
-			"unit": "m",
-			"value": "0.0",
-			"__dependencies": { "unit": "unit" },
-			"description": "beam"}
-			
 
 	]
 	

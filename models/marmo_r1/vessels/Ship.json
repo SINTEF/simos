@@ -19,7 +19,13 @@
             "type": "marmo:vessels:parts:BilgeKeel", 
             "optional": "true",
             "__dependencies": { "unit": "unit" },
-            "description": "Star-board side bilge keel"}
+            "description": "Star-board side bilge keel"},
+            
+            
+        {"name": "sections", 
+            "type": "ShipSection", 
+            "dim": "*",
+            "description": "ship sections."	}
 
 	]
 	

@@ -8,7 +8,7 @@
     
     "properties": [
 	{"name": "sn", 
-            "type": "marmo:containers:SimpleString",  
+            "type": "string",  
             "description": "Serialnumber"},
 	
      {"name": "xcoord", 

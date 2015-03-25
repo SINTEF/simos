@@ -33,7 +33,7 @@
 			
 	{"name": "LL", 
             "type": "FloaterLoading",  
-            "description": "Loaded condition"},
+            "description": "Loaded condition"}
 
     ]
     

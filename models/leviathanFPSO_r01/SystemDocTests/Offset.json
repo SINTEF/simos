@@ -1,0 +1,43 @@
+
+{   
+    "name": "Offset",
+    "type": "Offset",
+    "description": "One offset test(1 direction, different offsets)",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "FPSO", 
+            "type": "leviathanFPSO:FloaterFPSO",  
+            "description": "The FPSO"},
+			
+	{"name": "loading", 
+            "type": "leviathanFPSO:FloaterLoading",  
+            "description": "The loading of the FPSO"},
+			
+	{"name": "mooring", 
+            "type": "leviathanFPSO:MooringFull",  
+            "description": "The mooring system of the FPSO"},
+			
+	{"name": "heading",
+			"type": "marmo:containers:DimensionalScalar",
+			"unit":"deg",
+			"description": "The ship heading"},
+			
+	{"name": "pullDirection",
+			"type": "marmo:containers:DimensionalScalar",
+			"unit":"deg",
+			"description": "The direction of the pull force in local coord system"},
+			
+	{"name": "pos", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of the oqus position signal"},
+			
+	{"name": "forceRing", 
+            "type": "leviathanFPSO:InstrForceSensor",  
+            "description": "The force sensor to mesure the pull force"}
+    ]
+    
+}
+
+

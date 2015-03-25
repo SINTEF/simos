@@ -2,46 +2,43 @@
 {   
     "name": "EnvWind",
     "type": "EnvWind",
-    "description": "A wind",
+    "description": "One wind",
     
     "extends": ["marmo:basic:NamedEntity"],
     
     "properties": [
-     {"name": "number", 
-            "type": "marmo:containers:integer",
-			"description": "Number of environment"},
 			
 	{"name": "spectrum", 
-            "type": "marmo:containers:SimpleString",
+            "type": "string",
 			"description": "Type of spectrum"},
 			
 	{"name": "Hs", 
             "type": "marmo:containers:DimensionalScalar",  
 			"unit": "m",
-            "description": "wave height."},
+            "description": "Siginfiant wind velocity"},
 			
      {"name": "Tp", 
             "type": "marmo:containers:DimensionalScalar",  
 			"unit": "s",
-            "description": "wave period."},
-			
-     {"name": "seed", 
-            "type": "integer",  
-            "value": 1,
-            "description": "wave seed."},
+            "description": "Peak period."},
 			
 	{"name": "heading", 
             "type": "marmo:containers:DimensionalScalar",  
             "unit": "deg",
-            "description": "Wave heading in global coord"}
+            "description": "Wind heading in global coord"},
 			
 	{"name": "nFans", 
-            "type": "marmo:containers:integer",  
+            "type": "integer",  
             "description": "number of fans"}, 
 			
 	{"name": "signal", 
             "type": "marmo:containers:NonEquallySpacedSignal", 
-            "description": "an array of a signal to the fans."}
+            "description": "an array of a signal to the fans."},
+			
+	{"name": "gauges", 
+            "type": "InstrWindSensor",  
+			"dim":"*",
+            "description": "Wind sensor installed during wind calibration"}
     ]
     
 }

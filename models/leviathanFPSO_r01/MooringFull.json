@@ -8,17 +8,17 @@
     
     "properties": [
      {"name": "n", 
-            "type": "marmo:containers:Scalar",  
+            "type": "integer",  
             "description": "number of lines."},
 			
      {"name": "lines", 
             "type": "MooringLine",  
-			"dim": "24"
+			"dim": "*",
             "description": "Truncated mooring system as specified"},
 			
 	{"name": "Riser", 
             "type": "MooringLine",  
-			"dim": "18"
+			"dim": "*",
             "description": "Riser system as specified"}
 
     ]

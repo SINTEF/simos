@@ -380,7 +380,7 @@ Generator.prototype.generate = function(model) {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generateModel = function(modelID) {
-	
+	console.log("\t generating Model " + modelID + ' !');
 	var model = this.initModel(modelID);
 		
 	var packageID = this.packageIDFromModelID(modelID);

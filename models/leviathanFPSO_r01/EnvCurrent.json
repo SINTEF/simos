@@ -18,7 +18,12 @@
 			
 	{"name": "pumps", 
             "type": "marmo:containers:SimpleString",  
-            "description": "Number and percentage of pumps"}
+            "description": "Number and percentage of pumps"},
+			
+	 {"name": "gauges", 
+            "type": "InstrCurrentSensor",  
+			"dim":"*",
+            "description": "Current sensors installed during current calibration"}
     ]
     
 }

@@ -1,0 +1,39 @@
+
+{   
+    "name": "EnvCalibWaveCurrent",
+    "type": "EnvCalibWaveCurrent",
+    "description": "The Calibration of one type of wave with current (specified Hs, Tp, Uc) with possibly seed variations",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	
+	{"name": "spectrum", 
+            "type": "string",
+			"description": "Type of spectrum"},
+			
+	{"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "wave height."},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+
+	{"name": "Uc", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": m/s",
+            "description": "current velocity"},
+			
+     {"name": "waveCurrentRuns", 
+            "type": "leviathanFPSO:EnvWave", 
+			"dim":"*",
+            "description": "all the runs with the wavemaker for calibration and seed variation of one wave-current type"}
+
+    ]
+    
+}
+
+

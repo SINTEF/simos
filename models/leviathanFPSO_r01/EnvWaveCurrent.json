@@ -14,7 +14,7 @@
 			
 	{"name": "Current", 
             "type": "EnvCurrent",
-			"description": "The current"},
+			"description": "The current"}
     ]
     
 }

@@ -1,0 +1,34 @@
+
+{   
+    "name": "SystemDocTests",
+    "type": "SystemDocTests",
+    "description": "Complete System Documentation Tests",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	 {"name": "decayTests", 
+            "type": "Decay", 
+			"dim":"*",
+            "description": "All the decay tests"},
+			
+	{"name": "offsetTests", 
+            "type": "Offset", 
+			"dim":"*",
+            "description": "All the offset tests"},
+	
+     {"name": "windCoeff", 
+            "type": "WindOnly", 
+			"dim":"*",
+            "description": "Wind only tests"},
+			
+	 {"name": "currentCoeff", 
+            "type": "CurrentOnly", 
+			"dim":"*",
+            "description": "Current only tests"}
+
+    ]
+    
+}
+
+

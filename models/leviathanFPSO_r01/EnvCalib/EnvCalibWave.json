@@ -1,0 +1,34 @@
+
+{   
+    "name": "EnvCalibWave",
+    "type": "EnvCalibWave",
+    "description": "The Calibration of one type of wave (specified Hs and Tp) with possibly seed variations",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	
+	{"name": "spectrum", 
+            "type": "string",
+			"description": "Type of spectrum"},
+			
+	{"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "wave height."},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+
+     {"name": "waveRuns", 
+            "type": "leviathanFPSO:EnvWave", 
+			"dim":"*",
+            "description": "all the runs with the wavemaker for calibration and seed variation of one wavetype"}
+
+    ]
+    
+}
+
+

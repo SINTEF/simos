@@ -28,7 +28,7 @@
 	{"name": "w", 
             "type": "marmo:containers:DimensionalScalar",  
 			"unit": "kN/m",
-            "description": "Weight per unit length"},
+            "description": "Weight per unit length"}
 
     ]
     

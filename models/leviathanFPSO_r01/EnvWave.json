@@ -2,13 +2,13 @@
 {   
     "name": "EnvWave",
     "type": "EnvWave",
-    "description": "A wave",
+    "description": "One wave (signal to wavemaker and maybe calibrated wave elevation",
     
     "extends": ["marmo:basic:NamedEntity"],
     
     "properties": [	
 	{"name": "spectrum", 
-            "type": "marmo:containers:SimpleString",
+            "type": "string",
 			"description": "Type of spectrum"},
 			
 	{"name": "Hs", 
@@ -23,13 +23,16 @@
 			
      {"name": "seed", 
             "type": "integer",  
-            "value": 1,
             "description": "wave seed."},
+			
+	{"name": "pelle",
+			"type": "integer",
+			"description": "Flag for pelle 1 yes or 0 no."},
 			
 	{"name": "heading", 
             "type": "marmo:containers:DimensionalScalar",  
             "unit": "deg",
-            "description": "Wave heading in global coord"}
+            "description": "Wave heading in global coord"},
 			
 	{"name": "Wavemaker", 
             "type": "string",  
@@ -42,7 +45,7 @@
      {"name": "gauges", 
             "type": "InstrWaveGauge",  
 			"dim":"*",
-            "description": "wave gauge ahead of the bulls eye."},
+            "description": "Wave gauges installed during wave calibration"}
 
     ]
     

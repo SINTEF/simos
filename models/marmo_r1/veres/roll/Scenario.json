@@ -1,0 +1,32 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a VERES scenario.",
+	
+    "extends": ["marmo:project:Scenario"],
+	
+	"properties": [
+			
+    {"name": "ship", 
+            "type": "marmo:vessels:Ship",
+            "description": "ship model."},
+            
+	{"name": "waves", 
+			"type": "marmo:hydro:freq:Waves",
+			"description": "wave spec."},
+
+			
+    {"name": "responses", 
+            "type": "DirectionDependentResults",
+            "dim":"*",
+            "description": "results."},
+			
+    {"name": "runConfig", 
+            "type": "marmo:veres:RunConfig", 
+            "description": "wamit run configuration."}
+
+
+	]
+	
+}

@@ -1,0 +1,36 @@
+
+{	
+	"name": "DampingZone",
+	"type": "DampingZone",
+	"description": "damping zone.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "origin", 
+         "type": "marmo:containers:Dimensional3DVector", 
+         "unit": "m",
+         "description": "Coordinate for the zone origin."
+         },		 		
+	         	 
+		{"name": "startR", 
+		 "type": "marmo:containers:DimensionalScalar", 
+		 "unit": "m",
+		 "description": "start radius of damping zone."
+		 },
+				 			 
+		{"name": "l", 
+		 "type": "marmo:containers:DimensionalScalar", 
+		 "unit": "m",
+		 "description": "length of damping zone."},
+		 
+		{"name": "nu", 
+			 "type": "marmo:containers:DimensionalScalar", 
+			 "unit": "",
+			 "description": "cooling factor."
+			 }
+	
+	]
+	
+}

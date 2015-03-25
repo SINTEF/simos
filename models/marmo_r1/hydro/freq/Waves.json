@@ -1,0 +1,30 @@
+
+{	
+	"name": "Waves",
+	"type": "Waves",
+	"description": "Description of a VERES scenario.",
+	
+    "extends": ["marmo:project:Scenario"],
+	
+	"properties": [
+            
+	{"name": "periods", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "s",  
+			"description": "wave periods."},
+			
+	{"name": "directions", 
+		"type": "marmo:containers:EquallySpacedSignal",
+		"unit": "deg",  
+		"description": "wave headings."},
+		
+	{"name": "amplitude", 
+		"type": "marmo:containers:DimensionalScalar",
+		"unit": "m",  
+		"description": "wave periods."}	
+
+
+
+	]
+	
+}

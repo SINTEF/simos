@@ -1,0 +1,19 @@
+
+{	
+	"name": "ProbesBundle",
+	"type": "ProbesBundle",
+	"description": "data model for a bundle of probes.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "probes", 
+         "type": "Probe", 
+         "dim": "*",
+         "description": "list of probes."
+         }		
+	         	 	
+	]
+	
+}

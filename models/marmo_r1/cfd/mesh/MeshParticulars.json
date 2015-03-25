@@ -36,7 +36,12 @@
 			"dim": "*" ,
 			"__dependencies": { "unit": "unit" },
 			"description": "mesh faces."},
-
+			
+	{"name": "mergePatchesCmds", 
+			"type": "MergePatch", 
+			"dim": "*" ,
+			"description": "path merging commands."},
+			
 	{"name": "faceting", 
 			"type": "Faceting", 
 			"description": "faceting settings"},

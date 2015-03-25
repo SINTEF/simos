@@ -19,7 +19,7 @@
 			"unit": "m",
 			"value": "0.0",
 			"__dependencies": { "unit": "unit" },
-			"description": "draft"},
+			"description": "length"},
 						
     	{"name": "h", 
 			"type": "marmo:containers:DimensionalScalar", 

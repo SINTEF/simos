@@ -1,0 +1,19 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of the computational domain for a 3D porous object",
+	
+	"extends": ["marmo:cfd:RectangularComputationDomain"],
+	
+	"properties": [
+			
+	{"name": "object", 
+			"type": "Object", 
+			"__assign": { "unit": "m" },
+			"__dependencies": { "unit": "unit" },
+			"description": "object inside moonpool."}
+
+	]
+	
+}

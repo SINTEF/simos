@@ -1,0 +1,39 @@
+
+{	
+	"name": "DirectionDependentResults",
+	"type": "DirectionDependentResults",
+	"description": "Description of WAMIT results.",
+
+	"extends": ["marmo:vessels:FloatingVessel"],
+	
+	"properties": [
+
+	   {"name": "U", 
+	         "type": "marmo:containers:DimensionalScalar", 
+	         "unit": "m/s",
+	         "description": "ship velocity."
+	         },
+	         
+	   {"name": "waveDirection", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "deg",
+         "description": "incoming wave direction."
+         },
+      
+		{"name": "rollDamping", 
+			"type": "RollDamping",
+			"optional": "true",
+			"description": "roll dampings."},
+			
+       {"name": "rao", 
+            "type": "marmo:dynamics:freqDomain:RAO",
+            "optional": "true",
+            "description": "RAO for the case."},
+
+       {"name": "addedMassDamping", 
+            "type": "marmo:dynamics:freqDomain:CompleteAddedMassDamping",
+            "optional": "true",
+            "description": "Speed dependent added mass and damping."}
+	]
+	
+}

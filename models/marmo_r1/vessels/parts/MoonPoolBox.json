@@ -8,6 +8,10 @@
 	
 	"properties": [
     
+  	{"name": "enableVOF", 
+	    			"type": "integer", 
+	    			"value": "0",
+	    			"description": "0: no vof inside moonpool, 1:VOF in side moonpool."},
 
 	{"name": "opening", 
 			"type": "marmo:geometry:Box", 

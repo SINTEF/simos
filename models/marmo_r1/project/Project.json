@@ -8,7 +8,12 @@
     "properties": [
         {"name": "date", 
             "type": "string", 
-            "description": "project date."}
+            "description": "project date."},
+            
+        {"name": "number", 
+            "type": "integer", 
+            "value": "1",
+            "description": "project number."}
 
     ]
     

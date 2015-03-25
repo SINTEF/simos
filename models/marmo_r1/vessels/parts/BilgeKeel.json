@@ -42,7 +42,20 @@
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },
-			 "description": "Coordinate for center of gravity. "}
+			 "description": "Coordinate for the root of the bilge keel. "},
+			 
+    {"name": "cen", 
+            "type": "marmo:containers:Dimensional3DVector", 
+            "unit": "m", 
+            "__dependencies": { "unit": "unit" },
+            "description": "coordinate for the bilge keel fillet center."},
+            
+    {"name": "tip", 
+            "type": "marmo:containers:Dimensional3DVector", 
+            "unit": "m", 
+            "__dependencies": { "unit": "unit" },
+            "description": "coordinate for the bilge keel tip."}
+
 
 	]
 	

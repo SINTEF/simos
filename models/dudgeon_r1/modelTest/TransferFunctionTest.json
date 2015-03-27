@@ -40,7 +40,7 @@
             "description": "ramp for wave."},
 			
     {"name": "waveGauges", 
-            "type": "marmo:containers:NonEquallySpacedSignal",  
+            "type": "WaveGauge",  
             "dim": "*",
             "description": "an array of a wave gauge signal."},
 

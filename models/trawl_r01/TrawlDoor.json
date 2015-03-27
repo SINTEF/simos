@@ -1,0 +1,33 @@
+
+{   
+    "name": "TrawlDoor",
+    "type": "TrawlDoor",
+    "description": "Trawl Door",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	{"name": "length", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "length"},
+			
+	{"name": "height", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "height"},
+			
+	{"name": "area", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m^2",
+            "description": "area"},
+			
+	{"name": "weight", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "N",
+            "description": "weight of door"}
+    ]
+    
+}
+
+

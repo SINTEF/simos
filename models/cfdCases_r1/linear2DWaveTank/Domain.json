@@ -1,0 +1,13 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of the computational domain.",
+	
+	"extends": ["marmo:cfd:RectangularComputationDomain"],
+	
+	"properties": [
+
+	]
+	
+}

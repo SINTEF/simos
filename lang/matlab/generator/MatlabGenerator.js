@@ -91,6 +91,8 @@ MatlabGenerator.prototype.generate = function(model) {
     cmd.push('');
 	cmd.push( entity.factoryFunc(1));
     cmd.push('');
+	cmd.push( entity.cloneFunc(1));
+    cmd.push('');
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %check if field is set ');
 	cmd.push('    %-----------------------------------------------------------------------');
@@ -118,6 +120,8 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('    %***********************************************************************');
 	cmd.push('    methods (Access = protected, Hidden)');
 	cmd.push('    %---------------------------------------------------------------------------');
+    cmd.push('');
+	cmd.push( entity.cloneToFunc(1));
     cmd.push('');
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %Array update size function');

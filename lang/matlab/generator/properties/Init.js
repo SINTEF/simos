@@ -5,7 +5,7 @@ exports.Init = Init;
 /*----------------------------------------------------------------------------*/
 Init.prototype.initPublicProperties = function(bl) {
 	var cmd = [];
-	cmd.push(this.gbl(bl) +	'ID = UUIDGenerator.generate_guid()');
+	cmd.push(this.gbl(bl) +	'ID = simos.external.UUIDGenerator.generate_guid()');
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/

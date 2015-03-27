@@ -292,6 +292,17 @@ Generator.prototype.addPackagesToPropType = function(model) {
 
 };
 /*----------------------------------------------------------------------------*/
+Generator.prototype.addPackagesToModelType = function(model) {
+
+	var packages = this.lang.splitPackages(model.type);
+	if (packages.length == 1) {
+		model.type = model["package"] + this.lang.packageSep + model.type;
+	}
+
+	return model;
+
+};
+/*----------------------------------------------------------------------------*/
 Generator.prototype.addPackagesToSuperTypes = function(model) {
 	if (this.lang.isDerived(model)) {
 		var exts = model["extends"];
@@ -360,6 +371,8 @@ Generator.prototype.initModel = function(modelID) {
 	
 	model = this.addPackagesToPropType(model);
 	model = this.addPackagesToSuperTypes(model);
+	
+	model = this.addPackagesToModelType(model);
 	
 	if (this.flatModel) {
 		model = this.flattenModel(model);

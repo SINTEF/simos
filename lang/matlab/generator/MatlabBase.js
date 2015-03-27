@@ -261,7 +261,7 @@ MatlabBase.prototype.modelFunc = function(bl) {
 	'function ' + this.modelDesAtt() + ' = get.' + this.modelDesAtt() + '(' + this.objName() +')');	
 
 	cmd.push(this.getBlockSpace(bl+1) + 
-		this.modelDesAtt() + ' = loadjson(' + this.objName() + '.' + this.modelDesAtt() + 'str' + ');' );
+		this.modelDesAtt() + ' = simos.external.jsonlab.loadjson(' + this.objName() + '.' + this.modelDesAtt() + 'str' + ');' );
 
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');	
@@ -301,6 +301,90 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 };
 
 /*----------------------------------------------------------------------------*/
+MatlabBase.prototype.cloneFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'function newObj = clone(' + this.objName() + ')');
+	cmd.push(this.gbl(bl+1) + 	'newObj = ' + this.parseFullTypeName(this.getModel().type).path + '(' + this.objName() + '.name);');
+	cmd.push(this.gbl(bl+1) +   this.objName() + '.cloneTo(newObj);' );	     
+
+	cmd.push(this.gbl(bl) +	'end');
+			
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.cloneToFunc = function(bl) {
+    
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	/* =============================================== */
+	cmd.push(this.gbl(bl) + 'function cloneTo(' + this.objName() + ',newObj)');
+
+	/*
+	if (this.isDerived()) {
+		var superTypes = this.superTypes();
+		for (var i = 0; i<superTypes.length; i++){
+			var supType = superTypes[i];
+			cmd.push(this.gbl(bl+1) +
+					supType.name + '._cloneTo(self,newObj)');			
+		}
+		cmd.push(this.gbl(bl+1) + '');
+	}
+	*/
+    
+	var props = this.getProperties();
+	
+	for (var i=0; i<props.length; i++) {
+		var prop = props[i];
+		cmd.push(this.gbl(bl+1) + 
+				'if (' + this.objName() + '.isSet(' + this.stringify(prop.name) +'))' );	     
+
+		if (this.isAtomicType(prop.type)) {
+			if (this.isArray(prop)) {
+				cmd.push(this.gbl(bl+2) + 
+						'newObj.' + this.makePrivate(prop.name) + 
+						' = ' + this.objName() + '.' + this.makePrivate(prop.name) + ';' );	     
+			}
+			else {
+				cmd.push(this.gbl(bl+2) + 
+						'newObj.' + this.makePrivate(prop.name) + 
+						' = ' + this.objName() + '.' + this.makePrivate(prop.name) + ';');	     				
+			}
+		}
+		else {
+			if (this.isArray(prop)) {
+				cmd.push(this.gbl(bl+2) + 
+						'newObj.' + this.makePrivate(prop.name) + 
+						' = {}' );	     	
+				var loopBlock = this.loopBlockForArray(bl+2,prop);
+				cmd.push(loopBlock.cmd);
+					cmd.push(this.gbl(loopBlock.bl+1) + 
+							'newObj.' + this.makePrivate(prop.name) + '{end+1} = ' +
+							this.objName() + '.' + this.makePrivate(prop.name) + loopBlock.indList + '.clone();' );    
+			}
+			else {
+				cmd.push(this.gbl(bl+2) + 
+						'newObj.' + this.makePrivate(prop.name) + 
+						' = ' + this.objName() + '.' + this.makePrivate(prop.name) + '.clone();');	     				
+			}
+			
+		}
+		
+		cmd.push(this.gbl(bl+1) +	'end');
+	}
+	
+	cmd.push(this.gbl(bl) +	'end');   
+	
+	
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
 MatlabBase.prototype.factoryFunc = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
@@ -316,7 +400,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'end ');
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'obj = ' + this.fullTypeName(this.getModel()) + '(name);');
+		'obj = ' + this.parseFullTypeName(this.getModel().type).path + '(name);');
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');	
 	cmd.push(this.getCodeSeparator(bl));

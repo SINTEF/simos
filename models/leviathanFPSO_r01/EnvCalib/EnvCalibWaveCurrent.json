@@ -24,7 +24,7 @@
 
 	{"name": "Uc", 
             "type": "marmo:containers:DimensionalScalar",  
-			"unit": m/s",
+			"unit": "m/s",
             "description": "current velocity"},
 			
      {"name": "waveCurrentRuns", 

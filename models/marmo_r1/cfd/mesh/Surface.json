@@ -20,7 +20,11 @@
 	{"name": "index", 
 			"type": "integer", "value": "0",
 			"description": "surface index."},
-						
+
+	{"name": "vertInds", 
+		"type": "integer", "dim": "*",
+		"description": "index of vertices."},
+				
 	{"name": "criteriaFlags", 
 			"type": "integer", "dim": "3",
 			"description": "flags for criteria, [Distance, Curvature, Target cell sizes]"},

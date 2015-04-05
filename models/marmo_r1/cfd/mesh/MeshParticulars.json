@@ -30,7 +30,12 @@
 	{"name": "nCells", 
 			"type": "integer", "value": "1",
 			"description": "number of mesh cells."},
-			
+
+	{"name": "vertices", 
+		"type": "marmo:containers:VectorArray", 
+		"optinal": "true",
+		"description": "mesh vertices."},
+
 	{"name": "faces", 
 			"type": "Surface", 
 			"dim": "*" ,
@@ -57,8 +62,13 @@
 			"description": "mesh faces."},
 
 	{"name": "nBackgroundCells", 
-			"type": "marmo:containers:Vector3D", "version": "1",
-			"description": "number of background cells in each direction."}
+			"type": "marmo:containers:Vector3D",
+			"description": "number of background cells in each direction."},
+			
+	{"name": "simpleGradingBackgroundCells", 
+		"type": "marmo:containers:Vector3D", 
+		"optional": "true",
+		"description": "simple grading expansion of background cells."}
 
 	]
 	

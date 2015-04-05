@@ -444,7 +444,7 @@ PythonBase.prototype.factoryFunc = function(bl) {
 	cmd.push(this.gbl(bl) + 
 	'def create(self,name):');	
 	cmd.push(this.gbl(bl+1) + 
-		'return ' + this.getModel().type + '(name)');
+		'return ' + this.getModel().name + '(name)');
 
 	var props = this.getProperties();
     for (var i = 0; i<props.length; i++) {

@@ -1,0 +1,22 @@
+
+{   
+    "name": "EnvWaveCurrent",
+    "type": "EnvWaveCurrent",
+    "description": "A wave with current",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+			
+	{"name": "Wave", 
+            "type": "EnvWave",
+			"description": "The wave"},
+			
+	{"name": "Current", 
+            "type": "EnvCurrent",
+			"description": "The current"}
+    ]
+    
+}
+
+

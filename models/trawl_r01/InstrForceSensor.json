@@ -1,0 +1,26 @@
+
+{   
+    "name": "InstrForceSensor",
+    "type": "InstrForceSensor",
+    "description": "Force Sensor",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "sn", 
+            "type": "marmo:containers:SimpleString",  
+            "description": "Serialnumber"},
+		
+	{"name": "model", 
+            "type": "marmo:containers:SimpleString",  
+            "description": "ring, cylindrical or beam"},
+			
+    {"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a force sensor."}
+
+     ]
+    
+}
+
+

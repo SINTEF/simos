@@ -1,0 +1,54 @@
+
+{   
+    "name": "EnvWave",
+    "type": "EnvWave",
+    "description": "One wave (signal to wavemaker and maybe calibrated wave elevation",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [	
+	{"name": "spectrum", 
+            "type": "string",
+			"description": "Type of spectrum"},
+			
+	{"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "wave height."},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "wave period."},
+			
+     {"name": "seed", 
+            "type": "integer",  
+            "description": "wave seed."},
+			
+	{"name": "pelle",
+			"type": "integer",
+			"description": "Flag for pelle 1 yes or 0 no."},
+			
+	{"name": "heading", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "unit": "deg",
+            "description": "Wave heading in global coord"},
+			
+	{"name": "Wavemaker", 
+            "type": "string",  
+            "description": "BM2 or BM3"},
+			
+	{"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a signal to the wavemaker."},
+			
+     {"name": "gauges", 
+            "type": "InstrWaveGauge",  
+			"dim":"*",
+            "description": "Wave gauges installed during wave calibration"}
+
+    ]
+    
+}
+
+

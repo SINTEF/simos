@@ -1,0 +1,18 @@
+
+{   
+    "name": "TestSerie",
+    "type": "TestSerie",
+    "description": "The overtrawling test serie",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	 {"name": "conditions", 
+            "type": "TestCondition", 
+			"dim":"*",
+            "description": "One test condition"}
+    ]
+    
+}
+
+

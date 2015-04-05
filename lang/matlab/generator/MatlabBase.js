@@ -360,12 +360,13 @@ MatlabBase.prototype.cloneToFunc = function(bl) {
 			if (this.isArray(prop)) {
 				cmd.push(this.gbl(bl+2) + 
 						'newObj.' + this.makePrivate(prop.name) + 
-						' = {}' );	     	
+						' = {};' );	     	
 				var loopBlock = this.loopBlockForArray(bl+2,prop);
 				cmd.push(loopBlock.cmd);
 					cmd.push(this.gbl(loopBlock.bl+1) + 
 							'newObj.' + this.makePrivate(prop.name) + '{end+1} = ' +
 							this.objName() + '.' + this.makePrivate(prop.name) + loopBlock.indList + '.clone();' );    
+				cmd.push(loopBlock.ends);
 			}
 			else {
 				cmd.push(this.gbl(bl+2) + 

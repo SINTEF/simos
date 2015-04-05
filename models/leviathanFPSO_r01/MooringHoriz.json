@@ -1,0 +1,22 @@
+
+{   
+    "name": "MooringHoriz",
+    "type": "MooringHoriz",
+    "description": "Horizontal (soft) mooring system",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "n", 
+            "type": "integer",  
+            "description": "number of lines."},
+			
+     {"name": "lines", 
+            "type": "MooringLine",  
+			"dim": "*",
+            "description": "Horizontal mooring system as specified"}
+    ]
+    
+}
+
+

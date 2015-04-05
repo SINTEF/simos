@@ -1,0 +1,42 @@
+
+{   
+    "name": "FloaterFPSO",
+    "type": "FloaterFPSO",
+    "description": "Model of a FPSO",
+    
+    "extends": ["marmo:basic:Floater"],
+	"extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "L", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "length"},
+			
+     {"name": "B", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "beam"},
+			
+	{"name": "D", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "depth"},
+			
+	{"name": "LB", 
+            "type": "FloaterLoading",  
+            "description": "Ballast condition"},
+			
+	{"name": "LM", 
+            "type": "FloaterLoading",  
+            "description": "Medium condition"},
+			
+	{"name": "LL", 
+            "type": "FloaterLoading",  
+            "description": "Loaded condition"}
+
+    ]
+    
+}
+
+

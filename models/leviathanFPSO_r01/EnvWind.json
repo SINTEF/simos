@@ -1,0 +1,47 @@
+
+{   
+    "name": "EnvWind",
+    "type": "EnvWind",
+    "description": "One wind",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+			
+	{"name": "spectrum", 
+            "type": "string",
+			"description": "Type of spectrum"},
+			
+	{"name": "Hs", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "Siginfiant wind velocity"},
+			
+     {"name": "Tp", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "Peak period."},
+			
+	{"name": "heading", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "unit": "deg",
+            "description": "Wind heading in global coord"},
+			
+	{"name": "nFans", 
+            "type": "integer",  
+            "description": "number of fans"}, 
+			
+	{"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of a signal to the fans."},
+			
+	{"name": "gauges", 
+            "type": "InstrWindSensor",  
+			"dim":"*",
+            "description": "Wind sensor installed during wind calibration"}
+    ]
+    
+}
+
+
+

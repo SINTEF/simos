@@ -1,0 +1,53 @@
+
+{	
+	"name": "LineSampling",
+	"type": "LineSampling",
+	"description": "data model for sampleed data out of CFD programs over line.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "patch", 
+         "type": "string", 
+         "description": "name of the surface or patch."
+         },		 		
+
+	    {"name": "method", 
+         "type": "string",
+         "value": "uniform", 
+         "description": "interpolation method, e.g. uniform, face, midPoint, ..."
+         },	
+
+	    {"name": "fields", 
+         "type": "string",
+         "dim": "*", 
+         "description": "field names."
+         },	
+         
+	    {"name": "startPnt", 
+		 "type": "marmo:containers:Dimensional3DVector", 
+         "unit": "m", 
+         "description": "start point."
+         },
+
+	    {"name": "endPnt", 
+		 "type": "marmo:containers:Dimensional3DVector", 
+         "unit": "m", 
+         "description": "end point."
+         },
+
+	    {"name": "nPnts", 
+		 "type": "integer", 
+         "description": "number of points."
+         },
+                                    	         	 
+		{"name": "samples", 
+		 "type": "TimestampedLineSample", 
+		 "dim":"*",
+		 "description": "time-stamped samples."
+		 }
+	
+	]
+	
+}

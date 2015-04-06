@@ -13,6 +13,11 @@
 			"dim": "*",
 			"description": "a collection of recorded forces."},
 
+	{"name": "lineSamplings", 
+			"type": "LineSampling",
+			"dim": "*",
+			"description": "a collection of line sampling data."},
+			
 	{"name": "probes", 
 			"type": "Probe",
 			"dim": "*",

@@ -1,0 +1,30 @@
+
+{	
+	"name": "TimestampedLineSample",
+	"type": "TimestampedLineSample",
+	"description": "time stamped line smaple.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "time", 
+         "type": "marmo:containers:DimensionalScalar",
+         "unit": "s", 
+         "description": "time-stamp."
+         },		 		
+         	         	 
+		{"name": "scalars", 
+		 "type": "marmo:containers:NonEquallySpacedSignal", 
+		 "dim":"*",
+		 "description": "sampled scalar fields."
+		 },
+				 			 
+		{"name": "vectors", 
+		 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
+		 "dim":"*",
+		 "description": "sampled 3D vector fields."}
+	
+	]
+	
+}

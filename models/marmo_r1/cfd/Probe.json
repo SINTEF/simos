@@ -13,7 +13,13 @@
          "unit": "m",
          "description": "Coordinate for probe location."
          },		 		
-	         	 
+
+	    {"name": "fields", 
+         "type": "string", 
+         "dim": "*",
+         "description": "field names."
+         },	
+         	         	 
 		{"name": "scalars", 
 		 "type": "marmo:containers:NonEquallySpacedSignal", 
 		 "dim":"*",

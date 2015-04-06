@@ -13,7 +13,7 @@
 			"description": "Computational domain."},
 
 	{"name": "waveMaker", 
-			"type": "marmo:dynamics:SolidBodyOscillator", 
+			"type": "WaveMaker", 
 			"description": "wave maker by imposing linear analytical values."},
 
     {"name": "postProData", 

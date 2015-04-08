@@ -1,0 +1,18 @@
+
+{	
+	"name": "WaveMaker",
+	"type": "WaveMaker",
+	"description": "wave maker model.",
+	
+	"extends": ["marmo:dynamics:SimpleHarmonicOscillator"],
+	
+	"properties": [
+			
+	{"name": "wmType", 
+			"type": "string", 
+			"value": "analytical",
+			"description": "wavemaker types, can be analytical, flap, piston."}
+
+	]
+	
+}

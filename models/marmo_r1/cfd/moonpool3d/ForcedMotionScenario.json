@@ -8,12 +8,17 @@
 	
 	"properties": [
 		{"name": "domain", 
-			"type": "Domain", 
-			"description": "Computational domain."},
-            
-    {"name": "postProData", 
-            "type": "PostProData",
-            "description": "a collection of post processed results interesting for this problem."}
+				"type": "Domain", 
+				"description": "Computational domain."},
+
+		{"name": "waveMaker", 
+				"type": "WaveMaker", 
+				"optional": "true",
+				"description": "wave maker by imposing linear analytical values."},
+	            
+	    {"name": "postProData", 
+	            "type": "PostProData",
+	            "description": "a collection of post processed results interesting for this problem."}
 
 	]
 	

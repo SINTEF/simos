@@ -23,7 +23,7 @@
 			"description": "a collection of probes."},
 			
     {"name": "addedMassDamping", 
-        "type": "marmo:hydro:freq:CompleteAddedMassDamping",
+        "type": "marmo:hydro:freq:radiation:CompleteAddedMassDamping",
         "description": "all values for added mass and damping mode of motion."}
 	]
 	

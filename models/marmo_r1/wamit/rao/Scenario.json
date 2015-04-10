@@ -1,0 +1,25 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Free motions scenario of a vessel in waves in wamit.",
+	
+    "extends": ["marmo:wamit:Scenario"],
+	
+	"properties": [
+            
+	{"name": "waves", 
+			"type": "marmo:wamit:hydro:freq:Waves",
+			"description": "wave spec."},
+
+	{"name": "results", 
+			"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
+			"dim": "*",
+			"description": "a collection of direction dependent results."},
+
+    {"name": "addedMassDamping", 
+        "type": "marmo:wamit:hydro:freq:radiation:CompleteAddedMassDamping",
+        "description": "all values for added mass and damping mode of motion."}
+	]
+	
+}

@@ -1,0 +1,34 @@
+
+{	
+	"name": "WaveHeadingDependentResults",
+	"type": "WaveHeadingDependentResults",
+	"description": "Description of wave heading depenedent results.",
+
+	"extends": ["marmo:hydro:freq:WaveHeadingDependentResults"],
+	
+	"properties": [
+      
+		{"name": "probes", 
+			"type": "marmo:hydro:freq:Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+
+		{"name": "excitation", 
+	            "type": "marmo:hydro:freq:diffraction:Excitation",
+	            "optinal": "true",
+	            "description": "first order waves excitation forces."},
+
+			
+       {"name": "rao", 
+            "type": "RAO",
+            "optinal": "true",
+            "description": "linear response amplitude operators."},
+
+       {"name": "driftCoeff", 
+            "type": "string",
+            "optinal": "true",
+            "description": "mean drift coefficients."}	
+
+	]
+	
+}

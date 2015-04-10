@@ -1,0 +1,47 @@
+
+{	
+	"name": "CompleteAddedMassDamping",
+	"type": "CompleteAddedMassDamping",
+	"description": "Description of WAMIT added mass and damping results, including generalized modes.",
+
+	"extends": ["marmo:basic:NamedEntity","marmo:dynamics:MotionModes"],
+	
+	"properties": [
+            
+       {"name": "surge", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in surge."},
+            
+       {"name": "sway", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in sway."},
+            
+       {"name": "heave", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in heave."},
+            
+       {"name": "roll", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in roll."},
+            
+       {"name": "pitch", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in pitch."},
+            
+       {"name": "yaw", 
+            "type": "AllModesAddedMassDamping",
+            "optional": "true",
+            "description": "coefficients in yaw."},    
+
+        {"name": "genModes", 
+            "type": "AllModesAddedMassDamping",
+            "dim": "*",
+            "description": "generalized modes."} 
+	]
+	
+}

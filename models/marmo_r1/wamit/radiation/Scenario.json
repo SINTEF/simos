@@ -1,16 +1,13 @@
 
 {	
-	"name": "ForcedMotionScenario",
-	"type": "ForcedMotionScenario",
+	"name": "Scenario",
+	"type": "Scenario",
 	"description": "Forced motion scenario of a vessel in wamit.",
 	
     "extends": ["marmo:wamit:Scenario"],
 	
 	"properties": [
 			
-	{"name": "domain", 
-			"type": "marmo:cfd:moonpool3d:Domain", 
-			"description": "Computational domain."},  
             
 	{"name": "periods", 
 			"type": "marmo:containers:EquallySpacedSignal",
@@ -18,12 +15,12 @@
 			"description": "wave periods."},
 				
 	{"name": "probes", 
-			"type": "marmo:hydro:freq:Probe",
+			"type": "marmo:wamit:Probe",
 			"dim": "*",
 			"description": "a collection of probes."},
 			
     {"name": "addedMassDamping", 
-        "type": "marmo:hydro:freq:radiation:CompleteAddedMassDamping",
+        "type": "marmo:wamit:hydro:freq:radiation:CompleteAddedMassDamping",
         "description": "all values for added mass and damping mode of motion."}
 	]
 	

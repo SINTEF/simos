@@ -1,7 +1,7 @@
 
 {	
-	"name": "DiffractionStudy",
-	"type": "DiffractionStudy",
+	"name": "Study",
+	"type": "Study",
 	"description": "Diffraction study of a vessel in wamit.",
 	
 	"extends": ["marmo:wamit:Study"],
@@ -9,7 +9,7 @@
 	"properties": [
 
 	{"name": "scenarios", 
-			"type": "DiffractionScenario", 
+			"type": "Scenario", 
 			"dim": "*",
 			"description": "a list of scenarios"}
 	]

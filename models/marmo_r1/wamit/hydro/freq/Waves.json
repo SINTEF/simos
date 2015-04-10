@@ -1,0 +1,15 @@
+
+{	
+	"name": "Waves",
+	"type": "Waves",
+	"description": "Description of a VERES scenario.",
+	
+    "extends": ["marmo:hydro:freq:Waves"],
+	
+	"properties": [
+
+
+
+	]
+	
+}

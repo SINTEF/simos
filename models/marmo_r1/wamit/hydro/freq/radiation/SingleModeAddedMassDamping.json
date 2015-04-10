@@ -4,7 +4,7 @@
 	"type": "SingleModeAddedMassDamping",
 	"description": "Description of WAMIT added mass and damping results.",
 
-	"extends": ["marmo:basic:NamedEntity","marmo:dynamics:MotionModes"],
+	"extends": ["marmo:hydro:freq:radiation:SingleModeAddedMassDamping"],
 	
 	"properties": [
     
@@ -14,7 +14,7 @@
 			"description": "index for the mode of motion."},
 
        {"name": "forceInd", 
-            "type": "integer", 
+            "type": "integer",
             "value": "1",
             "description": "index for the force."},
             

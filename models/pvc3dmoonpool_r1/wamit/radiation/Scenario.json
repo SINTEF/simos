@@ -1,0 +1,17 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Forced motion scenario of a vessel in wamit.",
+	
+    "extends": ["marmo:wamit:radiation:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "marmo:cfd:moonpool3d:Domain", 
+			"description": "Computational domain."}
+            
+	]
+	
+}

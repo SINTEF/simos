@@ -1,23 +1,19 @@
 
 {	
-	"name": "DiffractionScenario",
-	"type": "DiffractionScenario",
+	"name": "Scenario",
+	"type": "Scenario",
 	"description": "Diffraction scenario of a vessel in wamit.",
 	
     "extends": ["marmo:wamit:Scenario"],
 	
 	"properties": [
 			
-	{"name": "domain", 
-			"type": "marmo:cfd:moonpool3d:Domain", 
-			"description": "Computational domain."},  
-
 	{"name": "waves", 
-			"type": "marmo:hydro:freq:Waves",
+			"type": "marmo:wamit:hydro:freq:Waves",
 			"description": "wave spec."},
 			
 	{"name": "headingDependentResults", 
-		"type": "marmo:hydro:freq:WaveHeadingDependentResults",
+		"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
 		"dim": "*",
 		"description": "first order waves excitation forces."}
 	]

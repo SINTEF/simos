@@ -9,7 +9,7 @@
 	"properties": [
     
 	   {"name": "forceInd", 
-			"type": "integer", "from":[1,2,3,4,5,6],
+			"type": "integer", 
 			"value": "1",
 			"description": "index for the force."},
             

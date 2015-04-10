@@ -21,7 +21,7 @@
             "description": "a collection of post processed results interesting for this problem."},
 			
     {"name": "addedMassDamping", 
-            "type": "CompleteAddedMassDamping", 
+            "type": "marmo:hydro:freq:radiation:CompleteAddedMassDamping", 
             "optional": "true",
             "description": "added mass and damping values."}
 

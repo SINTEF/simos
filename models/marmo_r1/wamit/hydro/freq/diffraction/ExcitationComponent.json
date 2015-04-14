@@ -4,40 +4,14 @@
 	"type": "ExcitationComponent",
 	"description": "Description a fist-order wave excitation component.",
 
-	"extends": ["marmo:basic:NamedEntity", "marmo:dynamics:MotionModes"],
+	"extends": ["marmo:hydro:freq:diffraction:ExcitationComponent"],
 	
 	"properties": [
             
-       {"name": "surge", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in surge."},
-            
-       {"name": "sway", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in sway."},
-            
-       {"name": "heave", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in heave."},
-            
-       {"name": "roll", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in roll."},
-            
-       {"name": "pitch", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in pitch."},
-            
-       {"name": "yaw", 
-            "type": "marmo:containers:ComplexScalarResponse",
-            "optional": "true",
-            "description": "coefficients in yaw."}    
-            
+       {"name": "genModes", 
+           "type": "marmo:containers:ComplexScalarResponse",
+           "dim": "*",
+           "description": "generalized modes."}              
 	]
 	
 }

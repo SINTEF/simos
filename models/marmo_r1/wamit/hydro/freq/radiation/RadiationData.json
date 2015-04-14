@@ -1,0 +1,17 @@
+
+{	
+	"name": "RadiationData",
+	"type": "RadiationData",
+	"description": "Description of radiation problem results.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+	          		{"name": "modes", 
+	        			"type": "RadiationModeData",
+	        			"dim": "*",
+	        			"description": "a collection of modes of radiation."}
+
+	]
+	
+}

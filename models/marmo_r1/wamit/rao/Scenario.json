@@ -12,7 +12,11 @@
 			"type": "marmo:wamit:hydro:freq:Waves",
 			"description": "wave spec."},
 
-	{"name": "results", 
+	{"name": "radiation", 
+			"type": "marmo:wamit:hydro:freq:radiation:RadiationData",
+			"description": "radiation results."},
+				
+	{"name": "headingDependentResults", 
 			"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
 			"dim": "*",
 			"description": "a collection of direction dependent results."},

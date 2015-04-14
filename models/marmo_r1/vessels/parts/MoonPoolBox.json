@@ -17,7 +17,13 @@
 			"type": "marmo:geometry:Box", 
 			"unit": "m",
 			"__dependencies": { "unit": "unit" },
-			"description": "moonpool opening."}
+			"description": "moonpool opening."},
+			
+			
+	{"name": "equivalentLidDamping", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"optional": "true",
+			"description": "Equivalent lid damping for the moonpool."}
 					
 	]
 	

@@ -8,29 +8,7 @@
 	
 	"properties": [
     
-	   {"name": "motionInd", 
-			"type": "integer", 
-			"value": "1",
-			"description": "index for the mode of motion."},
 
-       {"name": "forceInd", 
-            "type": "integer",
-            "value": "1",
-            "description": "index for the force."},
-            
-       {"name": "A", 
-            "type": "marmo:containers:NonEquallySpacedSignal",
-            "__assign": { "xname": "T",
-                          "xunit": "s",
-                          "xdescription": "period of scillations."},
-            "description": "added mass coefficients."},
-
-       {"name": "B", 
-            "type": "marmo:containers:NonEquallySpacedSignal",
-            "__assign": { "xname": "T",
-                          "xunit": "s",
-                          "xdescription": "period of scillations."},
-            "description": "damping coefficients."}
 	]
 	
 }

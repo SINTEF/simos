@@ -1,0 +1,23 @@
+
+{	
+	"name": "RadiationModeData",
+	"type": "RadiationModeData",
+	"description": "Description of radiation mode results.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+    	   {"name": "motionInd", 
+   			"type": "integer", 
+   			"value": "1",
+   			"description": "index for the mode of motion."},
+
+   		{"name": "probes", 
+   			"type": "marmo:hydro:freq:Probe",
+   			"dim": "*",
+   			"description": "a collection of probes."}
+
+	]
+	
+}

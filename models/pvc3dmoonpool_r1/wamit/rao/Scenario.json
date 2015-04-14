@@ -9,7 +9,7 @@
 	"properties": [
 			
 	{"name": "domain", 
-			"type": "marmo:cfd:moonpool3d:Domain", 
+			"type": "pvc3dmoonpool:cfd:Domain", 
 			"description": "Computational domain."}
 
 	]

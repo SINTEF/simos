@@ -14,10 +14,9 @@
 			"description": "a collection of probes."},
 
 		{"name": "excitation", 
-	            "type": "marmo:hydro:freq:diffraction:Excitation",
+	            "type": "marmo:wamit:hydro:freq:diffraction:Excitation",
 	            "optinal": "true",
 	            "description": "first order waves excitation forces."},
-
 			
        {"name": "rao", 
             "type": "RAO",

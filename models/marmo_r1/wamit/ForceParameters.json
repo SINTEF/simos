@@ -12,8 +12,12 @@
              "type": "integer", 
              "dim": "6",
              "optional": "ture",
-             "description": "the modes which are fixed."}	
+             "description": "the modes which are fixed."},	
 
+	   {"name": "runFlag", 
+			"type": "integer", "from": [0,1],
+			"value": "1",
+			"description": "0: do not run, 1: run."}
 	]
 	
 }

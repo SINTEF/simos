@@ -10,8 +10,11 @@
 	          		{"name": "modes", 
 	        			"type": "RadiationModeData",
 	        			"dim": "*",
-	        			"description": "a collection of modes of radiation."}
-
+	        			"description": "a collection of modes of radiation."},
+	          		
+	          	    {"name": "addedMassDamping", 
+	          	        "type": "CompleteAddedMassDamping",
+	          	        "description": "all values for added mass and damping mode of motion."}
 	]
 	
 }

@@ -1,0 +1,27 @@
+
+{	
+	"name": "GDFLow",
+	"type": "GDFLow",
+	"description": "low order GDF.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+	   {"name": "points", 
+			"type": "marmo:containers:VectorArray", 
+			"description": "points."},
+
+	   {"name": "symX", 
+			"type": "integer", 
+			"value": "0",
+			"description": "symmetry flag in x, 0: not sym, 1: sym."},
+			
+	   {"name": "symY", 
+			"type": "integer", 
+			"value": "0",
+			"description": "symmetry flag in y, 0: not sym, 1: sym."}
+
+	]
+	
+}

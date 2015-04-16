@@ -19,7 +19,7 @@
             "description": "0:low order, 1: high order."},
             
         {"name": "panelSize", 
-            "type": "integer", 
+            "type": "double", 
             "value":"1",
             "description": "a value for panel subdevision."}		
 	]

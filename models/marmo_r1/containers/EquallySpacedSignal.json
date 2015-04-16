@@ -16,7 +16,7 @@
 	    
 	 
 	{"name": "value", 
-			 "type": "double", "dim": "nSamples", 
+			 "type": "double", "dim": "*", 
 			 "description": "data points."},			 
 
 	{"name": "xname", 

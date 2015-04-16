@@ -8,7 +8,32 @@
 	
 	"properties": [
 
-
+   	    {"name": "index", 
+            "type": "integer", 
+            "unit": "1",
+            "description": "body index."
+            },
+   	    
+	   {"name": "lowGDF", 
+			"type": "GDFLow",
+			"optional": "true",
+			"description": "low order gdf data."},
+			
+	   {"name": "surfacePoints", 
+			"type": "marmo:containers:VectorArray",
+			"optional": "true",
+			"description": "points on body surface, used for extracting data on body."},
+			
+			
+		{"name": "radiation", 
+				"type": "marmo:wamit:hydro:freq:radiation:RadiationData",
+				"optional": "true",
+				"description": "radiation results."},
+					
+		{"name": "diffraction", 
+				"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
+				"dim": "*",
+				"description": "a collection of direction dependent results."}
 	]
 	
 }

@@ -13,6 +13,11 @@
 			"dim": "*",
 			"description": "a collection of probes."},
 
+	   	{"name": "fieldSamples", 
+   	   		"type": "marmo:hydro:freq:FieldSample",
+   	   		"dim": "*",
+   	   		"description": "a collection of probes."},
+			
 		{"name": "excitation", 
 	            "type": "marmo:wamit:hydro:freq:diffraction:Excitation",
 	            "optinal": "true",

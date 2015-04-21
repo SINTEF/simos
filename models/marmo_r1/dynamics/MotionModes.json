@@ -6,14 +6,14 @@
 	
 	"properties": [
        {"name": "modeNames", 
-            "type": "string", "dim":"6", 
+            "type": "string", "dim":"*", 
             "value": ["surge","sway","heave","roll","pitch","yaw"],
             "description": "list of modes of motions names."},
             
-        {"name": "modes", 
-             "type": "integer", 
-             "dim": "6",
-             "description": "radiation modes."}
+        {"name": "modeInds", 
+             "type": "integer", "dim": "*",
+             "value": [1,2,3,4,5,6],
+             "description": "radiation modes indexes."}
  
 	]
 	

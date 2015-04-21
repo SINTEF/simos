@@ -24,7 +24,7 @@
 	            "description": "first order waves excitation forces."},
 			
        {"name": "rao", 
-            "type": "RAO",
+            "type": "marmo:wamit:hydro:freq:interaction:RAO",
             "optinal": "true",
             "description": "linear response amplitude operators."},
 

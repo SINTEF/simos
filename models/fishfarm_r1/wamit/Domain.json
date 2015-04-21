@@ -9,13 +9,8 @@
 	"properties": [
 
        	{"name": "body", 
-			"type": "marmo:wamit:Body", 
-			"description": "body"},
-       	
-       	{"name": "fieldPoints", 
-			"type": "marmo:containers:VectorArray",
-			"optional": "true",
-			"description": "coordinates of field points"}
+			"type": "Body", 
+			"description": "body"}
 
 	]
 	

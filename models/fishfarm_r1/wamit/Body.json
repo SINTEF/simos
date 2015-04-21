@@ -1,0 +1,18 @@
+
+{	
+	"name": "Body",
+	"type": "Body",
+	"description": "Description of a WAMIT body.",
+
+	"extends": ["marmo:wamit:Body"],
+	
+	"properties": [
+
+   	    {"name": "ovalModes", 
+            "type": "integer", 
+            "value": "0",
+            "description": "number of ovalization modes."
+            }
+	]
+	
+}

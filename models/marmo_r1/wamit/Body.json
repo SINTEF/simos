@@ -10,7 +10,7 @@
 
    	    {"name": "index", 
             "type": "integer", 
-            "unit": "1",
+            "value": "1",
             "description": "body index."
             },
    	    
@@ -25,13 +25,18 @@
 			"description": "points on body surface, used for extracting data on body."},
 			
 			
-		{"name": "radiation", 
-				"type": "marmo:wamit:hydro:freq:radiation:RadiationData",
-				"optional": "true",
+		{"name": "radiations", 
+				"type": "marmo:wamit:hydro:freq:radiation:BodyResults",
+				"dim": "*",
 				"description": "radiation results."},
 					
-		{"name": "diffraction", 
-				"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
+		{"name": "diffractions", 
+				"type": "marmo:wamit:hydro:freq:diffraction:BodyResults",
+				"dim": "*",
+				"description": "a collection of direction dependent results."},
+				
+		{"name": "interactions", 
+				"type": "marmo:wamit:hydro:freq:interaction:BodyResults",
 				"dim": "*",
 				"description": "a collection of direction dependent results."}
 	]

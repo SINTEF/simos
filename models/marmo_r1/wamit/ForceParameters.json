@@ -8,10 +8,9 @@
     	
 	"properties": [
              
-       {"name": "fixedModes", 
+       {"name": "freeModes", 
              "type": "integer", 
-             "dim": "6",
-             "optional": "ture",
+             "dim": "*",
              "description": "the modes which are fixed."},	
 
 	   {"name": "runFlag", 

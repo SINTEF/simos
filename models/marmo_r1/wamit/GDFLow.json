@@ -12,6 +12,10 @@
 			"type": "marmo:containers:VectorArray", 
 			"description": "points."},
 
+	   {"name": "faces", 
+			"type": "Quads",
+			"description": "points."},
+		
 	   {"name": "symX", 
 			"type": "integer", 
 			"value": "0",

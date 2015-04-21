@@ -1,7 +1,7 @@
 
 {	
-	"name": "RadiationData",
-	"type": "RadiationData",
+	"name": "RadiationResults",
+	"type": "RadiationResults",
 	"description": "Description of radiation problem results.",
 
 	"extends": ["marmo:basic:NamedEntity"],

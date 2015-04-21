@@ -21,7 +21,17 @@
         {"name": "panelSize", 
             "type": "double", 
             "value":"1",
-            "description": "a value for panel subdevision."}		
+            "description": "a value for panel subdevision."},
+            
+        {"name": "iopt5", 
+            "type": "integer", 
+            "value":"0",
+            "description": "0: total body pressure, 1: separated radiation and diffraction body pressure."},
+            
+        {"name": "iopt6", 
+            "type": "integer", 
+            "value":"0",
+            "description": "0: total field pressure, 1: separated radiation and diffraction field pressure."}	
 	]
 	
 }

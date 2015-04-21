@@ -12,18 +12,20 @@
 			"type": "marmo:wamit:hydro:freq:Waves",
 			"description": "wave spec."},
 
-	{"name": "radiation", 
-			"type": "marmo:wamit:hydro:freq:radiation:RadiationData",
-			"description": "radiation results."},
-				
-	{"name": "headingDependentResults", 
-			"type": "marmo:wamit:hydro:freq:WaveHeadingDependentResults",
+	{"name": "radiations", 
+			"type": "marmo:wamit:hydro:freq:radiation:FieldResults",
+			"dim": "*",
+			"description": "radiation field results."},
+
+	{"name": "diffractions", 
+			"type": "marmo:wamit:hydro:freq:diffraction:FieldResults",
 			"dim": "*",
 			"description": "a collection of direction dependent results."},
-
-    {"name": "addedMassDamping", 
-        "type": "marmo:wamit:hydro:freq:radiation:CompleteAddedMassDamping",
-        "description": "all values for added mass and damping mode of motion."}
+				
+	{"name": "interactions", 
+			"type": "marmo:wamit:hydro:freq:interaction:FieldResults",
+			"dim": "*",
+			"description": "a collection of direction dependent results."}
 	]
 	
 }

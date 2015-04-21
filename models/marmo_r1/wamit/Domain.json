@@ -33,7 +33,12 @@
        {"name": "scale", 
 			"type": "double",
 			"value": "1.0",
-			"description": "Scale of the problem, fullScaleLength/PresentLength."}
+			"description": "Scale of the problem, fullScaleLength/PresentLength."},
+			
+       	{"name": "fieldPoints", 
+			"type": "marmo:containers:VectorArray",
+			"optional": "true",
+			"description": "coordinates of field points"}
 
 	]
 	

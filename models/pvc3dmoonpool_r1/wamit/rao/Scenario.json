@@ -9,9 +9,12 @@
 	"properties": [
 			
 	{"name": "domain", 
-			"type": "pvc3dmoonpool:cfd:Domain", 
-			"description": "Computational domain."}
-
+			"type": "Domain", 
+			"description": "Computational domain."},
+	
+	{"name": "cfdDomain", 
+		"type": "pvc3dmoonpool:cfd:Domain", 
+		"description": "Computational domain."}
 	]
 	
 }

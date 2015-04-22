@@ -16,7 +16,18 @@
 	   {"name": "runFlag", 
 			"type": "integer", "from": [0,1],
 			"value": "1",
-			"description": "0: do not run, 1: run."}
+			"description": "0: do not run, 1: run."},
+			
+	   {"name": "exportOnBody", 
+		"type": "integer", "from": [0,1,2,3],
+		"value": "0",
+		"description": "0: nothing, 1: pressure, 2: velocity, 3: pressure and velocity."},
+		
+	   {"name": "exportOnField", 
+			"type": "integer", "from": [0,1,2,3],
+			"value": "0",
+			"description": "0: nothing, 1: pressure, 2: velocity, 3: pressure and velocity."}
+			
 	]
 	
 }

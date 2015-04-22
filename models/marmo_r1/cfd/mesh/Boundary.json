@@ -1,8 +1,8 @@
 
 {	
-	"name": "Surface",
-	"type": "Surface",
-	"description": "Description of a surface (face) in CFD mesh.",
+	"name": "Boundary",
+	"type": "Boundary",
+	"description": "Description of a Boundary (face) in CFD mesh.",
 	
 	"extends": ["marmo:basic:NamedEntityWithUnit"],
 	
@@ -21,9 +21,9 @@
 			"type": "integer", "value": "0",
 			"description": "surface index."},
 
-	{"name": "vertInds", 
+	{"name": "faces", 
 		"type": "integer", "dim": "*",
-		"description": "index of vertices."},
+		"description": "index of the faces on this boundary."},
 				
 	{"name": "criteriaFlags", 
 			"type": "integer", "dim": "3",

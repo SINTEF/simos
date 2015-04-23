@@ -1,0 +1,29 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a 3D ship with moonpool forced motion scenario.",
+	
+    "extends": ["marmo:cfd:forcedMotion:Scenario"],
+	
+	"properties": [
+		{"name": "domain", 
+				"type": "pvc3dmoonpool:cfd:Domain", 
+				"description": "Computational domain."},
+	            
+	    {"name": "postProData", 
+	            "type": "PostProData",
+	            "description": "a collection of post processed results interesting for this problem."},
+
+		{"name": "wamitFieldData", 
+				"type": "marmo:wamit:hydro:freq:interaction:FieldResults",
+				"dim": "*"
+				"description": "a collection of direction dependent results."},
+				
+		{"name": "wamitBodyData", 
+			"type": "marmo:wamit:hydro:freq:interaction:BodyResults",
+			"dim": "*",
+			"description": "a collection of direction dependent results."}
+	]
+	
+}

@@ -1,7 +1,7 @@
 
 {	
-	"name": "ForcedMotionStudy",
-	"type": "ForcedMotionStudy",
+	"name": "Study",
+	"type": "Study",
 	"description": "A ship moonpool study.",
 	
 	"extends": ["marmo:cfd:Study"],
@@ -9,7 +9,7 @@
 	"properties": [
 
 	{"name": "scenarios", 
-			"type": "ForcedMotionScenario", 
+			"type": "Scenario", 
 			"dim": "*",
 			"description": "a list of scenarios"}
 	]

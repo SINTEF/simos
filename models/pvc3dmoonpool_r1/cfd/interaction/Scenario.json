@@ -4,7 +4,7 @@
 	"type": "Scenario",
 	"description": "Description of a 3D ship with moonpool forced motion scenario.",
 	
-    "extends": ["marmo:cfd:forcedMotion:Scenario"],
+    "extends": ["marmo:cfd:waveBodyInteraction:interaction:Scenario"],
 	
 	"properties": [
 		{"name": "domain", 
@@ -17,7 +17,7 @@
 
 		{"name": "wamitFieldData", 
 				"type": "marmo:wamit:hydro:freq:interaction:FieldResults",
-				"dim": "*"
+				"dim": "*",
 				"description": "a collection of direction dependent results."},
 				
 		{"name": "wamitBodyData", 

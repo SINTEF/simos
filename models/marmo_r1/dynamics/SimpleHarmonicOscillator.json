@@ -36,6 +36,7 @@
 			 
 	   {"name": "ramp", 
 			 "type": "Ramp", 
+			 "optional": "true",
 			 "description": "oscillator ramp."
 			 },
 			 

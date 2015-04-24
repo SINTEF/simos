@@ -11,8 +11,11 @@
 	{"name": "regularWave", 
 			"type": "marmo:hydro:time:RegularWave",
 			"optional": "true", 
-			"description": "incoming wave."}
+			"description": "incoming wave."},
 
+	{"name": "oscillator", 
+			"type": "marmo:dynamics:SolidBodyOscillator", 
+			"description": "oscillators."}
 	]
 	
 }

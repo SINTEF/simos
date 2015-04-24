@@ -4,9 +4,22 @@
 	"type": "Domain",
 	"description": "Description of the computational domain for a 3D ship geometry with bilge keel and moonpool.",
 	
-	"extends": ["marmo:cfd:moonpool3d:Domain"],
+	"extends": ["marmo:cfd:RectangularComputationDomain"],
 	
 	"properties": [
+
+	{"name": "ship", 
+			"type": "Ship", 
+			"__assign": { "unit": "m" }, 
+			"__dependencies": { "unit": "unit" },
+			"description": "ship with moonpool geometry description."},
+			
+	{"name": "object", 
+			"type": "Object", 
+			"optional": "true",
+			"__assign": { "unit": "m" },
+			"__dependencies": { "unit": "unit" },
+			"description": "object inside moonpool."}
 
 	]
 	

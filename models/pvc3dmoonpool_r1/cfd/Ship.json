@@ -12,7 +12,11 @@
             "unit": "m",
             "optional": "true",
              "__dependencies": { "unit": "unit" },
-            "description": "moonpool geometry description."}
+            "description": "moonpool geometry description."},
+            
+	{"name": "oscMotions", 
+			"type": "marmo:dynamics:SolidBodyOscillator", 
+			"description": "motions oscillators."}
             
 	]
 	

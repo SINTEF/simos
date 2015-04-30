@@ -15,6 +15,11 @@
 	            "type": "PostProData",
 	            "description": "a collection of post processed results interesting for this problem."},
 
+		{"name": "wamitFieldPoints", 
+				"type": "marmo:containers:VectorArray",
+				"optional": "true",
+				"description": "a collection of field points to couple wamit data."},
+
 		{"name": "wamitFieldData", 
 				"type": "marmo:wamit:hydro:freq:interaction:FieldResults",
 				"dim": "*",

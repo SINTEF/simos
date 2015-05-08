@@ -7,7 +7,9 @@
     "extends": ["marmo:cfd:forcedMotion:Scenario"],
 	
 	"properties": [
-
+	           	{"name": "domain", 
+	    			"type": "Domain", 
+	    			"description": "Computational domain."}
 	]
 	
 }

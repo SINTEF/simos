@@ -1,0 +1,13 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a ship forced motion scenario.",
+	
+    "extends": ["marmo:cfd:forcedMotion:Scenario"],
+	
+	"properties": [
+
+	]
+	
+}

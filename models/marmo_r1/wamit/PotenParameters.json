@@ -21,7 +21,23 @@
 	   {"name": "sourceRun", 
 			"type": "SourcePotenRun",
 			"optinal": "true",
-			"description": "path to the poten source run for *.p2f which must be used instead of running poten, in case runFlag==0."}
+			"description": "path to the poten source run for *.p2f which must be used instead of running poten, in case runFlag==0."},
+			
+	   {"name": "iRad", 
+			"type": "integer", "from":[-1,0,1],
+			"value": "1",
+			"description": "-1: do not solve radiation problem, 0: solve radiation only for the specified modes, 1: solve radiation for all modes."},
+			
+	   {"name": "iDiff", 
+			"type": "integer", "from":[-1,0,1],
+			"value": "1",
+			"description": "-1: do not solve diffraction problem, 0: solve diffraction only for the specified modes, 1: solve diffraction for all modes."},
+			
+	   {"name": "iModes", 
+			"type": "integer",
+			"dim": "*",
+			"description": "an array of mode flags, 0:do not include, 1:include the mode. The included modes will be solved if idiff=0 or irad=0."}
+
 	]
 	
 }

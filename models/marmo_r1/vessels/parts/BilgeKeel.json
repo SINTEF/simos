@@ -54,7 +54,13 @@
             "type": "marmo:containers:Dimensional3DVector", 
             "unit": "m", 
             "__dependencies": { "unit": "unit" },
-            "description": "coordinate for the bilge keel tip."}
+            "description": "coordinate for the bilge keel tip."},
+            
+	{"name": "keelShape", 
+		"type": "marmo:containers:SimpleString", 
+		"value": "plate",
+		"description": "describing shape of the bilge keel, can be plate, wedge or etc."}
+
 
 
 	]

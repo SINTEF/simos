@@ -9,11 +9,6 @@
 					
 	"properties": [
 	    
-
-	{"name": "nSamples", 
-             "type": "integer", "value": 1,
-             "description": "number of data points."},
-	    
 	 
 	{"name": "value", 
 			 "type": "double", "dim": "*", 

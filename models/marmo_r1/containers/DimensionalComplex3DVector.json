@@ -4,7 +4,7 @@
 	"type": "DimensionalComplex3DVector",
 	"description": "complex single scalar value with dimension",
 
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:basic:NamedEntity"],
 	"properties": [	
 			 
         {"name": "x", 

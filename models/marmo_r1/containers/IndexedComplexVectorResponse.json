@@ -4,7 +4,7 @@
 	"type": "IndexedComplexVectorResponse",
 	"description": "Description of a complex response from WAMIT, when data is indexed by point location",
 
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
              

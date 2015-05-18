@@ -4,7 +4,7 @@
 	"type": "NonEquallySpaced2DVectorSignal",
 	"description": "data model for a collection of non equally spaced 2D vector signals, model test data for instance.",
 	
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
 			

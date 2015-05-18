@@ -5,7 +5,7 @@
 	"description": "data model for a vector array.",
 
 
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
 					
 	"properties": [
 	

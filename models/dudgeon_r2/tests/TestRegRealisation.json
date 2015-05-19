@@ -1,0 +1,33 @@
+
+{   
+    "name": "TestRegRealisation",
+    "type": "TestRegRealisation",
+    "description": "single realisation for a regular wave",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+     "properties": [
+	 {"name": "H",
+		"type": "marmo:containers:DimensionalScalar",
+		"unit": "m",
+		"description": "Waveheight"},
+			
+	{"name": "T",
+			"type": "marmo:containers:DimensionalScalar",
+			"unit": "s",
+			"description": "Wave Period"},
+	 
+	{"name": "Sensors",
+			"type": "dudgeon:InstrSensor",
+			"dim":"*",
+			"description": "The accelerometer, force sensor, temp sensor, wave probe"},
+			
+	{"name": "cameras",
+			"type": "dudgeon: VideoCamera",
+			"dim": "*",
+			"description": "The video cameras"}
+    ]
+    
+}
+
+

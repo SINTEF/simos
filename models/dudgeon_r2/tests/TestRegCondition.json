@@ -1,0 +1,28 @@
+
+{   
+    "name": "TestRegCondition",
+    "type": "TestRegCondition",
+    "description": "Reg wave Test condition",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	 {"name": "id", 
+            "type": "integer",  
+            "description": "test number"},
+			
+	{"name": "model",
+			"type": "dudgeon:Model",
+			"description": "model during the tests"},
+			
+	{"name": "h",
+			"type": "marmo:containers:DimensionalScalar",
+			"unit": "m",
+			"description": "waterdepth"},
+			
+	 {"name": "tests", 
+		"type": "TestRegRealisation", 
+		"dim":"*",
+		"description": "Each realisation"}
+    ]
+}

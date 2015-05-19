@@ -1,0 +1,40 @@
+
+{   
+    "name": "InstrSensor",
+    "type": "InstrSensor",
+    "description": "Sensor, can be waveprobe, force sensor, temp sensor, accelerometer, ...",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "sn", 
+            "type": "integer",  
+            "description": "Serialnumber"},
+		
+	{"name": "model", 
+            "type": "string",  
+            "description": "waveprobe, force transducer, temp. sensor, accelerometer, ..."},
+			
+	{"name": "xcoord", 
+			"type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+			"description": "X-position of the sensor"},
+			
+	{"name": "ycoord", 
+			"type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+			"description": "Y-position of the sensor"},
+			
+	{"name": "zcoord", 
+			"type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+			"description": "Z-position of the sensor"},
+			
+    {"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+			"dim": "*",
+            "description": "an array of logged dat from the sensor"}
+
+     ]
+    
+}

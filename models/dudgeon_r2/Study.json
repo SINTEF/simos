@@ -1,0 +1,30 @@
+
+{   
+    "name": "Study",
+    "type": "Study",
+    "description": "Model tests",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	{"name": "regTests", 
+            "type": "dudgeon:tests:TestRegCondition",  
+			"dim": "*",
+            "description": "regular test conditions."},
+						
+	{"name": "irrTests", 
+            "type": "dudgeon:tests:TestIrrCondition",  
+			"dim": "*",
+            "description": "irregular test conditions."},
+			
+
+	{"name": "irrCals", 
+            "type": "dudgeon:tests:CalIrrCondition",  
+			"dim": "*",
+            "description": "irregular calibration conditions."}
+			
+    ]
+    
+}
+
+

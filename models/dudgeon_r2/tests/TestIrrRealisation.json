@@ -1,0 +1,31 @@
+
+{   
+    "name": "TestIrrRealisation",
+    "type": "TestIrrRealisation",
+    "description": "single realisation for a single seed number of an irregular wave",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+     "properties": [
+	{"name": "id", 
+			"type": "integer",  
+			"description": "seed number"},
+			
+	{"name": "calibration", 
+			"type": "CalIrrRealisation", 
+			"description": "The wave calibration realization"},
+			
+	{"name": "sensors",
+			"type": "dudgeon:InstrSensor",
+			"dim":"*",
+			"description": "The accelerometer, force sensor, temp sensor, wave probe"},
+			
+	{"name": "cameras",
+			"type": "dudgeon: VideoCamera",
+			"dim": "*",
+			"description": "The video cameras"}
+	]
+    
+}
+
+

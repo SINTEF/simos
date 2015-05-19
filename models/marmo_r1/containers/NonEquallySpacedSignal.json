@@ -17,7 +17,7 @@
 			"description": "name for the x value."},
 
     {"name": "xlabel", 
-            "type": "string", "value": "",
+            "type": "string", "value": "time",
             "description": "label for the x value."},
             
 	{"name": "xdescription", 

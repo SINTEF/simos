@@ -1,0 +1,31 @@
+
+{	
+	"name": "IndexedComplexScalarResponse",
+	"type": "IndexedComplexScalarResponse",
+	"description": "Description of a complex response from WAMIT, when the data is indexed by point location.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+
+        {"name": "mod", 
+             "type": "EquallySpacedSignal", 
+             "description": "modulus."},
+
+        {"name": "phs", 
+             "type": "EquallySpacedSignal", 
+              "__assign": { "unit": "deg"},
+             "description": "phase."},
+             
+        {"name": "re", 
+             "type": "EquallySpacedSignal", 
+             "description": "real part."},
+             
+        {"name": "im", 
+             "type": "EquallySpacedSignal", 
+             "description": "imaginary part."} 
+            
+	]
+	
+}

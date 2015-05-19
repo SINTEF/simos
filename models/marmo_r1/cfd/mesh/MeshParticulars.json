@@ -30,9 +30,14 @@
 	{"name": "nCells", 
 			"type": "integer", "value": "1",
 			"description": "number of mesh cells."},
-			
+
+	{"name": "geo", 
+		"type": "Geometry", 
+		"optinal": "true",
+		"description": "mesh geometrical data."},
+
 	{"name": "faces", 
-			"type": "Surface", 
+			"type": "Boundary", 
 			"dim": "*" ,
 			"__dependencies": { "unit": "unit" },
 			"description": "mesh faces."},
@@ -57,8 +62,13 @@
 			"description": "mesh faces."},
 
 	{"name": "nBackgroundCells", 
-			"type": "marmo:containers:Vector3D", "version": "1",
-			"description": "number of background cells in each direction."}
+			"type": "marmo:containers:Vector3D",
+			"description": "number of background cells in each direction."},
+			
+	{"name": "simpleGradingBackgroundCells", 
+		"type": "marmo:containers:Vector3D", 
+		"optional": "true",
+		"description": "simple grading expansion of background cells."}
 
 	]
 	

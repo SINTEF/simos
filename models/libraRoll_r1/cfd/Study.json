@@ -1,0 +1,17 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "A ship forced motion study.",
+	
+	"extends": ["marmo:cfd:Study"],
+	   
+	"properties": [
+
+	{"name": "scenarios", 
+			"type": "Scenario", 
+			"dim": "*",
+			"description": "a list of scenarios"}
+	]
+	
+}

@@ -1,0 +1,20 @@
+
+{	
+	"name": "RegularWave",
+	"type": "RegularWave",
+	"description": "Description of a regular wave.",
+	
+    "extends": ["marmo:dynamics:SimpleHarmonicOscillator"],
+	
+	"properties": [
+            
+	{"name": "heading", 
+			"type": "marmo:containers:DimensionalScalar",
+			"unit": "deg",  
+			"description": "wave heading."}
+
+
+
+	]
+	
+}

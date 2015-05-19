@@ -3,62 +3,23 @@
 	"type": "EquallySpaced3DVectorSignal",
 	"description": "data model for a collection of equally spaced 3D vector signals, model test data for instance.",
 	
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:basic:NamedEntity"],
 		
-	"properties": [
-			
-	{"name": "nSamples", 
-			 "type": "integer", 
-			 "value": 1,
-			 "description": "number of data points."
-			 },
-			 			 
-			 
-	{"name": "xunit", 
-			 "type": "string", "value": "",
-			 "description": "delta unit."
-			 },
-			 			 
-	{"name": "xdelta", 
-			 "type": "double", 
-			 "value": 1,
-			 "description": "signal spacing."
-			 },	
-			 		 
-	{"name": "xstart", 
-			 "type": "double", 
-			 "value": 0,
-			 "description": "start of the signal input."
-			 },			 
+	"properties": [			 
 						 			 
 	{"name": "x", 
 			 "type": "EquallySpacedSignal", 
-			 "description": "x component value",
-			 "__dependencies": {	"unit": "unit",
-			 						"xunit": "xunit",
-			 						"nSamples": "nSamples",
-			 						"xdelta": "xdelta",
-			 						"xstart": "xstart" }
+			 "description": "x component value"
 			 },		
 			 
 	{"name": "y", 
 			 "type": "EquallySpacedSignal", 
-			 "description": "y component value",
-			 "__dependencies": {	"unit": "unit",
-			 						"xunit": "xunit",
-			 						"nSamples": "nSamples",
-			 						"xdelta": "xdelta",
-			 						"xstart": "xstart" }
+			 "description": "y component value"
 			 },
 			 			 
 	{"name": "z", 
 			 "type": "EquallySpacedSignal", 
-			 "description": "z component value",
-			 "__dependencies": {	"unit": "unit",
-			 						"xunit": "xunit",
-			 						"nSamples": "nSamples",
-			 						"xdelta": "xdelta",
-			 						"xstart": "xstart" }
+			 "description": "z component value"
 			 }			 
 	]
 	

@@ -1,0 +1,24 @@
+
+{	
+	"name": "WaveHeadingDependent",
+	"type": "WaveHeadingDependent",
+	"description": "Description of wave heading depenedent results.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+	
+	   {"name": "waveDirection", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "deg",
+         "description": "incoming wave direction."
+         },
+         
+ 		{"name": "postProData", 
+ 			"type": "marmo:containers:PostProData",
+ 			"description": "a collection of post processed results interesting for this problem."}
+
+      
+	]
+	
+}

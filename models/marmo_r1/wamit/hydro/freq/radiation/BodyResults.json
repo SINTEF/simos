@@ -1,0 +1,17 @@
+
+{	
+	"name": "BodyResults",
+	"type": "BodyResults",
+	"description": "Description of radiation mode body results.",
+
+	"extends": ["FieldResults"],
+	
+	"properties": [
+
+   		{"name": "addedMassDampings", 
+   			"type": "SingleModeAddedMassDamping",
+   			"dim": "*",
+   			"description": "a collection added mass and damping values."}
+	]
+	
+}

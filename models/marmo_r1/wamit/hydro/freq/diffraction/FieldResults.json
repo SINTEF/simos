@@ -1,0 +1,23 @@
+
+{	
+	"name": "FieldResults",
+	"type": "FieldResults",
+	"description": "Description of wave heading depenedent diffraction results on field points.",
+
+	"extends": ["marmo:hydro:freq:WaveHeadingDependent"],
+	
+	"properties": [
+      
+		{"name": "probes", 
+			"type": "marmo:hydro:freq:Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+
+	   	{"name": "fieldSamples", 
+   	   		"type": "marmo:hydro:freq:FieldSample",
+   	   		"dim": "*",
+   	   		"description": "a collection of probes."}
+
+	]
+	
+}

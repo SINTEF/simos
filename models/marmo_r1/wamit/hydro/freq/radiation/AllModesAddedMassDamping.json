@@ -1,0 +1,17 @@
+
+{	
+	"name": "AllModesAddedMassDamping",
+	"type": "AllModesAddedMassDamping",
+	"description": "Description of WAMIT added mass and damping results.",
+
+	"extends": ["marmo:hydro:freq:radiation:AllModesAddedMassDamping"],
+	
+	"properties": [
+    
+        {"name": "genModes", 
+            "type": "SingleModeAddedMassDamping",
+            "dim": "*",
+            "description": "generalized modes."}  
+	]
+	
+}

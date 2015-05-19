@@ -23,7 +23,7 @@
 			 
 	{"name": "endTime", 
 			 "type": "marmo:containers:DimensionalScalar", 
-			 "value": 1.0,
+			 "value": 0.0,
 			 "unit": "s",
 			 "description": "ramp end time."
 			 },		
@@ -36,7 +36,7 @@
 			 
 	{"name": "endValue", 
 			 "type": "marmo:containers:DimensionalScalar",
-			 "value": 0.0,
+			 "value": 1.0,
 			 "description": "ramp end value."
 			 },
 

@@ -4,7 +4,7 @@
 	"type": "Vector3D",
 	"description": "single 3D vector.",
 	
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
 	
 	"properties": [
 						 	  

@@ -1,0 +1,18 @@
+
+{	
+	"name": "BodyResults",
+	"type": "BodyResults",
+	"description": "Description of wave heading depenedent wave-body interaction results.",
+
+	"extends": ["FieldResults"],
+	
+	"properties": [
+
+   	    {"name": "raos", 
+   	            "type": "RAO",
+   	            "dim": "*",
+   	            "description": "linear response amplitude operators."}	
+
+	]
+	
+}

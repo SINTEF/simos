@@ -1,0 +1,16 @@
+
+{	
+	"name": "Body",
+	"type": "Body",
+	"description": "Description of a WAMIT body.",
+
+	"extends": ["marmo:wamit:Body"],
+	
+	"properties": [
+
+       	{"name": "lidDamping", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"description": "Equivalent lid damping for the moonpool."}
+	]
+	
+}

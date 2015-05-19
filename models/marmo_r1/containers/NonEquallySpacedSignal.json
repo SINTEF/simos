@@ -8,10 +8,6 @@
 	
 	"properties": [
 						
-	{"name": "nSamples", 
-			 "type": "integer", "value": 1,
-			 "description": "number of data points."},
-
 	{"name": "xname", 
 			"type": "string", "value": "t",
 			"description": "name for the x value."},
@@ -30,12 +26,12 @@
 			 "simaAttr": "xunit"},
 			 			 	  
 	{"name": "xvalue", 
-			 "type": "double", "dim": "nSamples", 
+			 "type": "double", "dim": "*", 
 			 "description": "x data points.",
 			 "simaAttr": "xdata"},
 			 			 
 	{"name": "value", 
-			 "type": "double", "dim": "nSamples", 
+			 "type": "double", "dim": "*", 
 			 "description": "data points.",
 			 "simaAttr": "ydata."},
 			 

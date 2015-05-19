@@ -1,0 +1,25 @@
+
+{	
+	"name": "IndexedComplexVectorResponse",
+	"type": "IndexedComplexVectorResponse",
+	"description": "Description of a complex response from WAMIT, when data is indexed by point location",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+             
+        {"name": "x", 
+             "type": "IndexedComplexScalarResponse", 
+             "description": "x."},
+
+        {"name": "y", 
+             "type": "IndexedComplexScalarResponse", 
+             "description": "y."},
+             
+        {"name": "z", 
+             "type": "IndexedComplexScalarResponse", 
+             "description": "z."}
+            
+	]
+	
+}

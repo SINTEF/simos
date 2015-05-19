@@ -7,11 +7,9 @@
     "extends": ["SolidBody", "MotionModes"],
 	
 	"properties": [
-       {"name": "freeMotionModes", 
+       {"name": "fixedMotionModes", 
              "type": "integer", 
-             "dim": "6",
-             "value": 1,
-             "optional": "ture",
+             "dim": "*",
              "description": "the modes which are fixed."},
              
        {"name": "massMatrix", 

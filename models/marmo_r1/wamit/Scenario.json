@@ -18,7 +18,7 @@
             "type": "string",
             "value": "all",
             "description": "list of relevant entities in the geometry file."},
-            			
+
 	{"name": "poten", 
 			"type": "PotenParameters", 
 			"description": "poten parameters."},

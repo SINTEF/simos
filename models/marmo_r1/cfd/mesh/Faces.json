@@ -1,0 +1,25 @@
+
+{	
+	"name": "Faces",
+	"type": "Faces",
+	"description": "Description of mesh faces.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	{"name": "inds", 
+			"type": "integer", "dim": "*",
+			"description": "all indexes of faces vertices/points, to be found in Faces:points."},
+			
+	{"name": "nNode", 
+			"type": "integer", "dim": "*",
+			"description": "An array with the length of number of faces, which gives each face number of nodes or vertices"},
+
+	{"name": "stInd", 
+		"type": "integer", "dim": "*",
+		"description": "An array with length of number of faces, which gives each face nodes start index in inds."}
+
+	]
+	
+}

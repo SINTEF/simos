@@ -1,0 +1,27 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Forced motion scenario of a vessel in wamit.",
+	
+    "extends": ["marmo:wamit:Scenario"],
+	
+	"properties": [
+			
+            
+	{"name": "periods", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "s",  
+			"description": "wave periods."},
+				
+	{"name": "probes", 
+			"type": "marmo:wamit:Probe",
+			"dim": "*",
+			"description": "a collection of probes."},
+			
+    {"name": "addedMassDamping", 
+        "type": "marmo:wamit:hydro:freq:radiation:CompleteAddedMassDamping",
+        "description": "all values for added mass and damping mode of motion."}
+	]
+	
+}

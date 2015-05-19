@@ -1,0 +1,18 @@
+
+{	
+	"name": "SourcePotenRun",
+	"type": "SourcePotenRun",
+	"description": "Poten source run path and files.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+			
+	   {"name": "path", 
+			"type": "string",
+			"value": "",
+			"description": "path to the poten case folder."}	
+			
+	]
+	
+}

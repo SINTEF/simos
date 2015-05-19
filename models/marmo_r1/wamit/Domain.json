@@ -9,9 +9,20 @@
 	"properties": [
 
 	   {"name": "depth", 
-			"type": "double",
-			"value": "-1.0",
+			"type": "marmo:containers:DimensionalScalar",
+			"value": -1.0,
+			"unit": "m",
 			"description": "water depth, -1: infinite."},
+
+	   {"name": "uLen", 
+			"type": "marmo:containers:DimensionalScalar",
+			"value": 1.0,
+			"unit": "m",
+			"description": "unit length."},
+			
+	   {"name": "constants", 
+			"type": "marmo:dynamics:PhysicalConstants",
+			"description": "list of constants."},
 			
 	   {"name": "rho", 
              "type": "marmo:containers:DimensionalScalar", 
@@ -19,10 +30,15 @@
              "unit": "kg/m^3",
              "description": "water density."},
              
-	{"name": "scale", 
+       {"name": "scale", 
 			"type": "double",
 			"value": "1.0",
-			"description": "Scale of the problem, fullScaleLength/PresentLength."}
+			"description": "Scale of the problem, fullScaleLength/PresentLength."},
+			
+       	{"name": "fieldPoints", 
+			"type": "marmo:containers:VectorArray",
+			"optional": "true",
+			"description": "coordinates of field points"}
 
 	]
 	

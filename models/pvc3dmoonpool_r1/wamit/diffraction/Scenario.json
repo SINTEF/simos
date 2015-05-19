@@ -1,0 +1,18 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Diffraction scenario of a vessel in wamit.",
+	
+    "extends": ["marmo:wamit:diffraction:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "pvc3dmoonpool:cfd:Domain", 
+			"description": "Computational domain."}
+
+
+	]
+	
+}

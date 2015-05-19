@@ -13,15 +13,25 @@
             "value":"1",
             "description": "Number of CPUs."},	
             
-        {"name": "lowHight", 
+        {"name": "lowHigh", 
             "type": "integer",  "from": [0,1],
             "value":"0",
             "description": "0:low order, 1: high order."},
             
         {"name": "panelSize", 
-            "type": "integer", 
+            "type": "double", 
             "value":"1",
-            "description": "a value for panel subdevision."}		
+            "description": "a value for panel subdevision."},
+            
+        {"name": "iopt5", 
+            "type": "integer", 
+            "value":"0",
+            "description": "0: total body pressure, 1: separated radiation and diffraction body pressure."},
+            
+        {"name": "iopt6", 
+            "type": "integer", 
+            "value":"0",
+            "description": "0: total field pressure, 1: separated radiation and diffraction field pressure."}	
 	]
 	
 }

@@ -4,7 +4,7 @@
 	"type": "ComplexScalarResponse",
 	"description": "Description of a complex response from WAMIT.",
 
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
 

@@ -1,0 +1,30 @@
+
+{	
+	"name": "FieldSample",
+	"type": "FieldSample",
+	"description": "data model for field sampling.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	    {"name": "T", 
+         "type": "marmo:containers:DimensionalScalar", 
+         "unit": "s",
+         "description": "wave period."
+         },		 		
+         	         	 
+		{"name": "scalars", 
+		 "type": "marmo:containers:IndexedComplexScalarResponse", 
+		 "dim":"*",
+		 "description": "scalar output probes."
+		 },
+				 			 
+		{"name": "vectors", 
+		 "type": "marmo:containers:IndexedComplexVectorResponse", 
+		 "dim":"*",
+		 "description": "3D vector output probes."}
+	
+	]
+	
+}

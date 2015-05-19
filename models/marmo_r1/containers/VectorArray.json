@@ -8,21 +8,17 @@
 	"extends": ["marmo:basic:NamedEntityWithUnit"],
 					
 	"properties": [
-	    
-	{"name": "len", 
-             "type": "integer", "value": 1,
-             "description": "number of data points."},
-	    
+	
 	{"name": "x", 
-			 "type": "double", "dim": "len", 
+			 "type": "double", "dim": "*", 
 			 "description": "data points."},
 			 	 
     {"name": "y", 
-             "type": "double", "dim": "len", 
+             "type": "double", "dim": "*", 
              "description": "data points."},
              
     {"name": "z", 
-             "type": "double", "dim": "len", 
+             "type": "double", "dim": "*", 
              "description": "data points."}
              	  
 	]

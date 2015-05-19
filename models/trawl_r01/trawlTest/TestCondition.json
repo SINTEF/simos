@@ -7,6 +7,10 @@
     "extends": ["marmo:basic:NamedEntity"],
     
     "properties": [
+	 {"name": "id", 
+            "type": "integer",  
+            "description": "condition number"},
+	 
 	 {"name": "tests", 
             "type": "TestRealisation", 
 			"dim":"*",

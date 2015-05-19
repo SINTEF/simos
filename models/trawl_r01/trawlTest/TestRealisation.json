@@ -7,7 +7,10 @@
     "extends": ["marmo:basic:NamedEntity"],
     
      "properties": [
-			
+	{"name": "id", 
+			"type": "integer",  
+			"description": "test number"},
+
 	{"name": "forceSensors",
 			"type": "trawl:InstrForceSensor",
 			"dim":"*",

@@ -35,6 +35,10 @@
 			 "description": "data points.",
 			 "simaAttr": "ydata."},
 			 
+	{"name": "unit", 
+			 "type": "string", "value": "",
+			 "description": "signal unit"},
+			 
     {"name": "label", 
             "type": "string", "value": "",
             "description": "label for the y value."},

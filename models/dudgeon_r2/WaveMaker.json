@@ -11,10 +11,10 @@
 			"type": "string",
 			"description": "Flap, piston, ..."},
 			
-	{"name": "xcoord", 
-			"type": "marmo:containers:DimensionalScalar",  
+	{"name": "position", 
+			"type": "marmo:containers:Vector3D",  
 			"unit": "m",
-			"description": "X-position of the wavemaker"},
+			"description": "position of the wavemaker"},
 			
 	{"name": "dt", 
             "type": "marmo:containers:DimensionalScalar",  

@@ -25,15 +25,11 @@
 			"unit": "N",
             "description": "weight of door"}, 
 			
-	{"name": "xcoord", 
-            "type": "marmo:containers:DimensionalScalar",  
+	{"name": "position", 
+            "type": "marmo:containers:Vector3D",  
 			"unit": "m",
-            "description": "X-position of the model"},
-			
-	{"name": "ycoord", 
-            "type": "marmo:containers:DimensionalScalar",  
-			"unit": "m",
-            "description": "Y-position of the model"}
+            "description": "position of the model"}
+            
     ]
     
 }

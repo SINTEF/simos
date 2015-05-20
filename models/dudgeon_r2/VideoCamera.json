@@ -11,21 +11,11 @@
             "type": "marmo:containers:SimpleString",  
             "description": "Serialnumber"},
 		
-	 {"name": "xcoord", 
-            "type": "marmo:containers:DimensionalScalar",  
+	 {"name": "position", 
+            "type": "marmo:containers:Vector3D",  
 			"unit": "m",
-            "description": "Global x coord."},
-			
-     {"name": "ycoord", 
-            "type": "marmo:containers:DimensionalScalar",  
-			"unit": "m",
-            "description": "Global y coord."},
-			
-	{"name": "zcoord", 
-            "type": "marmo:containers:DimensionalScalar",  
-			"unit": "m",
-            "description": "Global z coord."},
-			
+            "description": "Position in global coord"},
+						
     {"name": "images", 
             "type": "marmo:containers:NonEquallySpacedSignal", 
             "description": "the video"}

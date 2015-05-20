@@ -7,13 +7,13 @@
     "extends": ["marmo:basic:NamedEntity"],
     
      "properties": [
-	{"name": "id", 
+	{"name": "seed", 
 			"type": "integer",  
 			"description": "seed number"},
 			
-	{"name": "calibration", 
-			"type": "CalIrrRealisation", 
-			"description": "The wave calibration realization"},
+	{"name": "calRef", 
+			"type": "CalRef", 
+			"description": "Reference to the calibrated environment"},
 			
 	{"name": "sensors",
 			"type": "dudgeon:InstrSensor",

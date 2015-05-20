@@ -15,25 +15,14 @@
             "type": "string",  
             "description": "waveprobe, force transducer, temp. sensor, accelerometer, ..."},
 			
-	{"name": "xcoord", 
-			"type": "marmo:containers:DimensionalScalar",  
+	{"name": "position", 
+			"type": "marmo:containers:Vector3D",  
 			"unit": "m",
-			"description": "X-position of the sensor"},
-			
-	{"name": "ycoord", 
-			"type": "marmo:containers:DimensionalScalar",  
-			"unit": "m",
-			"description": "Y-position of the sensor"},
-			
-	{"name": "zcoord", 
-			"type": "marmo:containers:DimensionalScalar",  
-			"unit": "m",
-			"description": "Z-position of the sensor"},
-			
+			"description": "position of the sensor"},
+						
     {"name": "signal", 
             "type": "marmo:containers:NonEquallySpacedSignal", 
-			"dim": "*",
-            "description": "an array of logged dat from the sensor"}
+            "description": "an array of logged data from the sensor"}
 
      ]
     

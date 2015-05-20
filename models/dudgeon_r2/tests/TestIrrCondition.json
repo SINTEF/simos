@@ -15,15 +15,11 @@
 			"type": "dudgeon:Model",
 			"description": "model during the tests"},
 			
-	 {"name": "tests", 
+	 {"name": "irrRealizations", 
 			"type": "TestIrrRealisation", 
 			"dim":"*",
 			"description": "The seed variations"},
-			
-	{"name": "calibration", 
-			"type": "CalIrrCondition", 
-			"description": "The wave calibration condition"},
-			
+						
 	{"name": "h",
 			"type": "marmo:containers:DimensionalScalar",
 			"unit": "m",

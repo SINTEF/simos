@@ -1,8 +1,8 @@
 
 {   
-    "name": "TestRegCondition",
-    "type": "TestRegCondition",
-    "description": "REg wave Test condition, with many different regular waves",
+    "name": "CalRegCondition",
+    "type": "CalRegCondition",
+    "description": "Reg wave calibration data",
     
     "extends": ["marmo:basic:NamedEntity"],
     
@@ -10,11 +10,7 @@
 	 {"name": "id", 
 			"type": "integer",  
 			"description": "test number"},
-			
-	{"name": "model",
-			"type": "dudgeon:Model",
-			"description": "model during the tests"},
-									
+						
 	{"name": "h",
 			"type": "marmo:containers:DimensionalScalar",
 			"unit": "m",
@@ -53,10 +49,10 @@
 	{"name": "nper",
 			"type": "integer",
 			"description": "number of periods"}, 
-			
-	{"name": "calRef", 
-			"type": "CalRef", 
-			"description": "Reference to the calibrated environment"},
+						
+	{"name": "waveMaker",
+			"type": "dudgeon:WaveMaker",
+			"description": "The wavemaker and the signals to it"},
 			
 	{"name": "sensors",
 			"type": "dudgeon:InstrSensor",

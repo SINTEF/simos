@@ -7,6 +7,11 @@
     "extends": ["marmo:basic:NamedEntity"],
     
     "properties": [
+    {"name": "regCals", 
+            "type": "dudgeon:tests:CalRegCondition",  
+			"dim": "*",
+            "description": "regular calibration conditions."},
+            
 	{"name": "regTests", 
             "type": "dudgeon:tests:TestRegCondition",  
 			"dim": "*",
@@ -17,7 +22,6 @@
 			"dim": "*",
             "description": "irregular test conditions."},
 			
-
 	{"name": "irrCals", 
             "type": "dudgeon:tests:CalIrrCondition",  
 			"dim": "*",

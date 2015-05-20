@@ -7,7 +7,7 @@
     "extends": ["marmo:basic:NamedEntity"],
     
      "properties": [
-	{"name": "id", 
+	{"name": "seed", 
 			"type": "integer",  
 			"description": "seed number"},
 			

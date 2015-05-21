@@ -1,0 +1,31 @@
+
+{   
+    "name": "WaveMaker",
+    "type": "WaveMaker",
+    "description": "The wavemaker and the signals to it",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	{"name": "model", 
+			"type": "string",
+			"description": "Flap, piston, ..."},
+			
+	{"name": "position", 
+			"type": "marmo:containers:Vector3D",  
+			"unit": "m",
+			"description": "position of the wavemaker"},
+			
+	{"name": "dt", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "s",
+            "description": "timestep used in the signal to the wavemaker"}, 
+			
+	{"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal",  
+            "description": "signal to the wavemaker"}
+    ]
+    
+}
+
+

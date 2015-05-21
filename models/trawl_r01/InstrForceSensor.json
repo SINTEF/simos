@@ -8,11 +8,11 @@
     
     "properties": [
      {"name": "sn", 
-            "type": "marmo:containers:SimpleString",  
+            "type": "integer",  
             "description": "Serialnumber"},
 		
 	{"name": "model", 
-            "type": "marmo:containers:SimpleString",  
+            "type": "string",  
             "description": "ring, cylindrical or beam"},
 			
     {"name": "signal", 

@@ -13,7 +13,7 @@
 			"description": "name for the x value."},
 
     {"name": "xlabel", 
-            "type": "string", "value": "",
+            "type": "string", "value": "time",
             "description": "label for the x value."},
             
 	{"name": "xdescription", 
@@ -34,6 +34,10 @@
 			 "type": "double", "dim": "*", 
 			 "description": "data points.",
 			 "simaAttr": "ydata."},
+			 
+	{"name": "unit", 
+			 "type": "string", "value": "",
+			 "description": "signal unit"},
 			 
     {"name": "label", 
             "type": "string", "value": "",

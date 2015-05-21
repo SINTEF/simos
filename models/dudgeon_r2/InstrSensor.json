@@ -1,0 +1,29 @@
+
+{   
+    "name": "InstrSensor",
+    "type": "InstrSensor",
+    "description": "Sensor, can be waveprobe, force sensor, temp sensor, accelerometer, ...",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "sn", 
+            "type": "integer",  
+            "description": "Serialnumber"},
+		
+	{"name": "model", 
+            "type": "string",  
+            "description": "waveprobe, force transducer, temp. sensor, accelerometer, ..."},
+			
+	{"name": "position", 
+			"type": "marmo:containers:Vector3D",  
+			"unit": "m",
+			"description": "position of the sensor"},
+						
+    {"name": "signal", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "an array of logged data from the sensor"}
+
+     ]
+    
+}

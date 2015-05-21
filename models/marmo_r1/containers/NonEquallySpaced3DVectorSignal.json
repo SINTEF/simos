@@ -2,7 +2,7 @@
 {	
 	"name": "NonEquallySpaced3DVectorSignal",
 	"type": "NonEquallySpaced3DVectorSignal",
-	"description": "data model for a collection of equally spaced 3D vector signals, model test data for instance.",
+	"description": "data model for a collection of non equally spaced 3D vector signals, model test data for instance.",
 	
 	"extends": ["marmo:basic:NamedEntity"],
 	

@@ -32,7 +32,20 @@
 			 		 
 	{"name": "xstart", 
 			 "type": "double", "value": 0,
-			 "description": "start of the signal input."}		 
+			 "description": "start of the signal input."},
+			 
+    {"name": "xlabel", 
+		    "type": "string", "value": "",
+		    "description": "label for the x value."},
+		    
+    {"name": "label", 
+	        "type": "string", "value": "",
+	        "description": "label for the y value."},
+		    		 
+    {"name": "legend", 
+            "type": "string", "value": "",
+            "description": "description of xy values to be used as legend."}
+
 	  
 	]
 	

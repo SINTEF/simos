@@ -508,6 +508,8 @@ Generator.prototype.generatePackage = function(packageID) {
 	
 	/* generating packages */
 	this.generatePackagesRecursively(packageID);
+	
+	return 'Package generator finished!';
 };
 /*----------------------------------------------------------------------------*/
 module.exports = function() { return new Generator(); };

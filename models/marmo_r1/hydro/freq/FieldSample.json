@@ -23,8 +23,12 @@
 		{"name": "vectors", 
 		 "type": "marmo:containers:IndexedComplexVectorResponse", 
 		 "dim":"*",
-		 "description": "3D vector output probes."}
-	
+		 "description": "3D vector output probes."},
+
+		{"name": "gridName", 
+			 "type": "string", 
+			 "value":"",
+			 "description": "name of the field grid this data belongs to, empty:no grid."}
 	]
 	
 }

@@ -12,7 +12,13 @@
             "type": "integer", 
             "value": "0",
             "description": "number of ovalization modes."
-            }
+            },
+            
+       	{"name": "botOpenZ", 
+                "type": "double", 
+                "value": "0",
+                "description": "z coordinate of bottom openning, between -18 and -20."
+                }
 	]
 	
 }

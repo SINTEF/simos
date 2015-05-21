@@ -15,7 +15,7 @@
 			 "description": "data points."},			 
 
 	{"name": "xname", 
-			"type": "string", "value": "x",
+			"type": "string", "value": "time",
 			"description": "name for the x value"},
 
 	{"name": "xdescription", 

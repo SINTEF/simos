@@ -8,31 +8,11 @@
 	   
 	"properties": [
 			
-	{"name": "timeUnit", 
-			"type": "string",  "value": "s",
-			"description": "unit of time signal"
-			},
-
-	{"name": "forceUnit", 
-			"type": "string", "value": "N",
-			"description": "unit of force signal"
-			},
-
-	{"name": "momUnit", 
-			"type": "string", "value": "Nm",
-			"description": "unit of moment signal"
-			},
 			
 	{"name": "CofR", 
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "description": "Coordinate for center of rotation. Used to calculate moments. "
-			 },
-	  			
-	{"name": "time", 
-			 "type": "marmo:containers:EquallySpacedSignal", 
-			 "__dependencies": {	"unit": "timeUnit" },
-			 "description": "Array of times "
 			 },
 
     {"name": "sources", 
@@ -45,49 +25,31 @@
 
 	{"name": "preF", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "forceUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Pressure Force"
 			 },		
 
 	{"name": "visF", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "forceUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Viscous Force"
 			 },		
 
 	{"name": "porF", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "forceUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Porous Force"
 			 },		
 			 
 	{"name": "preM", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "momUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Pressure moment"
 			 },		
 
 	{"name": "visM", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "momUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Viscous moment"
 			 },		
 
 	{"name": "porM", 
 			 "type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
-			 "__dependencies": {	"xunit": "timeUnit",
-			 						"unit": "momUnit" },
-			 "__assign": {		"xname": "time" },
 			 "description": "Porous moment"
 			 }					 
 

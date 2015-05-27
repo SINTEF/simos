@@ -9,10 +9,12 @@
     "properties": [
      {"name": "sn", 
             "type": "integer",  
+            "value": 0,
             "description": "Serialnumber"},
 		
 	{"name": "model", 
-            "type": "string",  
+            "type": "string",
+            "value": "",
             "description": "waveprobe, force transducer, temp. sensor, accelerometer, ..."},
 			
 	{"name": "position", 

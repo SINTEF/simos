@@ -46,7 +46,7 @@ SaveLoad.prototype.loadFunc = function(bl) {
 	cmd.push(this.gbl(bl+2) + 			'dsType = \'hdf5\'; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1) + 		'if ~(exist(\'name\',\'var\'))'); 
-	cmd.push(this.gbl(bl+2) + 			'name = \'hdf5\'; ');
+	cmd.push(this.gbl(bl+2) + 			'name = ' + this.objName() + '.name; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1) + 		'if ~(exist(\'action\',\'var\'))'); 
 	cmd.push(this.gbl(bl+2) + 			'action = \'init\'; ');

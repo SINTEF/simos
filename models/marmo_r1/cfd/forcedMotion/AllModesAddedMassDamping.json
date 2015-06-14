@@ -1,0 +1,60 @@
+
+{	
+	"name": "AllModesAddedMassDamping",
+	"type": "AllModesAddedMassDamping",
+	"description": "Description of WAMIT added mass and damping results.",
+
+	"extends": ["marmo:basic:NamedEntity","marmo:dynamics:MotionModes"],
+	
+	"properties": [
+    
+	   {"name": "forceInd", 
+			"type": "integer", 
+			"value": "1",
+			"description": "index for the force."},
+            
+       {"name": "surge", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "1"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in surge."},
+            
+       {"name": "sway", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "2"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in sway."},
+            
+       {"name": "heave", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "3"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in heave."},
+            
+       {"name": "roll", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "4"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in roll."},
+            
+       {"name": "pitch", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "5"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in pitch."},
+            
+       {"name": "yaw", 
+            "type": "SingleModeAddedMassDamping",
+            "__assign": { "motionInd": "6"},
+            "__dependencies": { "forceInd": "forceInd"},
+            "optional": "true",
+            "description": "coefficients in yaw."}    
+            
+	]
+	
+}

@@ -421,6 +421,29 @@ CommonLangBase.prototype.isArray = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isFixedDimArray = function(prop) {
+	if (this.isArray(prop) ) {
+        if (this.getDimensionList(prop).indexOf('*') == -1) {
+            return true;
+        }
+        else {
+		    return false;
+        }
+	}
+	else {
+		return false;
+	}
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isVariableDimArray = function(prop) {
+	if (this.isArray(prop) ) {
+        return (!(this.isFixedDimArray(prop));
+	}
+	else {
+		return false;
+	}
+};
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.isSingle = function(attr) {
 	return (!this.isArray(attr));
 };
@@ -460,6 +483,24 @@ CommonLangBase.prototype.isString = function(prop) {
 		return false;
 	}
 };
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isPublic = function(prop) {
+    if (prop.access == undefined || prop.access == 'public') {
+		return true;
+	} 
+    else {
+        return false;
+    }
+}
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.isPrivate = function(prop) {
+    if (prop.access == 'private') {
+		return 'true';
+	} 
+    else {
+        return false;
+    }
+}
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.findProperty = function(name, model) {
 	if (model == undefined) {

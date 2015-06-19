@@ -59,7 +59,7 @@ HDF5Save.prototype.saveVertionsToHDF5Handle = function(bl) {
 	for(var i = 0, len = packages.length; i< len; i++) {
 		var key = packages[i];
 		cmd.push(this.gbl(bl+1) + 
-		'handle.attrs[' + this.stringify(key) + '] = ' + this.stringify(this.getVersion(key)) );
+		'handle.attrs[' + this.stringify(key) + '] = ' + this.stringify(this.getPackageVersion(key)) );
 	}
 	
 	cmd.push(this.gbl(bl+1) + 
@@ -124,7 +124,7 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 		'self.REF = handle.ref');
 	
 	cmd.push(this.gbl(bl+1) + 
-		'handle.attrs["type"] = ' + this.stringify(this.typeID(this.getModel())) );
+		'handle.attrs["type"] = ' + this.stringify(this.getPackagedTypeStr()) );
 
 	cmd.push(this.gbl(bl+1) + 
 		'handle.attrs["ID"] = self.ID' );

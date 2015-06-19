@@ -3,6 +3,43 @@ function Init(){
 };
 exports.Init = Init;
 /*----------------------------------------------------------------------------*/
+Init.prototype.propertiesDeclaration = function(bl) {
+	/*
+	 * return properties declaration
+	 */
+
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+        var decStr = '';
+
+        if ( (this.isSingle(prop)) && (this.isAtomic(prop)) ){
+            decStr = this.changeType(prop.type); 
+        }
+        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) ) {
+            decStr = this.changeType(prop.type) + ', dimension(' + this.getFortDimensionList(prop) +')';
+            if (this.isVariableDimArray(prop)) {
+                decStr = decStr + ', allocatable';
+            }
+        }
+
+        if (this.isPublic(prop)) {
+            decStr = decStr + ', public';
+        }
+        cmd.push(this.gbl(bl) + decStr + ' :: ' + prop.name + '    !' + prop.description); 
+    }
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 Init.prototype.getInitObjectList = function(prop) {
 	if ((this.isArray(prop)) && (! this.isAtomic(prop))){
 		/* we have o use a list with the defined dimensions of the object */

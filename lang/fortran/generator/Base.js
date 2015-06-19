@@ -24,12 +24,12 @@ packageParts = ['./storage/SaveLoad',
                     './storage/MongoLoad',
                     
                     './properties/Query',
-                    './properties/Init',
+                    
                     './properties/Assign',
                     './properties/SetGet',
                     './properties/Representation'];
 */
-packageParts = []
+packageParts = ['./properties/Init']
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {
 	var packPath = packageParts[ip];
@@ -72,8 +72,32 @@ Base.prototype.stringify = function(str) {
     return ('\'' + String(str).replace(/\'/g, '\'\'') + '\'');
 };
 /*----------------------------------------------------------------------------*/
-CommonLangBase.prototype.getFortDimensionList = function(prop) {
-    return this.getDimensionList(prop).join(',').replace(/\*\/g,':');
+Base.prototype.getFortDimensionList = function(prop) {
+    return this.getDimensionList(prop).join(',').replace(/\*/g,':');
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.parseFullTypeName = function(type, model) {
+	/* get a complex type package path,
+	 * e.g. model:hydro:wamit:rao
+	 * and extract path and versioning data*/
+	if (model == undefined){
+		model = this.getModel();
+	}
+	
+	var packages = this.splitPackages(type);
+	/* take out the typename */
+	var typeName = packages.join('');
+	packages = packages.slice(0,packages.length-1);
+	var versions = this.getPackagesVersions(packages,model);
+				
+	
+	return({	"packages": packages,
+				"versions": versions,
+				"name": typeName,
+				"path": this.makeTypePath(packages, versions, typeName)});
+
+
+	
 };
 /*----------------------------------------------------------------------------*/
 Base.prototype.importModules = function(bl) {

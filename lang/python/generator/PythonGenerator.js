@@ -29,7 +29,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('    Babak Ommani, Offshore Hydrodynamic, MARINTEK """');
 	cmd.push('');
 	cmd.push('## ' + entity.getDescription());
-	cmd.push('## Generated with ' + entity.getClassName() + ' version ' + entity.getVersion());
+	cmd.push('## Generated with ' + entity.getClassName() );
 	cmd.push('');
 	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push('#modules');

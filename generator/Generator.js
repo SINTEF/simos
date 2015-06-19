@@ -7,6 +7,9 @@ var simosPath = require('./config.js').simosPath;
 
 var config = require(path.join(simosPath,'config.js'));
 
+var ModelParser = require('./lang/ModelParser.js').ModelParser;
+
+
 fs.mkdirPathSync = function(dirPath, mode) {
 	  //Call the standard fs.mkdir
 	try {
@@ -45,8 +48,6 @@ Generator.prototype.constructor = function(lang) {
 	this.packageFlag = '__package__';
 	
 	this.versions = null;
-	
-	this.modelExt = 'json';
 	
 	this.flatModel = true;
 };
@@ -94,38 +95,9 @@ Generator.prototype.setLang = function(lang) {
 /*----------------------------------------------------------------------------*/
 /* Package and model name and path manipulation */
 /*----------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------*/
-Generator.prototype.splitPackageName = function(packageName) {
-	if (packageName.indexOf(this.lang.versionSep) == -1)
-		return {"name": packageName, "version":""};
-		
-	var parts = packageName.split(this.lang.versionSep);
-	
-	return {"name": parts.slice(0, parts.length-1).join(this.lang.versionSep),
-			"version": parts[parts.length-1]};
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.packageIDFromModelID = function(modelID) {
-	var parts = modelID.split(this.lang.packageSep);
-	return parts.slice(0,parts.length-1).join(this.lang.packageSep);
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.modelNameFromID = function(modelID) {
-	var parts = modelID.split(this.lang.packageSep);
-	return parts[parts.length-1];
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.expandPackages = function(packageID) {
-	var ps = packageID.split(this.lang.packageSep);
-	
-	var packages = [];
-	
-	for (var i = 0, len = ps.length; i < len; i++) {
-		packages.push(this.splitPackageName(ps[i]));
-	}
-	
-	return packages;
-};
+
 
 /*----------------------------------------------------------------------------*/
 Generator.prototype.sourcePackageIDtoPath = function(packageID) {
@@ -137,6 +109,9 @@ Generator.prototype.targetPackageIDtoPath = function(packageID) {
 	var packagePath = '';
 	
 	if (this.lang.name.toLowerCase() == 'python'){
+		packagePath = packageID.split(this.lang.packageSep).join('/');
+	}
+	else if (this.lang.name.toLowerCase() == 'fortran'){
 		packagePath = packageID.split(this.lang.packageSep).join('/');
 	}
 	else if (this.lang.name.toLowerCase() == 'matlab'){
@@ -196,7 +171,9 @@ Generator.prototype.getModel = function(modelID) {
 	//console.log(path.resolve(modelPath) + '.' + this.modelExt);
 	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
 	
-	return require(modelPath);
+	var model = require(modelPath);
+	
+	return new ModelParser(model);
 	
 };
 /*----------------------------------------------------------------------------*/
@@ -219,145 +196,59 @@ Generator.prototype.getLocalModelVersion = function(modelID) {
 };
 
 /*----------------------------------------------------------------------------*/
-Generator.prototype.addVersionToModel = function(model, version, packages) {
-	
-	/* add package and version data to model*/
-	if (model[this.versionFlag] == undefined){
-		model[this.versionFlag] =  version;
-		/* adding current package and versions */
-		for (var i=0, len = packages.length; i< len; i++){
-			model[this.versionFlag][packages[i].name] = packages[i].version;
-		}
-	}
-	
-	return model;
-	
-};
-/*----------------------------------------------------------------------------*/
 Generator.prototype.collectVersions = function(packageID, versions) {
 	
 	console.log("\t collecting versions for " + packageID);
-	var packages = this.expandPackages(packageID);
-	var currentPackage = packages[packages.length-1];
+	var packages = this.lang.versionedPackagesFromVersionedPackagedStr(packageID);
+	var currentPackage = {"name": packages.names[packages.names.length-1],
+						  "versions": packages.versions[packages.versions.length-1]};
 
 	if (currentPackage.version != "")
 		versions[currentPackage.name] = currentPackage.version;
-	
-	var ppath = this.sourcePackageIDtoPath(packageID); 
-	
-	var files = fs.readdirSync(ppath);
-			
-	for (var i = 0, len = files.length; i < len; i++) {
-		var file = files[i];
-		var filePath = path.join(ppath, file);
-		if (fs.statSync(filePath).isDirectory()){
-			/* probably another package, try to generate it too!*/
-			this.collectVersions(packageID + this.lang.packageSep + file, versions);
-		}
-	}
-		
+    
 	/* adding the explicitly defined versions for interfacing other packages*/
 	var definedVersions = this.getLocalModelVersion(packageID);	
 	for (var key in definedVersions) {
 		versions[key] = definedVersions[key];
 	}
 };
-/*----------------------------------------------------------------------------*/
-Generator.prototype.addPackageDataToModel = function(model, packages) {
-	
-	if (model["package"] == undefined) {
-		var packageNames = [];
-		for (var i=0, len = packages.length; i< len; i++){
-			packageNames.push(packages[i].name);
-		}
-		model["package"] =  packageNames.join(this.lang.packageSep);
-	}
-	
-	return model;
-	
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.addPackagesToPropType = function(model) {
-	for (var p = 0, plen = model.properties.length; p < plen; p++){
-		var prop = model.properties[p];
-		if (!this.lang.isAtomic(prop)) {
-			var packages = this.lang.splitPackages(prop.type);
-			if (packages.length == 1) {
-				prop.type = model["package"] + this.lang.packageSep + prop.type;
-			}
-		}
-	}
-	
-	return model;
 
-};
+
 /*----------------------------------------------------------------------------*/
-Generator.prototype.addPackagesToModelType = function(model) {
-
-	var packages = this.lang.splitPackages(model.type);
-	if (packages.length == 1) {
-		model.type = model["package"] + this.lang.packageSep + model.type;
+Generator.prototype.flattenModel = function(pmodel) {
+	if (!pmodel.isDerived()){
+		return pmodel;
 	}
-
-	return model;
-
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.addPackagesToSuperTypes = function(model) {
-	if (this.lang.isDerived(model)) {
-		var exts = model["extends"];
-		for (var p = 0, plen = exts.length; p < plen; p++){
-			var ext = model["extends"][p];
-			var packages = this.lang.splitPackages(ext);
-			if (packages.length == 1) {
-				model["extends"][p] = model["package"] + this.lang.packageSep + ext;
-			}
-		}
-	}
-	return model;
-
-};
-/*----------------------------------------------------------------------------*/
-Generator.prototype.flattenModel = function(model) {
-	if (!this.lang.isDerived(model)){
-		return model;
-	}
-	var superTypes = this.lang.superTypes(model);
+	var superTypes = pmodel.superTypes();
 	
 	for(var i = 0, ilen = superTypes.length; i < ilen; i++){
 		var type = superTypes[i];
-		var ppath = [];
-		for (var j = 0, jlen = type.packages.length; j < jlen; j++){
-			ppath.push(this.lang.addVersion(type.packages[j], type.versions[j]));
-		}
-		ppath.push(type.name);
 		
-		var supModelID = ppath.join(this.lang.packageSep);
+		var supModelID = pmodel.makeVersionedPackagedTypeStr(type.packages,type.versions, type.name );
 				
-		var supModel = this.initModel(supModelID);
-		for (var p = 0, plen = supModel.properties.length; p < plen; p++){
-			var prop = supModel.properties[p];
-			if (!this.lang.hasProperty(prop.name, model)){
-				model.properties.push(prop);
+		var psupModel = this.initModel(supModelID);
+		var props = psupModel.getProperties();
+		for (var p = 0, plen = props.length; p < plen; p++){
+			var prop = props[p];
+			if (!pmodel.hasProperty(prop.name)){
+				pmodel.model.properties.push(prop);
 			}
 		}
 	}
 	
-	model["__extendedFor__"] = model["extends"];
-	model["extends"] = undefined;
+	pmodel.model["__extendedFor__"] = model["extends"];
+	pmodel.model["extends"] = undefined;
 	
-	return model;
+	return pmodel;
 	
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.initModel = function(modelID) {
 	
-	var model = this.getModel(modelID);
+	var pmodel = this.getModel(modelID);
 	
-	var packageID = this.packageIDFromModelID(modelID);
-	var packages = this.expandPackages(packageID);
 	
-	model = this.addPackageDataToModel(model, packages);
+	var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
 
 	var version = this.getLocalModelVersion(modelID);
 	
@@ -367,30 +258,26 @@ Generator.prototype.initModel = function(modelID) {
 			version[key] = this.versions[key];
 	}
 	
-	model = this.addVersionToModel(model, version, packages);
+	pmodel.updateFromVersionedPackagedTypeStr(modelID, version);
 	
-	model = this.addPackagesToPropType(model);
-	model = this.addPackagesToSuperTypes(model);
-	
-	model = this.addPackagesToModelType(model);
 	
 	if (this.flatModel) {
-		model = this.flattenModel(model);
+		pmodel = this.flattenModel(pmodel);
 	}
 	
 	/* save new generated model */
-	var modelStr = JSON.stringify(model, undefined, 2);
+	var modelStr = JSON.stringify(pmodel.model, undefined, 2);
 	var genPackagePath = this.generatedPackageIDtoPath(packageID);
 	this.createOutPath(genPackagePath);
 		
-	var outFileName = this.modelNameFromID(modelID) + '(gen).' + this.modelExt;
+	var outFileName = this.lang.getOutModelFileNameFromPackagedTypeStr(modelID);
 	var outFilePath = path.join(genPackagePath, outFileName);
 		
 	fs.writeFileSync( outFilePath, modelStr);
 	/*--------------------------*/
 	
 	
-	return model;
+	return pmodel;
 };
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
@@ -406,13 +293,13 @@ Generator.prototype.generate = function(model) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generateModel = function(modelID) {
 	console.log("\t generating Model " + modelID + ' !');
-	var model = this.initModel(modelID);
+	var model = this.initModel(modelID).model;
 		
-	var packageID = this.packageIDFromModelID(modelID);
+	var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
 	
 	var outppath = this.initPackagePath(packageID);
 	
-	var outFileName = this.modelNameFromID(modelID) + '.' + this.lang.ext;
+	var outFileName = this.lang.getOutCodeFileNameFromPackagedTypeStr(modelID);
 	var outFilePath = path.join(outppath, outFileName);
 	
 	fs.writeFileSync( outFilePath, this.generate(model));

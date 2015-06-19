@@ -59,6 +59,8 @@ PythonBase.prototype.constructor = function(model) {
 	this.name = 'python';
 	this.ext = 'py';
 	
+	this.packagePathSep = '.';
+	
 	this.blockSpace = '    ';
 	
 	this.sep1 = '#******************************************************************************';
@@ -109,6 +111,34 @@ PythonBase.prototype.importModules = function() {
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
+PythonBase.prototype.makeModulePath = function(packagedTypeStr) {
+	var type = '';
+	
+    if (typeof(packagedTypeStr) == 'object') {
+        type = packagedTypeStr;
+    }
+    else{
+    	type = this.parsePackagedTypeStr(packagedTypeStr);
+    }
+    
+	var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
+
+	return (versionedPackages.join(this.packagePathSep) + this.packagePathSep + type.name);
+
+};
+
+PythonBase.prototype.getClassPathFromType = function(packagedTypeStr) {
+	var parsed = this.parsePackagedTypeStr(packagedTypeStr);
+	var modulePath = this.makeModulePath(parsed);
+	
+	return (modulePath + this.packagePathSep + parsed.name);
+};
+
+PythonBase.prototype.getOutCodeFileNameFromPackagedTypeStr = function(modelID) {
+	return this.getModelNameFromPackagedTypeStr(modelID) + '.' + this.ext;
+	
+};
+/*----------------------------------------------------------------------------*/
 PythonBase.prototype.getSuperTypesImport = function() {
 	
 	var cmd = [];
@@ -118,11 +148,15 @@ PythonBase.prototype.getSuperTypesImport = function() {
 	cmd.push('#importing extended types');
 	for (var i = 0; i<superTypes.length; i++){
 		var supType = superTypes[i];
-		cmd.push('from ' + supType.path + ' import ' + supType.name);
+		cmd.push('import ' + this.makeModulePath(supType) );
 	}
 	return cmd.join('\n');
 	
     
+};
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.getClassName = function() {
+	return this.getName();
 };
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.superTypesList = function() {
@@ -149,10 +183,10 @@ PythonBase.prototype.getImportForCustomDataTypes = function() {
 	for (var i = 0; i<props.length; i++){
 		var prop =  props[i];
 		if (this.isAtomicType(prop.type) == false) {
-			var typeData = this.parseFullTypeName(prop.type);
-			if (importedTypes.indexOf(typeData.path) == -1) {
-				cmd.push('import ' + typeData.path );
-				importedTypes.push(typeData.path);
+			var mpath = this.makeModulePath(prop.type);
+			if (importedTypes.indexOf(mpath) == -1) {
+				cmd.push('import ' + mpath );
+				importedTypes.push(mpath);
 			}
 		}
 	}

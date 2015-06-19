@@ -134,7 +134,7 @@ PythonBase.prototype.getClassPathFromType = function(packagedTypeStr) {
 	return (modulePath + this.packagePathSep + parsed.name);
 };
 
-PythonBase.prototype.getOutCodeFileNameFromPackagedTypeStr = function(modelID) {
+PythonBase.prototype.getOutCodeFileNameFromVersionedPackagedTypeStr = function(modelID) {
 	return this.getModelNameFromPackagedTypeStr(modelID) + '.' + this.ext;
 	
 };

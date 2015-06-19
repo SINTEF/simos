@@ -60,7 +60,7 @@ ModelParser.prototype.getDimensionType = function() {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getModel = function(){
 	if (typeof(this.model) === 'undefined') {
-		throw ("Illigal model", this.model);
+		throw ("model is not defined : " + this.model);
 	}
 	else {
 		return this.model;
@@ -982,7 +982,6 @@ ModelParser.prototype.parseVersionedPackagedTypeStr = function(verPackagedTypeSt
 	/* get a packagedTypeStr,
 	 * e.g. model:hydro:wamit:rao
 	 * and extract path and versioning data*/
-	model = this.getModel();
 
 	var splitType = this.versionedPackagesFromVersionedPackagedTypeStr(verPackagedTypeStr);
 	

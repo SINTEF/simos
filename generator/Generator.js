@@ -299,7 +299,8 @@ Generator.prototype.generateModel = function(modelID) {
 	
 	var outppath = this.initPackagePath(packageID);
 	
-	var outFileName = this.lang.getOutCodeFileNameFromPackagedTypeStr(modelID);
+	var outFileName = this.lang.getOutCodeFileNameFromVersionedPackagedTypeStr(modelID);
+
 	var outFilePath = path.join(outppath, outFileName);
 	
 	fs.writeFileSync( outFilePath, this.generate(model));

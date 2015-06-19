@@ -24,13 +24,24 @@ Init.prototype.propertiesDeclaration = function(bl) {
         if ( (this.isSingle(prop)) && (this.isAtomic(prop)) ){
             decStr = this.changeType(prop.type); 
         }
-        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) ) {
+        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) && prop.type != 'string') {
             decStr = this.changeType(prop.type) + ', dimension(' + this.getFortDimensionList(prop) +')';
-            if (this.isVariableDimArray(prop)) {
-                decStr = decStr + ', allocatable';
-            }
         }
-
+        else if ( (this.isSingle(prop)) && (! this.isAtomic(prop)) ) {
+            decStr = 'type(' + this.getClassPathFromType(prop.type) + ')';
+        }
+        else if ( (this.isArray(prop)) && (! this.isAtomic(prop)) ) {
+            decStr = 'type(' + this.getClassPathFromType(prop.type) + ')' + ', dimension(' + this.getFortDimensionList(prop) +')';
+        }
+        else if ( (this.isArray(prop)) && (prop.type == 'string') ) {
+           console.log("special treatment of array of strings");
+        } 
+        else
+            throw("combination for property nor found : " + JSON.stringify(prop) );
+    
+        if (this.isAllocatable(prop)) {
+            decStr = decStr + ', allocatable';
+        }
         if (this.isPublic(prop)) {
             decStr = decStr + ', public';
         }

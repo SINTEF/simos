@@ -52,21 +52,62 @@ Base.prototype.constructor = function(model) {
 	    "short"		:"int",
 	    "integer"	:"integer",
 	    "boolean"	:"logical",
-	    "string"	:"str",
-	    "char"		:"str",
+	    "string"	:"character,dimension(:)",
+	    "char"		:"character",
 	    "tiny"		:"int",
 	    "object"	:"object"
 	};
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
-	
+	this.packagePathSep = '_';
+
 	this.blockSpace = '    ';
 	
 	this.sep1 = '!******************************************************************************';
 	this.sep2 = '!---------------------------------------------------------------------------';
 };
 
+Base.prototype.makeModulePath = function(packagedTypeStr) {
+	var type = '';
+	
+    if (typeof(packagedTypeStr) == 'object') {
+        type = packagedTypeStr;
+    }
+    else{
+    	type = this.parsePackagedTypeStr(packagedTypeStr);
+    }
+    
+	//var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
+
+	return (type.packages.join(this.packagePathSep) + this.packagePathSep + type.name);
+
+};
+
+Base.prototype.getClassPathFromType = function(packagedTypeStr) {
+	return (this.makeModulePath(packagedTypeStr));
+};
+
+Base.prototype.getOutCodeFileNameFromVersionedPackagedTypeStr = function(modelID) {
+    var type = this.parseVersionedPackagedTypeStr(modelID);
+	return (this.makeModulePath(type) + '.' + this.ext);
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.makeClassName = function(type) {
+    return 'class_'+ type;
+};
+
+Base.prototype.getClassName = function() {
+    return this.makeClassName(this.getClassPathFromType(this.getType()));
+};
+
+Base.prototype.makeTypeName = function(type) {
+    return this.getClassPathFromType(type);
+};
+
+Base.prototype.getTypeName = function() {
+    return this.makeTypeName(this.getType());
+};
 /*----------------------------------------------------------------------------*/
 Base.prototype.stringify = function(str) {
     return ('\'' + String(str).replace(/\'/g, '\'\'') + '\'');
@@ -75,30 +116,7 @@ Base.prototype.stringify = function(str) {
 Base.prototype.getFortDimensionList = function(prop) {
     return this.getDimensionList(prop).join(',').replace(/\*/g,':');
 };
-/*----------------------------------------------------------------------------*/
-Base.prototype.parseFullTypeName = function(type, model) {
-	/* get a complex type package path,
-	 * e.g. model:hydro:wamit:rao
-	 * and extract path and versioning data*/
-	if (model == undefined){
-		model = this.getModel();
-	}
-	
-	var packages = this.splitPackages(type);
-	/* take out the typename */
-	var typeName = packages.join('');
-	packages = packages.slice(0,packages.length-1);
-	var versions = this.getPackagesVersions(packages,model);
-				
-	
-	return({	"packages": packages,
-				"versions": versions,
-				"name": typeName,
-				"path": this.makeTypePath(packages, versions, typeName)});
 
-
-	
-};
 /*----------------------------------------------------------------------------*/
 Base.prototype.importModules = function(bl) {
 	 
@@ -122,10 +140,10 @@ Base.prototype.getImportForCustomDataTypes = function(bl) {
 	for (var i = 0; i<props.length; i++){
 		var prop =  props[i];
 		if (this.isAtomicType(prop.type) == false) {
-			var typeData = this.parseFullTypeName(prop.type);
-			if (importedTypes.indexOf(typeData.path) == -1) {
-				cmd.push(this.gbl(bl) + 'use class_' + typeData.name );
-				importedTypes.push(typeData.path);
+			var type = this.makeModulePath(prop.type);
+			if (importedTypes.indexOf(type) == -1) {
+				cmd.push(this.gbl(bl) + 'use ' + this.makeClassName(type) );
+				importedTypes.push(type);
 			}
 		}
 	}
@@ -520,3 +538,19 @@ Base.prototype.factoryFunc = function(bl) {
 	
 	return cmd.join('\n');
 };
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/*   Frtran specific model handling functions */
+/*----------------------------------------------------------------------------*/
+Base.prototype.isAllocatable = function(prop) {
+
+    if (this.isVariableDimArray(prop) || (prop.type == 'string'))
+        return true;
+    else
+        return false;
+
+}
+
+/*----------------------------------------------------------------------------*/
+

@@ -29,20 +29,23 @@ Generator.prototype.generate = function(model) {
 	cmd.push('! Babak Ommani, Offshore Hydrodynamic, MARINTEK ');
 	cmd.push('');
 	cmd.push('! ' + entity.getDescription());
-	cmd.push('! Generated with ' + entity.getClassName() + ' version ' + entity.getVersion());
+	cmd.push('! Generated with ' + entity.getType() + ' version ' + entity.getVersion());
 	cmd.push('!');
 	cmd.push('!------------------------------------------------------------------------------');
 	cmd.push('!******************************************************************************');
-	cmd.push('module class_' + entity.getClassName() );
+	cmd.push('module ' + entity.getClassName() );
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('    !use statements');
 	cmd.push(entity.importModules(1));
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('    implicit none');
     cmd.push('    private');
+    //cmd.push('    type::varString_t
+    //cmd.push('        character,dimension(:),allocatable::d
+    //cmd.push('    end type varString_t');
 	cmd.push('    !---------------------------------------------------------------------------');
-	cmd.push('    public :: ' + entity.getType());    
-	cmd.push('    type   :: ' + entity.getType());    
+	cmd.push('    public :: ' + entity.getTypeName());    
+	cmd.push('    type   :: ' + entity.getTypeName());    
 	cmd.push('        private');    
 	cmd.push(entity.propertiesDeclaration(3));	   
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -50,7 +53,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push('        private');    
 	//cmd.push(entity.proceduresDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
-	cmd.push('    end type ' + entity.getType());    
+	cmd.push('    end type ' + entity.getTypeName());    
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('contain');    
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -65,7 +68,7 @@ Generator.prototype.generate = function(model) {
 	//cmd.push(entity.dictReprFunc(1));
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('!---------------------------------------------------------------------------');
-	cmd.push('end module  class_' + entity.getClassName() );
+	cmd.push('end module  ' + entity.getClassName() );
 	cmd.push('!******************************************************************************');
 	
 	return cmd.join('\n'); 

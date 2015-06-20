@@ -46,7 +46,8 @@ Generator.prototype.constructor = function(lang) {
 	
 	this.versionFlag = '__versions__';
 	this.packageFlag = '__package__';
-	
+	this.modelExt = 'json';
+
 	this.versions = null;
 	
 	this.flatModel = true;
@@ -177,12 +178,13 @@ Generator.prototype.getModel = function(modelID) {
 	
 };
 /*----------------------------------------------------------------------------*/
-Generator.prototype.getLocalModelVersion = function(modelID) {
-	
-	var modelPath = this.sourcePackageIDtoPath(modelID);
-	var dir = path.dirname(modelPath);
+Generator.prototype.getLocalModelVersion = function(packageID) {
+
+	var dir = this.sourcePackageIDtoPath(packageID);
+
+	//var dir = path.dirname(modelPath);
 	var versionFile = path.join(dir, this.versionFlag);
-	
+
 	var versionFilePath = path.resolve(versionFile+ '.' + this.modelExt);
 
 	if (fs.existsSync(versionFilePath)) {
@@ -198,19 +200,22 @@ Generator.prototype.getLocalModelVersion = function(modelID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.collectVersions = function(packageID, versions) {
 	
-	console.log("\t collecting versions for " + packageID);
 	var packages = this.lang.versionedPackagesFromVersionedPackagedStr(packageID);
-	var currentPackage = {"name": packages.names[packages.names.length-1],
-						  "versions": packages.versions[packages.versions.length-1]};
+
+	var currentPackage = {"name": packages.names[0],
+						  "versions": packages.versions[0]};
 
 	if (currentPackage.version != "")
 		versions[currentPackage.name] = currentPackage.version;
     
 	/* adding the explicitly defined versions for interfacing other packages*/
 	var definedVersions = this.getLocalModelVersion(packageID);	
+
 	for (var key in definedVersions) {
 		versions[key] = definedVersions[key];
 	}
+
+    console.log(JSON.stringify(versions));
 };
 
 
@@ -223,7 +228,7 @@ Generator.prototype.flattenModel = function(pmodel) {
 	
 	for(var i = 0, ilen = superTypes.length; i < ilen; i++){
 		var type = superTypes[i];
-		
+
 		var supModelID = pmodel.makeVersionedPackagedTypeStr(type.packages,type.versions, type.name );
 				
 		var psupModel = this.initModel(supModelID);
@@ -250,7 +255,7 @@ Generator.prototype.initModel = function(modelID) {
 	
 	var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
 
-	var version = this.getLocalModelVersion(modelID);
+	var version = this.getLocalModelVersion(packageID);
 	
 	/* mix the locally read versions with the global collected versions. */
 	for (var key in this.versions){
@@ -279,13 +284,17 @@ Generator.prototype.initModel = function(modelID) {
 	
 	return pmodel;
 };
+
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 /* Code generator */
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-Generator.prototype.generate = function(model) {
+Generator.prototype.generate = function(model, outFileContent) {
 	
+    if ('extractUserDefinedCode' in this.lang)
+        this.lang.extractUserDefinedCode(outFileContent);
+    
 	return this.lang.generate(model);
 	
 	
@@ -302,8 +311,14 @@ Generator.prototype.generateModel = function(modelID) {
 	var outFileName = this.lang.getOutCodeFileNameFromVersionedPackagedTypeStr(modelID);
 
 	var outFilePath = path.join(outppath, outFileName);
-	
-	fs.writeFileSync( outFilePath, this.generate(model));
+    var outFileContent = '';	
+    try {
+        if (fs.statSync(outFilePath).isFile())
+            outFileContent = fs.readFileSync(outFilePath).toString();
+    }
+    catch (e) {};
+
+	fs.writeFileSync( outFilePath, this.generate(model, outFileContent));
 	
 	console.log("\t writing " + outFileName + ' !');
 	
@@ -326,13 +341,16 @@ Generator.prototype.generateOnePackage = function(packageID) {
 		if (fs.statSync(filePath).isFile()){
 			/* this is a json file, probably model is not __version__*/
 			var modelNameParts = file.split('.');
-			var modelName = modelNameParts.slice(0,modelNameParts.length-1).join('.');
-		 
-			if (this.isModelName(modelName)){
-				console.log(njs.sep2);
-				console.log("creating " + modelName);
-				this.generateModel( packageID + this.lang.packageSep + modelName);
-			}
+            //Check that it is a json file
+            if (modelNameParts[modelNameParts.length-1] == 'json'){
+			    var modelName = modelNameParts.slice(0,modelNameParts.length-1).join('.');
+		     
+			    if (this.isModelName(modelName)){
+				    console.log(njs.sep2);
+				    console.log("creating " + modelName);
+				    this.generateModel( packageID + this.lang.packageSep + modelName);
+			    }
+            }
 		}
 
 	}
@@ -358,11 +376,14 @@ Generator.prototype.generatePackagesRecursively = function(packageID) {
 		if (fs.statSync(filePath).isFile()){
 			/* this is a json file, probably model is not __version__*/
 			var modelNameParts = file.split('.');
-			var modelName = modelNameParts.slice(0,modelNameParts.length-1).join('.');
-		 
-			if (this.isModelName(modelName)){
-				this.generateModel( packageID + this.lang.packageSep + modelName);
-			}
+            //Check that it is a json file
+            if (modelNameParts[modelNameParts.length-1] == 'json'){
+			    var modelName = modelNameParts.slice(0,modelNameParts.length-1).join('.');
+		     
+			    if (this.isModelName(modelName)){
+				    this.generateModel( packageID + this.lang.packageSep + modelName);
+			    }
+            }
 		}
 		else if (fs.statSync(filePath).isDirectory()){
 			/* probably another package, try to generate it too!*/

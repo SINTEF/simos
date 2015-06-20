@@ -24,7 +24,7 @@ Init.prototype.propertiesDeclaration = function(bl) {
         if ( (this.isSingle(prop)) && (this.isAtomic(prop)) ){
             decStr = this.changeType(prop.type); 
         }
-        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) && prop.type != 'string') {
+        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) && prop.type != 'dstring') {
             decStr = this.changeType(prop.type) + ', dimension(' + this.getFortDimensionList(prop) +')';
         }
         else if ( (this.isSingle(prop)) && (! this.isAtomic(prop)) ) {
@@ -33,11 +33,11 @@ Init.prototype.propertiesDeclaration = function(bl) {
         else if ( (this.isArray(prop)) && (! this.isAtomic(prop)) ) {
             decStr = 'type(' + this.getClassPathFromType(prop.type) + ')' + ', dimension(' + this.getFortDimensionList(prop) +')';
         }
-        else if ( (this.isArray(prop)) && (prop.type == 'string') ) {
-           console.log("special treatment of array of strings");
+        else if ( (this.isArray(prop)) && (prop.type == 'dstring') ) {
+           console.log("special treatment of array of dynamic strings");
         } 
         else
-            throw("combination for property nor found : " + JSON.stringify(prop) );
+            throw("combination for property not found : " + JSON.stringify(prop) );
     
         if (this.isAllocatable(prop)) {
             decStr = decStr + ', allocatable';
@@ -46,6 +46,18 @@ Init.prototype.propertiesDeclaration = function(bl) {
             decStr = decStr + ', public';
         }
         cmd.push(this.gbl(bl) + decStr + ' :: ' + prop.name + '    !' + prop.description); 
+
+        if (this.isArray(prop) && this.isAllocatable(prop)) {
+            //add dimension variables
+            var dimNames = this.getDimensionVarNames(prop);
+            for (var di=0; di<dimNames.length; di++) {
+                var dimDesc = this.changeType("integer");
+                if (this.isPublic(prop)) {
+                    dimDesc = dimDesc + ', public';
+                }
+                cmd.push(this.gbl(bl) + dimDesc + ' :: ' + dimNames[di] + '    !' + di + " dimension of " + prop.name); 
+            }
+        }
     }
 
 	return cmd.join('\n');

@@ -52,7 +52,7 @@ Base.prototype.constructor = function(model) {
 	    "short"		:"int",
 	    "integer"	:"integer",
 	    "boolean"	:"logical",
-	    "string"	:"character,dimension(:)",
+	    "string"	:"character,dimension(1024)",
 	    "char"		:"character",
 	    "tiny"		:"int",
 	    "object"	:"object"
@@ -66,6 +66,19 @@ Base.prototype.constructor = function(model) {
 	
 	this.sep1 = '!******************************************************************************';
 	this.sep2 = '!---------------------------------------------------------------------------';
+
+    this.userCodes = {  "use"     : {"start" : "!@@@@@ USER DEFINED USE START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED USE End   @@@@@",
+                                     "code"  : ""},
+                        "prop"    : {"start" : "!@@@@@ USER DEFINED PROPERTIES START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED PROPERTIES End   @@@@@",
+                                     "code"  : ""},
+                        "funcSig" : {"start" : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS End   @@@@@",
+                                     "code"  : ""},
+                        "func"    : {"start" : "!@@@@@ USER DEFINED PROCEDURES START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED PROCEDURES End   @@@@@",
+                                     "code"  : ""} };
 };
 
 Base.prototype.makeModulePath = function(packagedTypeStr) {
@@ -116,7 +129,19 @@ Base.prototype.stringify = function(str) {
 Base.prototype.getFortDimensionList = function(prop) {
     return this.getDimensionList(prop).join(',').replace(/\*/g,':');
 };
-
+/*----------------------------------------------------------------------------*/
+Base.prototype.getDimensionVarNames = function(prop) {
+    var prefs = ['n', 'm', 'l', 'k'];
+    var names = [];
+    var dims = this.getDimensionList(prop);
+    for (var di=0; di<dims.length; di++) {
+        if (di < 4) 
+            names.push(prefs[di] + this.firstToUpper(prop.name));
+        else       
+            names.push(prefs[0] + (di+1) + this.firstToUpper(prop.name));
+    }
+    return names;
+};
 /*----------------------------------------------------------------------------*/
 Base.prototype.importModules = function(bl) {
 	 
@@ -545,12 +570,43 @@ Base.prototype.factoryFunc = function(bl) {
 /*----------------------------------------------------------------------------*/
 Base.prototype.isAllocatable = function(prop) {
 
-    if (this.isVariableDimArray(prop) || (prop.type == 'string'))
+    //if (this.isVariableDimArray(prop) || (prop.type == 'string'))
+    if (this.isVariableDimArray(prop))
         return true;
     else
         return false;
 
-}
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/*   Handling user specified code in generator functions */
+/*----------------------------------------------------------------------------*/
+Base.prototype.extractUserDefinedCode = function(code) {
+    var lines = code.split('\n');
+
+    for (key in this.userCodes) {
+        var part = this.userCodes[key];
+        var sind = lines.indexOf(part.start);
+        if (sind != -1) {
+            var eind = lines.indexOf(part.end);
+            if ((eind - sind) > 1){
+                console.log("            user code for (" + key + ") betweeb lines : " + sind  + " and " + eind);
+                part.code = lines.slice(sind+1,eind).join('\n');
+            }
+            else
+                part.code = "";
+        }
+        else
+            part.code = "";
+    }
+};
+
+Base.prototype.getUserDefinedCode = function(flag) {
+    if (this.userCodes[flag].code == "")
+            return [this.userCodes[flag].start,this.userCodes[flag].end].join('\n'); 
+    else
+        return [this.userCodes[flag].start,this.userCodes[flag].code, this.userCodes[flag].end].join('\n'); 
+};
 
 /*----------------------------------------------------------------------------*/
 

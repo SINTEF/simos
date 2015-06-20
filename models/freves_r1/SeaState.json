@@ -1,0 +1,18 @@
+
+{	
+	"name": "SeaState",
+	"type": "SeaState",
+	"description": "a class for sea state",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "waveSpectrums", 
+			 "type": "Spectrum", 
+             "dim": "*",
+			 "description": "Specs."}
+	 
+	]
+	
+}

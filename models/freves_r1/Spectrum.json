@@ -1,0 +1,27 @@
+
+{	
+	"name": "Spectrum",
+	"type": "Spectrum",
+	"description": "a class for spectrum",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "freq", 
+			 "type": "double", 
+             "dim": "*",
+			 "description": "Omega [rad/s]."},
+
+	{"name": "dir", 
+			 "type": "double", 
+             "dim": "*",
+			 "description": "directions, [rad]."},
+
+	{"name": "spec", 
+			 "type": "double", 
+             "dim": "*,*",
+			 "description": "directions, [rad]."}		 
+	]
+	
+}

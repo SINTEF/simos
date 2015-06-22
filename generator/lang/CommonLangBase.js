@@ -437,7 +437,7 @@ CommonLangBase.prototype.isFixedDimArray = function(prop) {
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.isVariableDimArray = function(prop) {
 	if (this.isArray(prop) ) {
-        return (!(this.isFixedDimArray(prop));
+        return (!(this.isFixedDimArray(prop)));
 	}
 	else {
 		return false;

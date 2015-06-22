@@ -292,7 +292,7 @@ Generator.prototype.initModel = function(modelID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generate = function(model, outFileContent) {
 	
-    if ('extractUserDefinedCode' in this.lang)
+    if (('extractUserDefinedCode' in this.lang) && (outFileContent != ''))
         this.lang.extractUserDefinedCode(outFileContent);
     
 	return this.lang.generate(model);

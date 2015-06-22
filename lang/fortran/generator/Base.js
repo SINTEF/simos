@@ -582,6 +582,9 @@ Base.prototype.isAllocatable = function(prop) {
 /*   Handling user specified code in generator functions */
 /*----------------------------------------------------------------------------*/
 Base.prototype.extractUserDefinedCode = function(code) {
+    if ((code == undefined) || (code == ''))
+        return;
+    
     var lines = code.split('\n');
 
     for (key in this.userCodes) {

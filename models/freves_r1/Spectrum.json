@@ -12,7 +12,7 @@
 			 "type": "double", 
              "dim": "*",
 			 "description": "Omega [rad/s]."},
-
+             
 	{"name": "dir", 
 			 "type": "double", 
              "dim": "*",

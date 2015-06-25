@@ -292,8 +292,11 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+5) + 					'val = val[0]' );
 	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, val)' );
 	cmd.push(this.gbl(bl+3) + 			'else:');
-	cmd.push(this.gbl(bl+4) + 				'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
-	cmd.push(this.gbl(bl+4) + 				'setattr(self,varName, initFunc())' );
+	cmd.push(this.gbl(bl+4) + 				'if varName == "name":' );
+	cmd.push(this.gbl(bl+5) + 					'setattr(self,varName, handle.name.split("/")[-1])' );
+	cmd.push(this.gbl(bl+4) + 				'else:' );
+	cmd.push(this.gbl(bl+5) + 					'initFunc = getattr(self,"_getInitValue" + varName[0].capitalize() + varName[1:])' );
+	cmd.push(this.gbl(bl+5) + 					'setattr(self,varName, initFunc())' );
 	cmd.push(this.gbl(bl+2) + 		'elif (stat == "detach"):');
 	cmd.push(this.gbl(bl+3) + 			'if (varName in handle.keys()) and not(varName in  self._loadedItems):');
 	cmd.push(this.gbl(bl+4) + 				'self._loadedItems.append(varName)');

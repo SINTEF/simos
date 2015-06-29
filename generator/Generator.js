@@ -14,14 +14,14 @@ fs.mkdirPathSync = function(dirPath, mode) {
 	}
 	catch (ex) {
 	    //When it fail in this way, do the custom steps
-	    if (ex && ex.errno === 34) {
+	    if (ex && ex.code === 'ENOENT') {
 	      //Create all the parents recursively
 	      fs.mkdirPathSync(path.dirname(dirPath), mode);
 	      //And then the directory
 	      fs.mkdirPathSync(dirPath, mode);
 	    }
-	  };
-	};
+	 }
+};
 	
 /*----------------------------------------------------------------------------*/
 function Generator(lang){

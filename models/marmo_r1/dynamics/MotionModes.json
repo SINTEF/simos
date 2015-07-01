@@ -3,14 +3,16 @@
 	"name": "MotionModes",
 	"type": "MotionModes",
 	"description": "names of modes of motions.",
-	
+
+    "extends": ["marmo:basic:NamedEntity"],
+
 	"properties": [
-       {"name": "modeNames", 
+       {"name": "names", 
             "type": "string", "dim":"*", 
             "value": ["surge","sway","heave","roll","pitch","yaw"],
             "description": "list of modes of motions names."},
             
-        {"name": "modeInds", 
+        {"name": "inds", 
              "type": "integer", "dim": "*",
              "value": [1,2,3,4,5,6],
              "description": "radiation modes indexes."}

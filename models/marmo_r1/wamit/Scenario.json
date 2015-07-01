@@ -4,7 +4,7 @@
 	"type": "Scenario",
 	"description": "Description of a WAMIT scenario.",
 	
-    "extends": ["marmo:project:Scenario"],
+    "extends": ["marmo:project:Scenario", "marmo:hydro:freq:Scenario"],
 	
 	"properties": [
 			
@@ -13,7 +13,10 @@
             "value":"temp", 
             "description": "name for the wamit model."},
             
-
+	{"name": "domain", 
+		"type": "Domain", 
+		"description": "Computational domain."},
+    			
     {"name": "entityList", 
             "type": "string",
             "value": "all",

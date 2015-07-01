@@ -7,23 +7,27 @@
 	"extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
-    
+       	{"name": "modeInd", 
+   			"type": "integer", 
+   			"value": "1",
+   			"description": "index for the mode of motion."},
+		           	
 	   {"name": "total", 
-			"type": "ExcitationComponent", 
+			"type": "marmo:containers:ComplexScalarResponse", 
 			"description": "total excitaion force."},
             
        {"name": "fk", 
-            "type": "ExcitationComponent",
+            "type": "marmo:containers:ComplexScalarResponse",
             "optional": "true",
             "description": "Froude-Kriloff excitaion component."},
             
         {"name": "scattering", 
-            "type": "ExcitationComponent",
+            "type": "marmo:containers:ComplexScalarResponse",
             "optional": "true",
             "description": "Scattering excitaion component."}, 
             
         {"name": "haskind", 
-            "type": "ExcitationComponent",
+            "type": "marmo:containers:ComplexScalarResponse",
             "optional": "true",
             "description": "Scattering excitaion component by Haskind relation."}
             

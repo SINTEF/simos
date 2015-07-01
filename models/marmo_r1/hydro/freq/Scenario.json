@@ -2,28 +2,28 @@
 {	
 	"name": "Scenario",
 	"type": "Scenario",
-	"description": "Free motions scenario of a vessel in waves in wamit.",
+	"description": "Free motions scenario of a vessel in waves, linear theory.",
 	
-    "extends": ["marmo:wamit:Scenario"],
+    "extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
             
 	{"name": "waves", 
-			"type": "marmo:wamit:hydro:freq:Waves",
+			"type": "marmo:hydro:freq:Waves",
 			"description": "wave spec."},
 
 	{"name": "radiations", 
-			"type": "marmo:wamit:hydro:freq:radiation:FieldResults",
+			"type": "marmo:hydro:freq:radiation:FieldResults",
 			"dim": "*",
 			"description": "radiation field results."},
 
 	{"name": "diffractions", 
-			"type": "marmo:wamit:hydro:freq:diffraction:FieldResults",
+			"type": "marmo:hydro:freq:diffraction:FieldResults",
 			"dim": "*",
 			"description": "a collection of direction dependent results."},
 				
 	{"name": "interactions", 
-			"type": "marmo:wamit:hydro:freq:interaction:FieldResults",
+			"type": "marmo:hydro:freq:interaction:FieldResults",
 			"dim": "*",
 			"description": "a collection of direction dependent results."}
 	]

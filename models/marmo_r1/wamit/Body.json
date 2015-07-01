@@ -26,17 +26,17 @@
 			
 			
 		{"name": "radiations", 
-				"type": "marmo:wamit:hydro:freq:radiation:BodyResults",
+				"type": "marmo:hydro:freq:radiation:BodyResults",
 				"dim": "*",
 				"description": "radiation results."},
 					
 		{"name": "diffractions", 
-				"type": "marmo:wamit:hydro:freq:diffraction:BodyResults",
+				"type": "marmo:hydro:freq:diffraction:BodyResults",
 				"dim": "*",
 				"description": "a collection of direction dependent results."},
 				
 		{"name": "interactions", 
-				"type": "marmo:wamit:hydro:freq:interaction:BodyResults",
+				"type": "marmo:hydro:freq:interaction:BodyResults",
 				"dim": "*",
 				"description": "a collection of direction dependent results."}
 	]

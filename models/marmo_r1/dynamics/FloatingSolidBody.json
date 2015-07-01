@@ -4,14 +4,18 @@
 	"type": "FloatingSolidBody",
 	"description": "Dynamic properties of a floating solid body.",
 	
-    "extends": ["SolidBody", "MotionModes"],
+    "extends": ["SolidBody"],
 	
 	"properties": [
        {"name": "fixedMotionModes", 
              "type": "integer", 
              "dim": "*",
              "description": "the modes which are fixed."},
-             
+
+     {"name": "motionModes", 
+         "type": "MotionModes", 
+         "description": "the body motion modes."},
+
        {"name": "massMatrix", 
              "type": "SixModesMassMatrix",
              "optional": "true", 

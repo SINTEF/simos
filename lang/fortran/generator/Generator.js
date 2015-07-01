@@ -54,7 +54,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push('    !---------------------------------------------------------------------------');
     cmd.push(entity.getUserDefinedCode("prop"));   
 	cmd.push('    !---------------------------------------------------------------------------');
-	cmd.push('    contain');    
+	cmd.push('    contains');    
 	cmd.push('        private');    
 	//cmd.push(entity.proceduresDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -62,7 +62,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('    end type ' + entity.getTypeName());    
 	cmd.push('    !---------------------------------------------------------------------------');
-	cmd.push('contain');    
+	cmd.push('contains');    
 	cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.initClass(1));
 	//cmd.push('    !---------------------------------------------------------------------------');

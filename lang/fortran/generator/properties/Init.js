@@ -21,11 +21,17 @@ Init.prototype.propertiesDeclaration = function(bl) {
 		var prop = properties[i];
         var decStr = '';
 
-        if ( (this.isSingle(prop)) && (this.isAtomic(prop)) ){
+        if ( (this.isSingle(prop)) && (this.isAtomic(prop) && prop.type != 'string') ){
             decStr = this.changeType(prop.type); 
         }
-        else if ( (this.isArray(prop)) && (this.isAtomic(prop)) && prop.type != 'dstring') {
+        else if ( (this.isSingle(prop)) && (prop.type == 'string') ){
+        	decStr = 'type(' + this.changeType(prop.type) + ')';
+        }
+        else if ( (this.isArray(prop)) && (this.isAtomic(prop) && prop.type != 'string') ) {
             decStr = this.changeType(prop.type) + ', dimension(' + this.getFortDimensionList(prop) +')';
+        }
+        else if ( (this.isArray(prop)) && (prop.type == 'string') ) {
+            decStr = 'type(' + this.changeType(prop.type) + ')' + ', dimension(' + this.getFortDimensionList(prop) +')';
         }
         else if ( (this.isSingle(prop)) && (! this.isAtomic(prop)) ) {
             decStr = 'type(' + this.getClassPathFromType(prop.type) + ')';
@@ -47,6 +53,7 @@ Init.prototype.propertiesDeclaration = function(bl) {
         }
         cmd.push(this.gbl(bl) + decStr + ' :: ' + prop.name + '    !' + prop.description); 
 
+        /*
         if (this.isArray(prop) && this.isAllocatable(prop)) {
             //add dimension variables
             var dimNames = this.getDimensionVarNames(prop);
@@ -58,6 +65,7 @@ Init.prototype.propertiesDeclaration = function(bl) {
                 cmd.push(this.gbl(bl) + dimDesc + ' :: ' + dimNames[di] + '    !' + di + " dimension of " + prop.name); 
             }
         }
+        */
     }
 
 	return cmd.join('\n');

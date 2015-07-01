@@ -52,7 +52,7 @@ Base.prototype.constructor = function(model) {
 	    "short"		:"int",
 	    "integer"	:"integer",
 	    "boolean"	:"logical",
-	    "string"	:"character,dimension(1024)",
+	    "string"	:"String",
 	    "char"		:"character",
 	    "tiny"		:"int",
 	    "object"	:"object"

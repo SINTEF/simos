@@ -26,6 +26,7 @@ CommonLangBase.prototype.constructor = function(model) {
 	    "tiny"		:"Tiny"
 	};
 	
+	this.generalModules = [];
 };
 
 
@@ -43,6 +44,21 @@ CommonLangBase.prototype.getTargetType = function(){
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.setTargetType = function(targetType){
 	this.targetType = targetType;
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getGeneralModulesTypes = function() {
+	
+	var types = this.generalModules;
+	
+	var importedTypes = [];
+	for (var i = 0; i<types.length; i++){
+		var type = types[i].name;
+		if (importedTypes.indexOf(type) == -1) {
+			importedTypes.push(type);
+		}
+	}
+	
+	return importedTypes;
 };
 /*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.firstToUpper = function(name) {

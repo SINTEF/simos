@@ -24,7 +24,12 @@
 	{"name": "neighbours", 
 			"type": "string",
 			"value": "",
-			"description": "faceting settings"}
+			"description": "faceting settings"},
+			
+	{"name": "boundaries", 
+		"type": "PolyMeshBoundary", 
+		"dim": "*",
+		"description": "boundaries."}
 
 	]
 	

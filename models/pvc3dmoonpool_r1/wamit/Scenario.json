@@ -4,7 +4,7 @@
 	"type": "Scenario",
 	"description": "Free motions scenario of a vessel in waves in wamit.",
 	
-    "extends": ["marmo:wamit:rao:Scenario"],
+    "extends": ["marmo:wamit:Scenario"],
 	
 	"properties": [
 			

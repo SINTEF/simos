@@ -4,7 +4,7 @@
 	"type": "RAO",
 	"description": "Frequency domain response amplitude operator.",
 
-	"extends": ["marmo:basic:NamedEntity","marmo:dynamics:MotionModes"],
+	"extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
             

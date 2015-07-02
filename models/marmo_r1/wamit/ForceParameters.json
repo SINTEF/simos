@@ -7,16 +7,16 @@
     "extends": ["marmo:basic:NamedEntity"],
     	
 	"properties": [
-             
-       {"name": "freeModes", 
-             "type": "integer", 
-             "dim": "*",
-             "description": "the modes which are fixed."},	
 
 	   {"name": "runFlag", 
 			"type": "integer", "from": [0,1],
 			"value": "1",
 			"description": "0: do not run, 1: run."},
+
+		{"name": "exportRao", 
+			"type": "integer", "from": [0,1,2,-1,-2,-3],
+			"value": "0",
+			"description": "0: nothing, -+1: using the Haskind exciting force, -+2: using the diffraction exciting force, 3: output field data only for specified radiation modes."},
 			
 	   {"name": "exportOnBody", 
 		"type": "integer", "from": [0,1,2,3],
@@ -24,9 +24,9 @@
 		"description": "0: nothing, 1: pressure, 2: velocity, 3: pressure and velocity."},
 		
 	   {"name": "exportOnField", 
-			"type": "integer", "from": [0,1,2,3],
+			"type": "integer", "from": [0,1,2,3,-1,-2,-3],
 			"value": "0",
-			"description": "0: nothing, 1: pressure, 2: velocity, 3: pressure and velocity."}
+			"description": "0: nothing, 1: pressure, 2: velocity, 3: pressure and velocity, negative value, export using source formulation. if negative value for exportRAO, only radiation modes will be exported."}
 			
 	]
 	

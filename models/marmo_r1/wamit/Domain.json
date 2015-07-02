@@ -48,7 +48,12 @@
        	{"name": "fieldGrids", 
 			"type": "FieldGeometry",
 			"dim": "*",
-			"description": "field data points described by polyMesh or GDF type grid."}
+			"description": "field data points described by polyMesh or GDF type grid."},
+			
+       	{"name": "body", 
+			"type": "Body", 
+			"description": "body"}
+
 
 	]
 	

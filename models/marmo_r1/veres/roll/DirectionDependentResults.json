@@ -25,15 +25,15 @@
 			"optional": "true",
 			"description": "roll dampings."},
 			
-       {"name": "rao", 
-            "type": "marmo:dynamics:freqDomain:RAO",
-            "optional": "true",
+       {"name": "RAOs", 
+            "type": "marmo:hydro:freq:interaction:RAO",
+            "dim": "*",
             "description": "RAO for the case."},
 
-       {"name": "addedMassDamping", 
-            "type": "marmo:dynamics:freqDomain:CompleteAddedMassDamping",
-            "optional": "true",
-            "description": "Speed dependent added mass and damping."}
+		{"name": "radiations", 
+			"type": "marmo:hydro:freq:radiation:BodyResults",
+			"dim": "*",
+			"description": "radiation results."}
 	]
 	
 }

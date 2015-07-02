@@ -222,6 +222,18 @@ Packaging.prototype.testsPath = function(packageStr) {
     return path.join(this.getGeneratedPackageOutPath(packageStr), 'tests');
 };
 /*----------------------------------------------------------------------------*/
+
+Packaging.prototype.appendPackageSourceFile = function(file) {
+	if (this.lang.packaging.packageFiles.src.files.indexOf(file) == -1)
+	    this.lang.packaging.packageFiles.src.files.push(file)
+}
+/*----------------------------------------------------------------------------*/
+
+Packaging.prototype.appendDependencyPackage = function(file) {
+	if (this.lang.packaging.packageFiles.lib.files.indexOf(file) == -1)
+		this.lang.packaging.packageFiles.lib.files.push(file);
+
+}
 /*----------------------------------------------------------------------------*/
 /*   Handling simos geenrated cmake code */
 /*----------------------------------------------------------------------------*/

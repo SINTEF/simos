@@ -9,6 +9,7 @@ exports.langs = {'python': {'id': 'py',
     						'interp': 'lang/fortran'}}
 
 */
-exports.langs = {
+exports.langs = {'python': {'id': 'py', 
+							'interp': 'lang/python'},
     			 'fortran': {'id': 'fort', 
     						'interp': 'lang/fortran'}}

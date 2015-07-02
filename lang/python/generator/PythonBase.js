@@ -4,6 +4,8 @@ var fs = require('fs');
 var simosPath = require('./config.js').simosPath;
 var CommonLangBase = require(path.join(simosPath, 'generator','lang','CommonLangBase.js')).CommonLangBase;
 
+var Packaging = require('./packaging/Packaging.js').Packaging;
+
 /*----------------------------------------------------------------------------*/
 function PythonBase(model){
 	this.constructor(model);
@@ -55,6 +57,18 @@ PythonBase.prototype.constructor = function(model) {
 	    "tiny"		:"int",
 	    "object"	:"object"
 	};
+
+	/*a list of modules/libs to be important for all files*/
+	this.generalModules = [{'name': 'numpy', 'alias': 'np'},
+	                       {'name': 'os'},
+	                       {'name': 'traceback'},
+	                       {'name': 'collections'},
+	                       {'name': 'uuid'},
+	                       {'name': 'pyfoma.dataStorage', 'alias': 'pyds'},
+	                       {'name': 'json', 'try': true},
+	                       {'name': 'bson', 'try': true},
+	                       {'name': 'h5py', 'try': true},
+	                       {'name': 'pymongo', 'try': true}];
 	
 	this.name = 'python';
 	this.ext = 'py';
@@ -65,6 +79,10 @@ PythonBase.prototype.constructor = function(model) {
 	
 	this.sep1 = '#******************************************************************************';
 	this.sep2 = '#---------------------------------------------------------------------------';
+	
+	//make packaging module
+	this.packaging = new Packaging(this);
+	
 };
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.stringify = function(str) {
@@ -77,39 +95,41 @@ PythonBase.prototype.importModules = function() {
 	
 	cmd.push('#importing general modules');
 	
-	cmd.push('import numpy as np');
-	cmd.push('import os');
-	cmd.push('import traceback');
+	for (var i = 0; i<this.generalModules.length; i++) {
+	    var module = this.generalModules[i];
+	    var imp = 'import ' + module.name;
+	    if ((module.alias != undefined) && (module.alias != ''))
+	        imp = imp + ' as ' + module.alias;
 	
-	cmd.push('import collections');
-	cmd.push('import uuid');
-	cmd.push('import pyfoma.dataStorage as pyds');
-
-	cmd.push('try:');
-	cmd.push(this.gbl() + 'import json');
-	cmd.push('except:');
-	cmd.push(this.gbl() + 'print "WARNING: json is not installed."');
-
-	cmd.push('try:');
-	cmd.push(this.gbl() + 'import bson');
-	cmd.push('except:');
-	cmd.push(this.gbl() + 'print "WARNING: bson is not installed."');
-
-	cmd.push('try:');
-	cmd.push(this.gbl() + 'import h5py');
-	cmd.push('except:');
-	cmd.push(this.gbl() + 'print "WARNING: h5py is not installed."');
-
-	cmd.push('try:');
-	cmd.push(this.gbl() + 'import pymongo');
-	cmd.push('except:');
-	cmd.push(this.gbl() + 'print "WARNING: pymongo is not installed."');
-
+	    if (module['try'] == true) {
+	    	cmd.push('try:');
+	    	cmd.push(this.gbl() + imp);
+	    	cmd.push('except:');
+	    	cmd.push(this.gbl() + 'print "WARNING: ' + module.name +' is not installed."');
+	    }
+	    else 
+	    	cmd.push(imp);
+	}
 	
 	cmd.push(this.getSuperTypesImport());
 	
     return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+PythonBase.prototype.getGeneralModulesTypes = function() {
+	
+	var types = this.generalModules;
+	
+	var importedTypes = [];
+	for (var i = 0; i<types.length; i++){
+		var type = types[i].name;
+		if (importedTypes.indexOf(type) == -1) {
+			importedTypes.push(type);
+		}
+	}
+	
+	return importedTypes;
+}
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.makeModulePath = function(packagedTypeStr) {
 	var type = '';

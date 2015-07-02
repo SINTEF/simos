@@ -374,8 +374,8 @@ Generator.prototype.generateModel = function(modelID, outppath) {
 
 	fs.writeFileSync( outFilePath, this.generate(modelParser.model, outFileContent));
 	
-	if (this.lang.packaging.packageFiles.src.files.indexOf(outFileName) == -1)
-	    this.lang.packaging.packageFiles.src.files.push(outFileName)
+	this.lang.packaging.appendPackageSourceFile(outFileName)
+	
 	  
 	//get model custom types and added to libs
 	
@@ -418,7 +418,8 @@ Generator.prototype.generateOnePackage = function(packageID) {
 	    
 	//Change packageIDs to their representative path for each language
 	for (var dpi = 0, len = depPacks.length; dpi < len; dpi++) {
-		this.lang.packaging.packageFiles.lib.files.push(this.lang.makeModulePath(depPacks[dpi]));
+		this.lang.packaging.appendDependencyPackage(this.lang.makeModulePath(depPacks[dpi]))
+		
 		
 		if (this.externalPackageDependencies.indexOf(depPacks[i]) == -1)
 			this.externalPackageDependencies.push(depPacks[i])

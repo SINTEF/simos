@@ -7,10 +7,6 @@
     "extends": ["SolidBody"],
 	
 	"properties": [
-       {"name": "fixedMotionModes", 
-             "type": "integer", 
-             "dim": "*",
-             "description": "the modes which are fixed."},
 
      {"name": "motionModes", 
          "type": "MotionModes", 

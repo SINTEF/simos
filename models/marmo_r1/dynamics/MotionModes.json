@@ -15,7 +15,11 @@
         {"name": "inds", 
              "type": "integer", "dim": "*",
              "value": [1,2,3,4,5,6],
-             "description": "radiation modes indexes."}
+             "description": "radiation modes indexes."},
+             
+         {"name": "fixed", 
+             "type": "integer", "dim": "*",
+             "description": "list of mode indexes which are fixed."}
  
 	]
 	

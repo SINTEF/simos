@@ -347,8 +347,8 @@ ModelParser.prototype.getStorableAttrs = function() {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getProperties = function() {
     return this.getModel().properties;
-};
 
+};
 ModelParser.prototype.getProperty = function(name) {
 	model = this.getModel();
 
@@ -815,9 +815,60 @@ ModelParser.prototype.getParentProps = function(childProp) {
 	
 	return parentProps;
 };
-
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getModelDepPackages = function() {
+	/* Get all packages which are referenced in the model and not the
+	 * model package itself.*/
+	
+	var packstr = this.getPackageStr();
+	var packs = this.getCustomTypesPackages();
+	
+	var depPacks = [];
+	
+	for (var i = 0; i<packs.length; i++){
+		if (packstr != packs[i])
+			depPacks.push(packs[i]);
+	} 
+	
+	return depPacks;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getCustomTypesPackages = function(props) {
+	/*remmember types are all expanded with packaging*/
+	
+	if (props == undefined)
+		props = this.getProperties();
+	
+	var types = this.getCustomTypes(props);
+	
+	var packs = [];
+	
+	for (var i = 0; i<types.length; i++){
+		packs.push(this.removeTypeFromPackagedTypeStr(types[i]));
+	} 
+	return packs;
+	
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getCustomTypes = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
+	var props = this.getNonAtomics(props);
+	var types = [];
+	
+	for (var i = 0; i<props.length; i++){
+		var prop = props[i];
+		types.push(prop.type);
+	}
+	
+	return types;
+};
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getNonAtomics = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
 	var propList = [];
 	
 	for (var i = 0; i<props.length; i++){
@@ -831,6 +882,9 @@ ModelParser.prototype.getNonAtomics = function(props) {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getAtomics = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
 	var propList = [];
 	
 	for (var i = 0; i<props.length; i++){
@@ -844,6 +898,9 @@ ModelParser.prototype.getAtomics = function(props) {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getArrays = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
 	var propList = [];
 	
 	for (var i = 0; i<props.length; i++){
@@ -857,6 +914,9 @@ ModelParser.prototype.getArrays = function(props) {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getSingles = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
 	var propList = [];
 	
 	for (var i = 0; i<props.length; i++){

@@ -1,5 +1,6 @@
 exports.simosPath = '.';
 
+/*
 exports.langs = {'python': {'id': 'py', 
     						'interp': 'lang/python'},
 				 'matlab': {'id': 'mat', 
@@ -7,3 +8,7 @@ exports.langs = {'python': {'id': 'py',
     			 'fortran': {'id': 'fort', 
     						'interp': 'lang/fortran'}}
 
+*/
+exports.langs = {
+    			 'fortran': {'id': 'fort', 
+    						'interp': 'lang/fortran'}}

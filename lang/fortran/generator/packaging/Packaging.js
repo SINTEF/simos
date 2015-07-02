@@ -1,7 +1,25 @@
 var path = require('path');
-var fs = require('fs.extra');
+var fs = require('fs');
+var fsextra = require('fs-extra');
 
-var simosPath = require('../config.js').simosPath;
+//var simosPath = require('../config.js').simosPath;
+
+fs.mkdirPathSync = function(dirPath, mode) {
+	  //Call the standard fs.mkdir
+	try {
+	  fs.mkdirSync(dirPath, mode);
+	}
+	catch (ex) {
+	    //When it fail in this way, do the custom steps
+	    if (ex && ex.code === 'ENOENT') {
+	      //Create all the parents recursively
+	      fs.mkdirPathSync(path.dirname(dirPath), mode);
+	      //And then the directory
+	      fs.mkdirPathSync(dirPath, mode);
+	    }
+	 }
+};
+	
 
 /*----------------------------------------------------------------------------*/
 function Packaging(lang){
@@ -17,74 +35,103 @@ exports.Packaging = Packaging;
 Packaging.prototype.constructor = function(lang) {
 	this.lang = lang;
     
-	this.templatePath = './template';
+	this.templatePath = path.join('lang','fortran','generator','packaging','template');
+	this.simosPath = '';
+	
+    this.outPath = '';
 
-    this.mainOutPath = '';
-    
+	this.packageFiles = { "src" : { "name" : "sources",
+	                  			 "fileName" : "libsources.cmake",
+				                  "start" : "#@@@@@ SIMOS GENERATED SOURCE FILES START @@@@@",
+								  "end"   : "#@@@@@ SIMOS GENERATED SOURCE FILES END @@@@@",
+								  "comment": "# SIMOS generated source files, DO NOT EDIT",
+								  "varName" : "PUBLIC_SOURCES_FORTRAN_SIMOS",
+								  "files" : []},
+	
+						"lib" : {  "name" : "libs",
+								  "fileName" : "libdependencies.cmake",
+				                  "start" : "#@@@@@ SIMOS GENERATED LIB DEPS START @@@@@",
+								  "end"   : "#@@@@@ SIMOS GENERATED LIB DEPS END @@@@@",
+								  "comment": "# SIMOS generated source files libs, DO NOT EDIT",
+								  "varName" : "LIB_DEPENDENCIES_SIMOS",
+								  "files" : []}
+						};
+	
+};
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.isValidPackage = function(packageStr, nModels) {
+    if (nModels == 0)
+        return false;
+    else
+        return true;
+}
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.getTemplatePath = function() {
+	return path.join(this.simosPath, this.templatePath);
 };
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.initPackage = function(packageStr) {
-    
+	
+	
     var packagePath = this.getGeneratedPackageOutPath(packageStr);
 
+    //console.log("initializing package " +packagePath );
+    //console.log("initializing package " +this.getTemplatePath() );
+    
     //create folders leading to the package
     if (! fs.existsSync(packagePath)) {
-        try {
-          fs.mkdirpSync(packagePath);
-        } catch(e) {
-          throw e;
-        }
+         fs.mkdirPathSync(packagePath);
     }
 
     var cmakePath = this.cmakePath(packageStr);
     
     if (! fs.existsSync(cmakePath)) {
-        try {
-          fs.mkdirSync(cmakePath);
-        } catch(e) {
-          throw e;
-        }
+          fs.mkdirPathSync(cmakePath);
     }    
     
     var srcPath = this.sourcePath(packageStr);
     
     if (! fs.existsSync(srcPath)) {
-        try {
-          fs.mkdirSync(srcPath);
-        } catch(e) {
-          throw e;
-        }
+          fs.mkdirPathSync(srcPath);
     }  
     
     var testPath = this.testsPath(packageStr);
     
     if (! fs.existsSync(testPath)) {
-        fs.copyRecursive(path.join('.',this.templatePath,'tests'), packagePath , function (err) {
+    	
+        fsextra.copy(path.join(this.getTemplatePath(),'tests'), testPath , function (err) {
           if (err) {
             throw err;
           }     
-        }); 
+        });
+         
     }  
     
     var cmakeListsPath = path.join(packagePath, 'CMakeLists.txt');
     
     if (! fs.existsSync(cmakeListsPath)) {
-        fs.copy(path.join('.',this.templatePath,'CMakeLists.txt'), packagePath , function (err) {
+        fsextra.copy(path.join(this.getTemplatePath(),'CMakeLists.txt'), cmakeListsPath , function (err) {
           if (err) {
             throw err;
           }     
-        }); 
+        });
+         
     } 
 
+    
+    //initializing the file lists
+	for (key in this.packageFiles) {
+	    var cmake = this.packageFiles[key];
+	    cmake.files = [];
+	}
+	
+    return srcPath;
 };
 /*----------------------------------------------------------------------------*/
-Packaging.prototype.finalizePackage = function(packageStr, files, libs) {
+Packaging.prototype.finalizePackage = function(packageStr) {
     //put correct source files and libraries into cmake files
-    var libs = this.libDepts;
-    var files = this.srcFiles;
-    
-    
-    libsources.cmake
+    this.writeLibVersion(packageStr);
+    this.writeCMakeFiles(packageStr);
     
 };
 /*----------------------------------------------------------------------------*/
@@ -110,44 +157,62 @@ Packaging.prototype.writeLibVersion = function(packageStr) {
 	fs.writeFileSync( outFilePath, cmds.join('\n'));    
 };
 /*----------------------------------------------------------------------------*/
-Packaging.prototype.writeLibDeps = function(packageStr, libs) {
+Packaging.prototype.writeCMakeFiles = function(packageStr) {
 
-    var outFileName = 'libdependencies.cmake';
-	var outFilePath = path.join(this.cmakePath(packageStr), outFileName);
-
-    var outFileContent = '';	
-    try {
-        if (fs.statSync(outFilePath).isFile())
+	for (key in this.packageFiles) {
+	    var cmake = this.packageFiles[key];
+	
+	    var outFileName = cmake.fileName;
+		var outFilePath = path.join(this.cmakePath(packageStr), outFileName);
+	
+		//console.log("src files make");
+		//console.log(path.join(this.getTemplatePath(),'cmake',outFileName));
+		
+	    var outFileContent = '';	
+        if (fs.existsSync(outFilePath))
             outFileContent = fs.readFileSync(outFilePath).toString();
         else {
-            fs.copy(path.join(this.templatePath,'cmake','outFileName'), this.cmakePath(packageStr) , function (err) {
-                if (err) {
-                throw err;
-                }     
-                }); 
+        	outFileContent = fs.readFileSync(path.join(this.getTemplatePath(),'cmake',outFileName)).toString();
         }
-            
-    }
-    catch (e) {};
-    
-    //replace generated libs
-	fs.writeFileSync( outFilePath, cmds.join('\n'));    
+
+	    
+	    //make code
+	    var cmds = [];
+	    cmds.push(cmake.start);
+	    cmds.push(cmake.comment);
+	    cmds.push('set (' + cmake.varName );
+	    
+	    /*read and add general modules data types for lib dependency from lang*/
+	    if (cmake.name == 'libs')
+	    	cmds.push(this.lang.getGeneralModulesTypes().join('\n'))
+
+	    cmds.push(cmake.files.join('\n'));
+	    
+	    cmds.push('    )');
+	    cmds.push(cmake.end);
+	    
+	    outFileContent = this.addGeneratedCMakeCode(outFileContent, cmake, cmds.join('\n'));
+
+	    //replace generated libs
+		fs.writeFileSync( outFilePath, outFileContent);
+	}
 };
+
 
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getGeneratedPackageName = function(packageStr) {
     return packageStr.split(this.lang.packageSep).join('_');
-}
+};
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getGeneratedPackageOutPath = function(packageStr) {
-    
-	return (path.join(this.mainOutPath, this.getGeneratedPackageName(packageStr)));
+
+	return (path.join(this.outPath, this.getGeneratedPackageName(packageStr)));
 
 };
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.cmakePath = function(packageStr) {
     return path.join(this.getGeneratedPackageOutPath(packageStr), 'cmake');
-}
+};
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.sourcePath = function(packageStr) {
     return path.join(this.getGeneratedPackageOutPath(packageStr), 'source');
@@ -157,3 +222,50 @@ Packaging.prototype.testsPath = function(packageStr) {
     return path.join(this.getGeneratedPackageOutPath(packageStr), 'tests');
 };
 /*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/*   Handling simos geenrated cmake code */
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
+    if ((code == undefined) || (code == ''))
+        return;
+    
+    var lines = code.split('\n');
+    var newCode = '';
+    
+    //var part = this.simosSrcs;
+    var sind = lines.indexOf(part.start);
+    if (sind != -1) {
+        var eind = lines.indexOf(part.end);
+        if ((eind - sind) > 1){
+            console.log("            simos " + part.name + " in cmake betweeb lines : " + sind  + " and " + eind);
+            
+            var topPart = lines.slice(0,sind).join('\n');
+            var botPart = lines.slice(eind+1,lines.length).join('\n');
+            
+            newCode = [topPart, addCode, botPart].join('\n');
+        }
+        else {
+            throw("something is wrong with SIMOS generated " + part.name + " in cmake.")
+        	newCode = lines.join('\n');
+        }
+    }
+    else
+    	newCode = [lines.join('\n'), addCode].join('\n');
+    	
+    return newCode;
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/*   writing packages dependencies and generated libs */
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.writeExternalDependenciesList = function(packages,outPath, packName) {
+	var outFilePath = path.join(outPath, packName + '_packExtDeps.txt');
+	fs.writeFileSync( outFilePath, packages.join('\n'));
+}
+
+Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, packName) {
+	var outFilePath = path.join(outPath, packName + '_packs.txt');
+	fs.writeFileSync( outFilePath, packages.join('\n'));
+}
+/*----------------------------------------------------------------------------*/
+

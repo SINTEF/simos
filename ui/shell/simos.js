@@ -17,8 +17,8 @@ replServer.context.path =  require('path');
 
 /* load packages */
 replServer.context.loadGenerators = function() {
-	replServer.context.pygen = '';
-	replServer.context.matgen = '';
+	//replServer.context.pygen = '';
+	//replServer.context.matgen = '';
 	var Generator = replServer.context.require(replServer.context.path.join(simosPath, 'generator'));
 	
 	for (lang in config.langs) {
@@ -26,8 +26,9 @@ replServer.context.loadGenerators = function() {
 		replServer.context[genName] =  new Generator();
 		replServer.context[genName].setSimosPath(simosPath);
 		replServer.context[genName].setLang(lang);
-		replServer.context[genName].outPath = 
-			replServer.context.path.join(simosPath,config.langs[lang].interp, 'models');
+		replServer.context[genName].setOutPath( 
+			replServer.context.path.join(simosPath,config.langs[lang].interp, 'models')
+												);
 		
 	}
 

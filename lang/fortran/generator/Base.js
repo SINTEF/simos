@@ -4,6 +4,7 @@ var fs = require('fs');
 var simosPath = require('./config.js').simosPath;
 var CommonLangBase = require(path.join(simosPath, 'generator','lang','CommonLangBase.js')).CommonLangBase;
 
+var Packaging = require('./packaging/Packaging.js').Packaging;
 /*----------------------------------------------------------------------------*/
 function Base(model){
 	this.constructor(model);
@@ -57,6 +58,9 @@ Base.prototype.constructor = function(model) {
 	    "tiny"		:"int",
 	    "object"	:"object"
 	};
+
+	/*a list of modules/libs to be important for all files*/
+	this.generalModules = [{'name': 'string_mod'}];
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -66,6 +70,9 @@ Base.prototype.constructor = function(model) {
 	
 	this.sep1 = '!******************************************************************************';
 	this.sep2 = '!---------------------------------------------------------------------------';
+
+	//make packaging module
+	this.packaging = new Packaging(this);
 
     this.userCodes = {  "use"     : {"start" : "!@@@@@ USER DEFINED USE START @@@@@",
                                      "end"   : "!@@@@@ USER DEFINED USE End   @@@@@",
@@ -104,6 +111,13 @@ Base.prototype.getClassPathFromType = function(packagedTypeStr) {
 Base.prototype.getOutCodeFileNameFromVersionedPackagedTypeStr = function(modelID) {
     var type = this.parseVersionedPackagedTypeStr(modelID);
 	return (this.makeModulePath(type) + '.' + this.ext);
+};
+
+Base.prototype.makeGeneratedCodeOutPath = function(packagedStr) {
+	var packagePath = packagedStr.split(this.packageSep).join('_');
+	packagePath = packagePath + '/' + 'source'
+	return packagePath;
+
 };
 /*----------------------------------------------------------------------------*/
 Base.prototype.makeClassName = function(type) {
@@ -149,32 +163,67 @@ Base.prototype.importModules = function(bl) {
 	
 	cmd.push(this.gbl(bl) + '!using general modules');
 	cmd.push(this.gbl(bl) + this.sep1);
+    cmd.push(this.getImportForGeneralDataTypes(bl));
+	cmd.push(this.gbl(bl) + this.sep1);
     cmd.push(this.getImportForCustomDataTypes(bl));
+    
 
 	
     return cmd.join('\n');
 };
-
+/*----------------------------------------------------------------------------*/
+Base.prototype.getGeneralModulesTypes = function() {
+	
+	var types = this.generalModules;
+	
+	var importedTypes = [];
+	for (var i = 0; i<types.length; i++){
+		var type = types[i].name;
+		if (importedTypes.indexOf(type) == -1) {
+			importedTypes.push(type);
+		}
+	}
+	
+	return importedTypes;
+}
+/*----------------------------------------------------------------------------*/
+Base.prototype.getImportForGeneralDataTypes = function(bl) {
+	
+	var cmd = [];
+	var types = this.getGeneralModulesTypes();
+	
+	cmd.push(this.gbl(bl) + '!using general modules');
+	for (var i = 0; i<types.length; i++)
+		cmd.push(this.gbl(bl) + 'use ' + types[i] );
+	
+	return cmd.join('\n');
+};
 /*----------------------------------------------------------------------------*/
 Base.prototype.getImportForCustomDataTypes = function(bl) {
 	
 	var cmd = [];
-	var props = this.getProperties();
+	var types = this.getCustomTypes();
+	
 	cmd.push(this.gbl(bl) + '!using custom modules');
 	var importedTypes = [];
-	for (var i = 0; i<props.length; i++){
-		var prop =  props[i];
-		if (this.isAtomicType(prop.type) == false) {
-			var type = this.makeModulePath(prop.type);
-			if (importedTypes.indexOf(type) == -1) {
-				cmd.push(this.gbl(bl) + 'use ' + this.makeClassName(type) );
-				importedTypes.push(type);
-			}
+	for (var i = 0; i<types.length; i++){
+		var type = this.makeModulePath(types[i]);
+		if (importedTypes.indexOf(type) == -1) {
+			cmd.push(this.gbl(bl) + 'use ' + this.makeClassName(type) );
+			importedTypes.push(type);
 		}
 	}
 	
 	return cmd.join('\n');
 };
+
+/*----------------------------------------------------------------------------*/
+Base.prototype.getModelDependencies = function() {
+	//does not include dynamic inheritance
+    
+	
+};
+    
 /*----------------------------------------------------------------------------*/
 Base.prototype.getPythonArrayDimList = function(prop) {
 	
@@ -581,6 +630,15 @@ Base.prototype.isAllocatable = function(prop) {
 /*----------------------------------------------------------------------------*/
 /*   Handling user specified code in generator functions */
 /*----------------------------------------------------------------------------*/
+
+Base.prototype.findStrInLines = function(lines, str) {
+    for (var i = 0; i<lines.length; i++) {
+    	if (lines[i].indexOf(str) != -1)
+    		return i;
+    }
+    return -1;
+}
+
 Base.prototype.extractUserDefinedCode = function(code) {
     if ((code == undefined) || (code == ''))
         return;
@@ -589,9 +647,9 @@ Base.prototype.extractUserDefinedCode = function(code) {
 
     for (key in this.userCodes) {
         var part = this.userCodes[key];
-        var sind = lines.indexOf(part.start);
+        var sind = this.findStrInLines(lines,part.start);
         if (sind != -1) {
-            var eind = lines.indexOf(part.end);
+            var eind = this.findStrInLines(lines,part.end);
             if ((eind - sind) > 1){
                 console.log("            user code for (" + key + ") betweeb lines : " + sind  + " and " + eind);
                 part.code = lines.slice(sind+1,eind).join('\n');

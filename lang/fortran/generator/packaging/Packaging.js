@@ -183,10 +183,14 @@ Packaging.prototype.writeCMakeFiles = function(packageStr) {
 	    cmds.push('set (' + cmake.varName );
 	    
 	    /*read and add general modules data types for lib dependency from lang*/
-	    if (cmake.name == 'libs')
-	    	cmds.push(this.lang.getGeneralModulesTypes().join('\n'))
-
-	    cmds.push(cmake.files.join('\n'));
+	    if (cmake.name == 'libs'){
+	    	var genLibs = this.lang.getGeneralModulesLibs()
+	    	if (genLibs.length > 0)
+	    		cmds.push(genLibs.join('\n'))
+	    }
+	    
+	    if (cmake.files.length > 0)
+	    	cmds.push(cmake.files.join('\n'));
 	    
 	    cmds.push('    )');
 	    cmds.push(cmake.end);
@@ -230,6 +234,7 @@ Packaging.prototype.appendPackageSourceFile = function(file) {
 /*----------------------------------------------------------------------------*/
 
 Packaging.prototype.appendDependencyPackage = function(file) {
+	//var file = this.lang.makeLibPath(packagedStr)
 	if (this.lang.packaging.packageFiles.lib.files.indexOf(file) == -1)
 		this.lang.packaging.packageFiles.lib.files.push(file);
 

@@ -61,6 +61,23 @@ CommonLangBase.prototype.getGeneralModulesTypes = function() {
 	return importedTypes;
 };
 /*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.getGeneralModulesLibs = function() {
+	
+	var types = this.generalModules;
+	
+	var importedTypes = [];
+	for (var i = 0; i<types.length; i++){
+		var type = types[i].name;
+		if (types[i].lib != undefined) 
+			type = types[i].lib;
+		if (importedTypes.indexOf(type) == -1) {
+			importedTypes.push(type);
+		}
+	}
+	
+	return importedTypes;
+};
+/*----------------------------------------------------------------------------*/
 CommonLangBase.prototype.firstToUpper = function(name) {
     return( name[0].toUpperCase() + name.substr(1) );
 };

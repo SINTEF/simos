@@ -55,12 +55,13 @@ Base.prototype.constructor = function(model) {
 	    "boolean"	:"logical",
 	    "string"	:"String",
 	    "char"		:"character",
+	    "char256"	:"character",
 	    "tiny"		:"int",
 	    "object"	:"object"
 	};
 
 	/*a list of modules/libs to be important for all files*/
-	this.generalModules = [{'name': 'string_mod'}];
+	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'}];
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -101,6 +102,22 @@ Base.prototype.makeModulePath = function(packagedTypeStr) {
 	//var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
 
 	return (type.packages.join(this.packagePathSep) + this.packagePathSep + type.name);
+
+};
+
+Base.prototype.makeLibPath = function(packagedTypeStr) {
+	var type = '';
+	
+    if (typeof(packagedTypeStr) == 'object') {
+        type = packagedTypeStr;
+    }
+    else{
+    	type = this.parsePackagedTypeStr(packagedTypeStr);
+    }
+    
+	var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
+
+	return (versionedPackages.join(this.packagePathSep) + this.packagePathSep + type.name);
 
 };
 

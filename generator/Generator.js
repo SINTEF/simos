@@ -418,7 +418,7 @@ Generator.prototype.generateOnePackage = function(packageID) {
 	    
 	//Change packageIDs to their representative path for each language
 	for (var dpi = 0, len = depPacks.length; dpi < len; dpi++) {
-		this.lang.packaging.appendDependencyPackage(this.lang.makeModulePath(depPacks[dpi]))
+		this.lang.packaging.appendDependencyPackage(depPacks[dpi])
 		
 		
 		if (this.externalPackageDependencies.indexOf(depPacks[i]) == -1)

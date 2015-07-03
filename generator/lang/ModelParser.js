@@ -182,12 +182,11 @@ ModelParser.prototype.getPackageVersion = function(p) {
 };
 
 ModelParser.prototype.getPackagesVersions = function(packages) {
-	var model = this.getModel();
 	
 	var versions = [];
 	
 	for (var j = 0, len = packages.length; j < len; j++){
-		versions.push(this.getPackageVersion(packages[j], model));
+		versions.push(this.getPackageVersion(packages[j]));
 	}
 	
 	return versions;
@@ -271,12 +270,20 @@ ModelParser.prototype.updateFromVersionedPackagedTypeStr = function(str, localVe
 
 ModelParser.prototype.getVersionedPackages = function() {
 	/*marmo_r1.cfd_r1.moonpool3d_r1.Domain*/
-	model = this.getModel();
 	
 	var packages = this.getPackages();
 	var versions = this.getPackagesVersions(packages);
 	
 	return (this.makeVersionedPackages(packages,versions));
+	
+};
+ModelParser.prototype.getVersionedRootPackageStr = function() {
+	/*marmo_r1.cfd_r1.moonpool3d_r1.Domain*/
+	
+	var rootPack = this.getPackages()[0];
+	var version = this.getPackageVersion(rootPack);
+	
+	return (this.addVersion(rootPack,version));
 	
 };
 
@@ -833,6 +840,53 @@ ModelParser.prototype.getModelDepPackages = function() {
 	return depPacks;
 };
 /*----------------------------------------------------------------------------*/
+ModelParser.prototype.getModelDepVersionedPackages = function() {
+	/* Get all packages which are referenced in the model and not the
+	 * model package itself.*/
+	
+	var packstr = this.getVersionedPackagesStr();
+	var packs = this.getCustomTypesVersionedPackages();
+	
+	//console.log("packstr : \n" + packstr);
+	//console.log("packs : \n" + packs.join('\n'));
+	
+	var depPacks = [];
+	
+	for (var i = 0; i<packs.length; i++){
+		if (packstr != packs[i])
+			depPacks.push(packs[i]);
+	} 
+	
+	return depPacks;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getModelDepRootVersionedPackages = function() {
+	/* Get all packages which are referenced in the model and not the
+	 * model package itself.*/
+	
+	var packstr = this.getVersionedRootPackageStr();
+	
+	var depPacks = this.getModelDepPackages();
+
+	//console.log("packstr : \n" + packstr);
+	//console.log("depPacks : \n" + depPacks.join('\n'));
+	
+	var depRootPackages = [];
+	
+	for (var i = 0; i<depPacks.length; i++){
+		var rootPack = this.splitPackageStr(depPacks[i])[0];
+		var version = this.getPackageVersion(rootPack);
+		var versionedRootPack = this.addVersion(rootPack, version);
+		//console.log("versionedRootPack : \n" + versionedRootPack);
+		if ((depRootPackages.indexOf(versionedRootPack) == -1) &&
+				(packstr != versionedRootPack)){
+			depRootPackages.push(versionedRootPack);
+		}
+	} 
+	
+	return depRootPackages;
+};
+/*----------------------------------------------------------------------------*/
 ModelParser.prototype.getCustomTypesPackages = function(props) {
 	/*remmember types are all expanded with packaging*/
 	
@@ -847,6 +901,30 @@ ModelParser.prototype.getCustomTypesPackages = function(props) {
 		packs.push(this.removeTypeFromPackagedTypeStr(types[i]));
 	} 
 	return packs;
+	
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getCustomTypesVersionedPackages = function(props) {
+	/*remmember types are all expanded with packaging*/
+	if (props == undefined)
+		props = this.getProperties();
+	
+	var packStrs = this.getCustomTypesPackages(props);
+	//console.log("packStrs : \n" + packStrs.join('\n'));
+	
+	var verPacks = [];
+	
+	for (var i = 0; i<packStrs.length; i++){
+		var packs = this.splitPackageStr(packStrs[i]);
+		//console.log("packs : \n" + packs.join('\n'));
+		
+		var versions = this.getPackagesVersions(packs);
+		var versionedPackageStr = this.makeVersionedPackageStr(packs, versions);
+		if (verPacks.indexOf(versionedPackageStr) == -1)
+			verPacks.push(versionedPackageStr);
+	} 
+	//console.log("verPacks : \n" + verPacks.join('\n'));
+	return verPacks;
 	
 };
 /*----------------------------------------------------------------------------*/
@@ -985,14 +1063,12 @@ ModelParser.prototype.parsePackagedTypeStr = function(packagedTypeStr) {
 	/* get a packagedTypeStr,
 	 * e.g. model:hydro:wamit:rao
 	 * and extract path and versioning data*/
-	model = this.getModel();
-
 	
 	var packages = this.splitPackageStr(packagedTypeStr);
 	/* take out the typename */
 	var typeName = packages[packages.length-1];
 	packages = packages.slice(0,packages.length-1);
-	var versions = this.getPackagesVersions(packages,model);
+	var versions = this.getPackagesVersions(packages);
 				
 	
 	return({	"packages": packages,

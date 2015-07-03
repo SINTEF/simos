@@ -234,7 +234,7 @@ Packaging.prototype.appendPackageSourceFile = function(file) {
 /*----------------------------------------------------------------------------*/
 
 Packaging.prototype.appendDependencyPackage = function(file) {
-	//var file = this.lang.makeLibPath(packagedStr)
+	//var file = this.lang.makeModulePath(packagedStr)
 	if (this.lang.packaging.packageFiles.lib.files.indexOf(file) == -1)
 		this.lang.packaging.packageFiles.lib.files.push(file);
 

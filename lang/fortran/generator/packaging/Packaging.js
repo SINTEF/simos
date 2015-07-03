@@ -205,12 +205,14 @@ Packaging.prototype.writeCMakeFiles = function(packageStr) {
 
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getGeneratedPackageName = function(packageStr) {
-    return packageStr.split(this.lang.packageSep).join('_');
+	var packName = this.lang.removeVersionsFromVersionedPackagedStr(packageStr);
+    return packName.split(this.lang.packageSep).join('_');
 };
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getGeneratedPackageOutPath = function(packageStr) {
-
-	return (path.join(this.outPath, this.getGeneratedPackageName(packageStr)));
+	var rootPack = this.lang.getRootPackageFromPackageStr(packageStr);
+	
+	return (path.join(this.outPath, rootPack, this.getGeneratedPackageName(packageStr)));
 
 };
 /*----------------------------------------------------------------------------*/
@@ -281,8 +283,37 @@ Packaging.prototype.writeExternalDependenciesList = function(packages,outPath, p
 }
 
 Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, packName) {
-	var outFilePath = path.join(outPath, packName + '_packs.txt');
-	fs.writeFileSync( outFilePath, packages.join('\n'));
+	
+	//write a dummy file
+	var cmds = [];
+	cmds.push('subroutine dummy()');
+	cmds.push('    implicit none');
+	cmds.push('    !Do nothing..');
+	cmds.push('end subroutine dummy');
+
+	var outFilePath = path.join(outPath, packName, 'dummy.f90');
+	fs.writeFileSync( outFilePath, cmds.join('\n'));
+	
+	//write a CMAKE file for the libraary
+	var packNames = [];
+	for (var i=0; i<packages.length; i++){
+		packNames.push(this.getGeneratedPackageName(packages[i]));
+	}
+	
+	var cmds = [];
+	cmds.push('# sub-packages');
+	for (var i=0; i<packNames.length; i++){
+		cmds.push('add_subdirectory (' + packNames[i] + ')');
+	}
+	cmds.push('# library');
+	cmds.push('add_library (' + packName + ' dummy.f90)');
+	cmds.push('# linking sub-packages');
+	cmds.push('target_link_libraries (' + packName);
+	cmds.push(packNames.join('\n'));
+	cmds.push(')');
+	
+	var outFilePath = path.join(outPath, packName, 'CMakeLists.txt');
+	fs.writeFileSync( outFilePath, cmds.join('\n'));
 }
 /*----------------------------------------------------------------------------*/
 

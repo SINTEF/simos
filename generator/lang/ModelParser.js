@@ -287,6 +287,12 @@ ModelParser.prototype.getVersionedRootPackageStr = function() {
 	
 };
 
+ModelParser.prototype.getRootPackageFromPackageStr = function(packageStr) {
+	/*marmo_r1.cfd_r1.moonpool3d_r1.Domain*/
+	return this.splitPackageStr(packageStr)[0];
+};
+
+
 ModelParser.prototype.getVersionedPackagesStr = function() {
 			
 	return (this.getVersionedPackages().join(this.packageSep));
@@ -1097,6 +1103,12 @@ ModelParser.prototype.removeTypeFromPackagedTypeStr = function(modelID) {
 	var parts = modelID.split(this.packageSep);
 	return parts.slice(0,parts.length-1).join(this.packageSep);
 };
+
+ModelParser.prototype.removeVersionsFromVersionedPackagedStr = function(verPackStr) {
+	var type = this.versionedPackagesFromVersionedPackagedStr(verPackStr);
+	return (type.names.join(this.packageSep));
+};
+
 
 ModelParser.prototype.versionedPackagesFromVersionedPackagedStr = function(packageID) {
 	var ps = packageID.split(this.packageSep);

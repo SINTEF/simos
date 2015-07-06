@@ -46,7 +46,7 @@ Representation.prototype.typeReprFunc = function(bl) {
 	
 	cmd.push(this.gbl(bl+1) +	'rep = collections.OrderedDict()' );
 
-	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.typePath(this.getModel())));
+	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.getVersionedPackagedTypeStr()));
 	cmd.push(this.gbl(bl+1) +	'rep["__ID__"] = self.ID' );
 	cmd.push(this.gbl(bl+1) +	'rep["name"] = self.name');
 	cmd.push(this.gbl(bl+1) +	'rep["description"] = self.description');
@@ -65,9 +65,9 @@ Representation.prototype.dictReprFunc = function(bl) {
 	cmd.push(this.gbl(bl) + 'def dictRepr(self, allItems=False, short=False, deep = True):');
 	
 	cmd.push(this.gbl(bl+1) +	'rep = collections.OrderedDict()' );
-	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.fullTypeName()));
+	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.getVersionedPackagedTypeStr()));
 	cmd.push(this.gbl(bl+1) +	'if not(short):');
-	cmd.push(this.gbl(bl+2) +		'rep["__versions__"] = ' + this.getVersion() );
+	cmd.push(this.gbl(bl+2) +		'rep["__versions__"] = ' + this.stringify(this.getVersion()) );
 	cmd.push(this.gbl(bl+1) +	'rep["__ID__"] = self.ID' );
 	cmd.push(this.gbl(bl+1) + 	'rep["name"] = self.name');
 	cmd.push(this.gbl(bl+1) + 	'rep["description"] = self.description');
@@ -147,8 +147,8 @@ Representation.prototype.mongodbReprFunc = function(bl) {
 	cmd.push(this.gbl(bl) + 'def mongodbRepr(self, parent=None):');
 	
 	cmd.push(this.gbl(bl+1) +	'rep = collections.OrderedDict()' );
-	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.fullTypeName()));
-	cmd.push(this.gbl(bl+1) +	'rep["__versions__"] = ' + this.getVersion() );
+	cmd.push(this.gbl(bl+1) +	'rep["__type__"] = ' + this.stringify(this.getVersionedPackagedTypeStr()));
+	cmd.push(this.gbl(bl+1) +	'rep["__versions__"] = ' + this.stringify(this.getVersion()) );
 	cmd.push(this.gbl(bl+1) +	'rep["_id"] = self.ID' );
 	cmd.push(this.gbl(bl+1) + 	'rep["name"] = self.name');
 	cmd.push(this.gbl(bl+1) + 	'rep["description"] = self.description');

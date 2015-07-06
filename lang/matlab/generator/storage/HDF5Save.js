@@ -138,7 +138,7 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 	}
 	
 	cmd.push(this.gbl(bl+1) + 	'h5writeatt(' + filePath + ',handle,\'type\',' + 
-				this.stringify(this.typeID(this.getModel())) + ');' 
+				this.stringify(this.getPackagedTypeStr()) + ');' 
 				);
 	cmd.push(this.gbl(bl+1) + 	'h5writeatt(' + filePath + ',handle,\'ID\',' + 
 			this.objName() + '.ID' +  ');' 

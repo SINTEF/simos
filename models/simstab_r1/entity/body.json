@@ -1,0 +1,48 @@
+
+{	
+	"name": "body",
+	"type": "body",
+	"description": "class describing a simo body",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "hullSystem", 
+			"type": "simstab:system:hulls", 
+			"description": "Hulls of the body."
+			},
+			
+    {"name": "initialMassMatrix", 
+			"type": "double",
+			"dim":"6,6",
+			"description": "Mass matrix of the body, without any other components of the body."
+			},
+			
+	{"name": "initialCogPosition", 
+			"type": "double",
+			"dim":"3",
+			"description": "Initial position of the centre of gravity of the body in the body coordinate system, without any other components of the body."
+			},
+
+	{"name": "massMatrix", 
+			"type": "double",
+			"dim":"6,6",
+			"description": "Total mass matrix of the body."
+			},
+			
+    {"name": "cogPosition", 
+			"type": "double",
+			"dim":"3",
+			"description": "Position of the centre of gravity of the body in the body coordinate system."
+			},		
+	
+	{"name": "position", 
+			"type": "double", 
+			"dim": "6",
+			"description": "Position and attitude of the body in the earth-fixed coordinate system."
+			}
+				 
+	]
+	
+}

@@ -4,6 +4,8 @@ var fs = require('fs');
 var simosPath = require('./config.js').simosPath;
 var CommonLangBase = require(path.join(simosPath, 'generator/lang/CommonLangBase.js')).CommonLangBase;
 
+var Packaging = require('./packaging/Packaging.js').Packaging;
+
 /*----------------------------------------------------------------------------*/
 function MatlabBase(model){
 	this.constructor(model);
@@ -53,13 +55,19 @@ MatlabBase.prototype.constructor = function(model) {
 	    "tiny"		:"int8"
 	};
 	
+	
+
 	this.name = 'matlab';
 	this.ext = 'm';
-
+	this.packagePathSep = '.';
+	
 	this.blockSpace = '    ';
 	
 	this.sep1 = '%******************************************************************************';
 	this.sep2 = '%---------------------------------------------------------------------------';
+	
+	//make packaging module
+	this.packaging = new Packaging(this);
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.stringify = function(str) {
@@ -70,7 +78,38 @@ MatlabBase.prototype.makeInternal = function(str) {
 	return ('INT' + str);	
 };
 
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.makeModulePath = function(packagedTypeStr) {
+	var type = '';
+	
+    if (typeof(packagedTypeStr) == 'object') {
+        type = packagedTypeStr;
+    }
+    else{
+    	type = this.parsePackagedTypeStr(packagedTypeStr);
+    }
+    
+	var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
 
+	return (versionedPackages.join(this.packagePathSep) + this.packagePathSep + type.name);
+
+};
+
+MatlabBase.prototype.getClassPathFromType = function(packagedTypeStr) {
+	var parsed = this.parsePackagedTypeStr(packagedTypeStr);
+	var modulePath = this.makeModulePath(parsed);
+	
+	return (modulePath + this.packagePathSep + parsed.name);
+};
+
+MatlabBase.prototype.getOutCodeFileNameFromVersionedPackagedTypeStr = function(modelID) {
+	return this.getModelNameFromPackagedTypeStr(modelID) + '.' + this.ext;
+	
+};
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.getClassName = function() {
+	return this.getName();
+};
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.getArrayDimList = function(prop) {
 	
@@ -308,7 +347,7 @@ MatlabBase.prototype.cloneFunc = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 'function newObj = clone(' + this.objName() + ')');
-	cmd.push(this.gbl(bl+1) + 	'newObj = ' + this.parseFullTypeName(this.getModel().type).path + '(' + this.objName() + '.name);');
+	cmd.push(this.gbl(bl+1) + 	'newObj = ' + this.getClassPathFromType(this.getModel().type) + '(' + this.objName() + '.name);');
 	cmd.push(this.gbl(bl+1) +   this.objName() + '.cloneTo(newObj);' );	     
 
 	cmd.push(this.gbl(bl) +	'end');
@@ -401,7 +440,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'end ');
 	cmd.push(this.getBlockSpace(bl+1) + 
-		'obj = ' + this.parseFullTypeName(this.getModel().type).path + '(name);');
+		'obj = ' + this.getClassPathFromType(this.getModel().type) + '(name);');
 	cmd.push(this.getBlockSpace(bl) + 
 	'end');	
 	cmd.push(this.getCodeSeparator(bl));
@@ -410,7 +449,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
     for (var i = 0; i<props.length; i++) {
     	if (!(this.isAtomicType(props[i].type))) {
     		var prop = props[i];
-    		var propType = this.parseFullTypeName(prop.type).path;
+    		var propType = this.getClassPathFromType(prop.type);
 					
 				cmd.push(this.getBlockSpace(bl) + 
 				'function obj = makea' + this.firstToUpper(prop.name) +'(~,name)');

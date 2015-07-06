@@ -1,18 +1,13 @@
-{   
-    "name": "Scenario",
-    "type": "Scenario",
-    "description": "sce.",
-    
-    "extends": ["marmo:basic:NamedEntity"],
-    
-    "properties": [
-        {"name": "geometry", 
-            "type": "Geometry", 
-            "description": "beam."},
-            
-            {"name": "oscillator", 
-                "type": "Oscillator", 
-                "description": "beam."}
-    ]
-    
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a ship forced motion scenario.",
+	
+    "extends": ["marmo:cfd:forcedMotion:Scenario"],
+	
+	"properties": [
+
+	]
+	
 }

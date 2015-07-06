@@ -139,5 +139,5 @@ endif (PUBLIC_SOURCES_C)
 #
 # Testing
 #
-enable_testing ()
-add_subdirectory (tests)
+#enable_testing ()
+#add_subdirectory (tests)

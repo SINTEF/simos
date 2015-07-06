@@ -410,7 +410,8 @@ Generator.prototype.generateOnePackage = function(packageID) {
 	    var mParser = this.generateModel(modelID, outppath);
 	    
 	    //var mDepPacks = mParser.getModelDepVersionedPackages();
-	    var mDepPacks = mParser.getModelDepRootVersionedPackages();
+	    //var mDepPacks = mParser.getModelDepRootVersionedPackagesAndDepInternalPackages();
+	    var mDepPacks = mParser.getModelExternalDepRootVersionedPackagesAndInternalDepPackages();
 	    //console.log("mDepPacks: \n" + mDepPacks.join('\n'));
 	    
 	    for (var dpi = 0; dpi < mDepPacks.length; dpi++) {

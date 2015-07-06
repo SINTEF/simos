@@ -848,7 +848,7 @@ ModelParser.prototype.getModelDepPackages = function() {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getModelDepVersionedPackages = function() {
 	/* Get all packages which are referenced in the model and not the
-	 * model package itself.*/
+	 * model package itself, add version to the packages.*/
 	
 	var packstr = this.getVersionedPackagesStr();
 	var packs = this.getCustomTypesVersionedPackages();
@@ -867,8 +867,7 @@ ModelParser.prototype.getModelDepVersionedPackages = function() {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getModelDepRootVersionedPackages = function() {
-	/* Get all packages which are referenced in the model and not the
-	 * model package itself.*/
+	/* Get all external packages and list the root package with version.*/
 	
 	var packstr = this.getVersionedRootPackageStr();
 	
@@ -888,6 +887,44 @@ ModelParser.prototype.getModelDepRootVersionedPackages = function() {
 				(packstr != versionedRootPack)){
 			depRootPackages.push(versionedRootPack);
 		}
+	} 
+	
+	return depRootPackages;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getModelExternalDepRootVersionedPackagesAndInternalDepPackages = function() {
+	/* Return a list of
+	 * 		External versioned root packages
+	 * 		Internal dep. packages complete path.*/
+	
+	var curVersionedRootPack = this.getVersionedRootPackageStr();
+	
+	/*this package str*/
+	var packstr = this.getPackageStr();
+	
+	var depPacks = this.getModelDepPackages();
+
+	//console.log("packstr : \n" + packstr);
+	//console.log("depPacks : \n" + depPacks.join('\n'));
+	
+	var depRootPackages = [];
+	
+	for (var i = 0; i<depPacks.length; i++){
+		/* Add external root packages */
+		var rootPack = this.splitPackageStr(depPacks[i])[0];
+		var version = this.getPackageVersion(rootPack);
+		var versionedRootPack = this.addVersion(rootPack, version);
+		//console.log("versionedRootPack : \n" + versionedRootPack);
+		if ((depRootPackages.indexOf(versionedRootPack) == -1) &&
+				(curVersionedRootPack != versionedRootPack)){
+			depRootPackages.push(versionedRootPack);
+		}
+		
+		/* Add internal dependency packages*/
+		if ((depRootPackages.indexOf(depPacks[i]) == -1) &&
+				(curVersionedRootPack == versionedRootPack)){
+			depRootPackages.push(depPacks[i]);
+		}		
 	} 
 	
 	return depRootPackages;

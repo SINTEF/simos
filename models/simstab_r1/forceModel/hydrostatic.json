@@ -1,0 +1,34 @@
+{	
+	"name": "hydrostatic",
+	"type": "hydrostatic",
+	"description": "class describing a the hydrostatic force of a body",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+	
+    {"name": "method", 
+			"type": "string", 
+			"description": "Calculation method for the hydrostatic force. Possible options: {'restoringMatrix','hullIntegration'}"
+			},
+			
+    {"name": "restoringMatrix", 
+			"type": "double",
+			"dim":"6,6",
+			"description": "Restoring matrix of the body. Used if model='restoringMatrix'."
+			},
+			
+	{"name": "referencePosition", 
+			"type": "double",
+			"dim":"6",
+			"description": "Position of reference for which the hydrostatic force is zero. Used if model='restoringMatrix'."
+			},
+			
+	{"name": "hullSystem", 
+			"type": "simstab:system:hulls", 
+			"description": "Hulls of the body. Used if model='hullIntegration'"
+			}
+				 
+	]
+	
+}

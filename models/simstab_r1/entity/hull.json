@@ -10,12 +10,7 @@
 			
 	{"name": "geometry", 
 			 "type": "simstab:geometry:model", 
-			 "description": "Geometry of the hull."},
-	
-	{"name": "position", 
-			"type": "marmo:containers:NonEquallySpacedSignal", 
-			"description": "Position and attitude of the hull in the body that owns this hull."
-			}
+			 "description": "Geometry of the hull."}
 				 
 	]
 	

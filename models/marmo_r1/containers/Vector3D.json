@@ -4,27 +4,9 @@
 	"type": "Vector3D",
 	"description": "single 3D vector.",
 	
-	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"extends": ["Dimensional3DVector"],
 	
 	"properties": [
-						 	  
-	{"name": "x", 
-			 "type": "double", 
-			 "value": "0",
-			 "description": "x component of the vector."
-			 },		
-			 
-	{"name": "y", 
-			 "type": "double", 
-			 "value": "0",
-			 "description": "y component of the vector."
-			 },		
-			 
-	{"name": "z", 
-			 "type": "double", 
-			 "value": "0",
-			 "description": "z component of the vector."
-			 }	
 	 
 	]
 	

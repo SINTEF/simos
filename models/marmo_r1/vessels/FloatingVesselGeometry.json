@@ -4,7 +4,7 @@
 	"type": "FloatingVesselGeometry",
 	"description": "Description of a general floating vessel.",
 
-	"extends": ["marmo:basic:NamedEntity"],
+	"extends": ["marmo:basic:NamedEntity", "marmo:dynamics:LocalCartesianCoordinateSystem"],
 	
 	   "properties": [
 

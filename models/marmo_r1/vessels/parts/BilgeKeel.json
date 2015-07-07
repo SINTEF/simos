@@ -8,6 +8,12 @@
 	
 	"properties": [
 			
+	{"name": "modelFile", 
+			"type": "marmo:geometry:GeometryFileDescription", 
+			"unit": "m",
+			"optional": "true",
+			"description": "geometry file."},
+            
 	{"name": "length", 
 			"type": "marmo:containers:DimensionalScalar", 
 			"unit": "m",

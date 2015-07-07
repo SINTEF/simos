@@ -17,7 +17,11 @@
 	{"name": "rot", 
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "deg",
-			 "description": "rotation vector in the global coordinate system."}
+			 "description": "rotation vector in the global coordinate system."},
+             
+	{"name": "tol", 
+			 "type": "double", 
+			 "description": "coordinate and geometry tolerance."}
 			 			 						
 	]
 	

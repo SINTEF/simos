@@ -8,15 +8,8 @@
 	
 	   "properties": [
 
-
-		{"name": "loc", 
-				"type": "marmo:containers:DimensionalScalar", 
-				"unit": "m",
-				"value": "0.0",
-				"description": "section's location along the ship."},
-
 		{"name": "pnts", 
-			"type": "marmo:containers:NonEquallySpaced3DVectorSignal", 
+			"type": "marmo:containers:ParametrizedVector3DArray", 
 			"description": "points' locations."},
 						
     	{"name": "area", 

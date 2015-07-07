@@ -1,0 +1,19 @@
+{   
+    "name": "Oscillator",
+    "type": "Oscillator",
+    "description": "oscillator.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+        {"name": "T", 
+            "type": "marmo:containers:DimensionalScalar", 
+            "description": "period."},
+            
+            {"name": "Amp", 
+                "type": "marmo:containers:DimensionalScalar", 
+                "description": "amplitude."}
+
+    ]
+    
+}

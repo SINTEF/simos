@@ -37,8 +37,10 @@ unset (PRIVATE_INCLUDE_DIRS)
 #
 # Define the main library
 #
+set(PUBLIC_SOURCES_FORTRAN ${PUBLIC_SOURCES_FORTRAN} ${PUBLIC_SOURCES_FORTRAN_SIMOS})
+
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/include)
-add_library (${LIB} STATIC ${PUBLIC_SOURCES_FORTRAN} ${PUBLIC_SOURCES_FORTRAN_SIMOS})
+add_library (${LIB} STATIC ${PUBLIC_SOURCES_FORTRAN})
 set_property (TARGET ${LIB}
     PROPERTY Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/
     )
@@ -47,7 +49,9 @@ target_include_directories (${LIB}
     )
     
 # Link to dependent targets
-target_link_libraries(${LIB} ${LIB_DEPENDENCIES} ${LIB_DEPENDENCIES_SIMOS})
+set(LIB_DEPENDENCIES ${LIB_DEPENDENCIES} ${LIB_DEPENDENCIES_SIMOS})
+
+target_link_libraries(${LIB} ${LIB_DEPENDENCIES})
 if (${LINK_BLAS_LAPACK})
     include (target_link_blas_lapack)
     target_link_blas_lapack (${LIB})

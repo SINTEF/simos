@@ -1,0 +1,23 @@
+
+{	
+	"name": "ParametrizedCurve",
+	"type": "ParametrizedCurve",
+	"description": "geometry of a 3D curve.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+	{"name": "pnts", 
+		"type": "marmo:containers:ParametrizedVector3DArray",
+		"description": "points on the line."},
+		
+	{"name": "curveLen", 
+		"type": "marmo:containers:DimensionalScalar", 
+		"unit": "m",
+		"value": "0.0",
+		"description": "curve length."}
+
+	]
+	
+}

@@ -21,6 +21,7 @@
              
 	{"name": "tol", 
 			 "type": "double", 
+			 "value": "0.000001",
 			 "description": "coordinate and geometry tolerance."}
 			 			 						
 	]

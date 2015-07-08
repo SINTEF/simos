@@ -4,17 +4,14 @@
 	"type": "ShipSection",
 	"description": "Ship section description.",
 
-	"extends": ["marmo:basic:NamedEntity","FloatingVesselGeometry"],
+	"extends": ["marmo:basic:NamedEntity","FloatingVesselGeometry", 
+	            "marmo:geometry:ParametrizedCurve"],
 	
 	   "properties": [
-
-		{"name": "pnts", 
-			"type": "marmo:containers:ParametrizedVector3DArray", 
-			"description": "points' locations."},
 						
     	{"name": "area", 
 			"type": "marmo:containers:DimensionalScalar", 
-			"unit": "m2",
+			"unit": "m^2",
 			"value": "0.0",
 			"description": "section area."},
 			

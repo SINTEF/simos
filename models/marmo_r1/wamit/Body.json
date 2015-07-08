@@ -24,7 +24,11 @@
 			"optional": "true",
 			"description": "points on body surface, used for extracting data on body."},
 			
-			
+	   {"name": "dipolePanels", 
+			"type": "DipolePanels",
+			"optional": "true",
+			"description": "description of dipole panels if exist."},
+				
 		{"name": "radiations", 
 				"type": "marmo:hydro:freq:radiation:BodyResults",
 				"dim": "*",

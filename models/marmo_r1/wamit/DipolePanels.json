@@ -1,0 +1,24 @@
+
+{	
+	"name": "DipolePanels",
+	"type": "DipolePanels",
+	"description": "Description of DipolePanels.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+   	    {"name": "sind", 
+            "type": "integer", 
+            "value": "1",
+            "description": "start index index."
+            },
+   	    
+   	    {"name": "eind", 
+            "type": "integer", 
+            "value": "1",
+            "description": "end index index."
+            }
+      ]
+	
+}

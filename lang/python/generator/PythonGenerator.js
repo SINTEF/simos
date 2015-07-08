@@ -34,11 +34,17 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push('#modules');
 	cmd.push(entity.importModules());
+	cmd.push('#------------------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("import"));
+	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push('');
 	cmd.push('#******************************************************************************');
 	cmd.push('class ' + entity.getClassName() + '(' + entity.superTypesList() + '):');
 	cmd.push('    #---------------------------------------------------------------------------');
-	cmd.push(entity.classInit(1));	   
+	cmd.push(entity.classInit(1));
+	cmd.push('#------------------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("method"));
+	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push('    #creating set and gets');
 	cmd.push(entity.propSetGet(1));

@@ -657,8 +657,14 @@ Base.prototype.findStrInLines = function(lines, str) {
 }
 
 Base.prototype.extractUserDefinedCode = function(code) {
-    if ((code == undefined) || (code == ''))
+    if ((code == undefined) || (code == '')){
+    	/*files does not exist, clean the existing code */
+    	for (key in this.userCodes) {
+    		var part = this.userCodes[key];
+    		part.code = "";
+    	}
         return;
+    }
     
     var lines = code.split('\n');
 

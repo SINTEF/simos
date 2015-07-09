@@ -244,6 +244,15 @@ Packaging.prototype.appendDependencyPackage = function(file) {
 /*----------------------------------------------------------------------------*/
 /*   Handling simos geenrated cmake code */
 /*----------------------------------------------------------------------------*/
+
+Packaging.prototype.findStrInLines = function(lines, str) {
+    for (var i = 0; i<lines.length; i++) {
+    	if (lines[i].indexOf(str) != -1)
+    		return i;
+    }
+    return -1;
+}
+
 Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     if ((code == undefined) || (code == ''))
         return;
@@ -252,9 +261,11 @@ Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     var newCode = '';
     
     //var part = this.simosSrcs;
-    var sind = lines.indexOf(part.start);
+    var sind = this.findStrInLines(lines,part.start);
+    //console.log(JSON.stringify(part))
     if (sind != -1) {
-        var eind = lines.indexOf(part.end);
+        var eind =  this.findStrInLines(lines,part.end);
+        //console.log('inds ' + sind + '  ' + eind )
         if ((eind - sind) > 1){
             console.log("            simos " + part.name + " in cmake betweeb lines : " + sind  + " and " + eind);
             
@@ -271,6 +282,7 @@ Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     else
     	newCode = [lines.join('\n'), addCode].join('\n');
     	
+    //console.log(newCode)
     return newCode;
 };
 /*----------------------------------------------------------------------------*/

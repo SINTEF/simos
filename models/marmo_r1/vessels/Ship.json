@@ -8,7 +8,24 @@
 	
 	"properties": [
 
+	   {"name": "lpp", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"description": "length between prependiculars."},
 
+	   {"name": "draftAP", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"description": "draft at aft prependicular."},
+			
+	   {"name": "draftFP", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"description": "draft at forward prependicular."},
+			
        {"name": "bilgeKeelPort", 
             "type": "marmo:vessels:parts:BilgeKeel", 
             "optional": "true",

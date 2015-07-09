@@ -31,8 +31,13 @@
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },
-			 "description": "Coordinate for center of bouyancy. in Body fixed coordinate. "}
+			 "description": "Coordinate for center of bouyancy. in Body fixed coordinate. "},
 
+       {"name": "displacement", 
+   			"type": "marmo:containers:DimensionalScalar", 
+   			"unit": "kg",
+   			"value": "0.0",
+   			"description": "body displacement."}
 	]
 	
 }

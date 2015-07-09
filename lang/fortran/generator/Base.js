@@ -30,7 +30,8 @@ packageParts = ['./storage/SaveLoad',
                     './properties/SetGet',
                     './properties/Representation'];
 */
-packageParts = ['./properties/Init']
+packageParts = ['./properties/Init',
+                './properties/SetGet']
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {
 	var packPath = packageParts[ip];

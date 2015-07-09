@@ -56,6 +56,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push('    contains');    
 	cmd.push('        private');    
+	cmd.push(entity.propSetGetDeclarations(3));
 	//cmd.push(entity.proceduresDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
     cmd.push(entity.getUserDefinedCode("funcSig"));
@@ -65,9 +66,9 @@ Generator.prototype.generate = function(model) {
 	cmd.push('contains');    
 	cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.initClass(1));
-	//cmd.push('    !---------------------------------------------------------------------------');
-	//cmd.push(entity.propSetGet(1));
-	//cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push(entity.propSetGet(1));
+	cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.reprFunc(1));
 	//cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.typeReprFunc(1));

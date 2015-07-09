@@ -158,104 +158,61 @@ SetGet.prototype.setChildPropRefs = function(bl, childProp, objName) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.propSetDeclaration = function(prop, bl) {
+	if (prop.type == 'string'){
+	    var cmd = [];
+	    	    
+	    cmd.push(this.gbl(bl) + 'generic, public :: set_' + prop.name + ' => set_' + prop.name + 'FromChar,set_' + prop.name +'FromString');
+	    cmd.push(this.gbl(bl) + 'procedure :: set_' + prop.name + 'FromChar');
+	    cmd.push(this.gbl(bl) + 'procedure :: set_' + prop.name + 'FromString');
+	    
+	    return cmd.join('\n');
+    }
+    else {
+    	return '';
+    }
+    
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.propGetDeclaration = function(prop, bl) {
+    return '';
+};
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.propSet = function(prop, bl) {
 	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + '@ ' + prop.name +'.setter' );	
+	if (prop.type == 'string'){
+	    cmd.push(this.gbl(bl) + 'subroutine set_' + prop.name + 'FromChar(this,chbdy)');
+	    cmd.push(this.gbl(bl+1) + 	'! External variables');
+	    cmd.push(this.gbl(bl+1) + 	'! Inputs');
+	    cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
+	    cmd.push(this.gbl(bl+1) + 	'character(*) :: chbdy');
+	    cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromChar');
+        cmd.push(this.gbl(bl));
+        cmd.push(this.gbl(bl) + 'subroutine set_' + prop.name + 'FromString(this,chbdy)');
+        cmd.push(this.gbl(bl+1) + 	'! External variables');
+        cmd.push(this.gbl(bl+1) + 	'! Inputs');
+        cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
+        cmd.push(this.gbl(bl+1) + 	'type(String) :: chbdy');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromString');	  
 
-	cmd.push(this.gbl(bl) + 'def ' + prop.name + '(self, val):');
+		return cmd.join('\n');
+	 }
+	 else {
+		 return '';
+	 }
+	 
 	
-	/* SetGet the value */
-	if (this.isAtomic(prop)) {
-		if (this.isArray(prop)) {
-			/*
-			 * no chekcs here, TODO: add casting or checks for atomic type
-			 * arrays
-			 */
-			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');			
-		}
-		else {
-			/* type casting between atomic types */
-			if (prop.type == "boolean") {
-				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
-						this.changeType(prop.type) +
-						'(' + this.changeType("integer") + '(val)' + ')');
-			}
-			else {
-				if (this.isLimited(prop)) {
-					if (prop.from instanceof Array){ 
-						cmd.push(this.gbl(bl+1) + 
-						'if not(' + this.changeType(prop.type) + '(val) in ' + this.stringify(prop.from) + '): ' );
-						cmd.push(this.gbl(bl+2) + 
-							'raise Exception(str(val) + " must be in " + str(' + this.stringify(prop.from) + ') )');
-					}
-					else{
-						cmd.push(this.gbl(bl+1) + 
-						'if not(' + this.changeType(prop.type) + '(val) in self.' + this.makePrivate(prop.from) + '): ' );
-						cmd.push(this.gbl(bl+2) + 
-							'raise Exception(str(val) + " must be in " + str(self.' + this.makePrivate(prop.from) + ') )');
-					}
-				}
-				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
-						this.changeType(prop.type) +'(val)');
-				
-			}
-
-			
-
-		}
-	}
-	else {
-		/* non-atomic types */
-		if (this.isArray(prop)) {
-			/*
-			 * cheks if all elements is array has the correct type TODO: add the
-			 * check
-			 */
-		}
-		else {
-			/* check if it has the correct type */
-			cmd.push(this.gbl(bl+1) + 
-					'if not(isinstance(val, ' + this.getClassPathFromType(prop.type)  + ')):');
-			cmd.push(this.gbl(bl+2) + 
-					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
-
-		}
-		/* simple assignment */
-		cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');
-	}
-
-	/* change array sizes if prop is a dimension */
-	/*TODO: this functionality must be improved to work with automated data loading 
-	 * and improve efficiency.*/
-	if (this.isDimension(prop)){
-		/* find out the array which has prop as a dimension */
-		var arrays = this.getPropertiesWithDimension(prop);
-		/* resize the array accordingly */
-		/*
-		for (var i = 0; i<arrays.length; i++){
-			cmd.push(this.gbl(bl+1) + 'if not(len(self.' + this.makePrivate(arrays[i].name) + ') == self.' + this.makePrivate(prop.name) +'):');
-			cmd.push(this.gbl(bl+2) + 		'self.' + this.arrayUpdateSizeFuncName(arrays[i]) +'()' );
-		};
-		*/	
-	}
-	
-	/* make relations between child and parrent data sets */
-	if (this.hasDependencies(prop)) {
-		cmd.push(this.setParentPropsRefs(bl+1, prop));
-	}
-	if (this.hasDependents(prop)){
-		/*some other properties depend on this one */
-		cmd.push(this.setChildPropsRefs(bl+1, prop));
-	}
-	
-	cmd.push(this.gbl(bl+1) +	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-	cmd.push(this.gbl(bl+2) + 
-			'self._loadedItems.append(' + this.stringify(prop.name) + ')');
-	
+	    
 	/* return the commands */
-    return cmd.join('\n');
+    
 };
 /*----------------------------------------------------------------------------*/
 SetGet.prototype.arrayUpdateSize = function(prop, bl) {
@@ -278,45 +235,7 @@ SetGet.prototype.arrayUpdateSize = function(prop, bl) {
 };
 /*----------------------------------------------------------------------------*/
 SetGet.prototype.propGet = function(prop, bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-		
-	cmd.push(this.gbl(bl) +		'@ property');	
-	cmd.push(this.gbl(bl) + 	'def ' + prop.name + '(self):');	
-	
-	if (this.isAtomic(prop)) {
-		if(this.isSingle(prop)){
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-		else {
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) :');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );			
-		}
-	}
-	else {
-		if(this.isArray(prop)){
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (len(self.' + this.makePrivate(prop.name) + ') == 0):');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-		else {
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (self.' + this.makePrivate(prop.name) + ' == None):');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-	}
-
-			
-	return cmd.join('\n');
+	return '';
 };
 
 /*----------------------------------------------------------------------------*/

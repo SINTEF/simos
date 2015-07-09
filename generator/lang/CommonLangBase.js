@@ -132,13 +132,54 @@ CommonLangBase.prototype.propSetGet = function(bl) {
 	
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];
-		cmd.push(this.getCodeSeparator(bl));
+		//cmd.push(this.getCodeSeparator(bl));
 		
 		if(!(prop.get == 'false')){
-			cmd.push( this.propGet(prop, bl) );
+			var getStr = this.propGet(prop, bl);
+			if (getStr != ''){
+				cmd.push(this.getCodeSeparator(bl));
+				cmd.push( getStr );
+			}
 		}
 		if(!(prop.set == 'false')){
-			cmd.push(this.propSet(prop,bl));	
+			var setStr = this.propSet(prop, bl);
+			if (setStr != ''){
+				cmd.push(this.getCodeSeparator(bl));
+				cmd.push( setStr );
+			}
+		}
+	}
+	
+    return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+CommonLangBase.prototype.propSetGetDeclarations = function(bl) {	
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];   
+
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		//cmd.push(this.getCodeSeparator(bl));
+		
+		if(!(prop.get == 'false')){
+			var getStr = this.propGetDeclaration(prop, bl);
+			if (getStr != ''){
+				cmd.push(this.getCodeSeparator(bl));
+				cmd.push( getStr );
+			}
+		}
+		if(!(prop.set == 'false')){
+			var setStr = this.propSetDeclaration(prop, bl);
+			if (setStr != ''){
+				cmd.push(this.getCodeSeparator(bl));
+				cmd.push( setStr );
+			}
 		}
 	}
 	

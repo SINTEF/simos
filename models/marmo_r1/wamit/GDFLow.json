@@ -24,7 +24,12 @@
 	   {"name": "symY", 
 			"type": "integer", 
 			"value": "0",
-			"description": "symmetry flag in y, 0: not sym, 1: sym."}
+			"description": "symmetry flag in y, 0: not sym, 1: sym."},
+			
+	   {"name": "uLen", 
+			"type": "double", 
+			"value": "1.0",
+			"description": "unit length."}
 
 	]
 	

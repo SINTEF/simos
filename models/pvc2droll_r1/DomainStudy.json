@@ -13,7 +13,7 @@
 		"description": "complete ship geometry description."},
 		
 	{"name": "scenarios", 
-			"type": "Domain", 
+			"type": "marmo:cfd:forcedMotion2D:Domain", 
 			"dim": "*",
 			"description": "a list of domains"}
 	]

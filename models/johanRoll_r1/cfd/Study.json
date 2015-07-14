@@ -8,6 +8,10 @@
 	   
 	"properties": [
 
+   	{"name": "ship", 
+		"type": "marmo:vessels:Ship", 
+		"description": "complete ship geometry description."},
+	           	
 	{"name": "scenarios", 
 			"type": "Scenario", 
 			"dim": "*",

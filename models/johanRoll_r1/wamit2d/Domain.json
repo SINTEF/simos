@@ -1,0 +1,17 @@
+
+{	
+	"name": "Domain",
+	"type": "Domain",
+	"description": "Description of a WAMIT computation domain.",
+
+    "extends": ["marmo:wamit:Domain"],
+    	
+	"properties": [
+
+       	{"name": "body", 
+			"type": "Body", 
+			"description": "body"}
+
+	]
+	
+}

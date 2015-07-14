@@ -18,14 +18,19 @@
 			"type": "GDFLow",
 			"optional": "true",
 			"description": "low order gdf data."},
-			
+
+		{"name": "pnl", 
+				"type": "PNL",
+				"optional": "true",
+				"description": "wamit exrported PNL data."},
+
 	   {"name": "surfacePoints", 
 			"type": "marmo:containers:VectorArray",
 			"optional": "true",
 			"description": "points on body surface, used for extracting data on body."},
 			
-	   {"name": "dipolePanels", 
-			"type": "DipolePanels",
+	   {"name": "lowDipolePanels", 
+			"type": "GDFLow",
 			"optional": "true",
 			"description": "description of dipole panels if exist."},
 				

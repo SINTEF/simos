@@ -4,12 +4,10 @@
 	"type": "Scenario",
 	"description": "Description of a ship forced motion scenario.",
 	
-    "extends": ["marmo:cfd:forcedMotion:Scenario"],
+    "extends": ["marmo:cfd:forcedMotion2D:Scenario"],
 	
 	"properties": [
-	           	{"name": "domain", 
-	    			"type": "Domain", 
-	    			"description": "Computational domain."}
+
 	]
 	
 }

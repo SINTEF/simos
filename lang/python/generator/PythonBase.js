@@ -61,6 +61,7 @@ PythonBase.prototype.constructor = function(model) {
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'numpy', 'alias': 'np'},
 	                       {'name': 'os'},
+	                       {'name': 'warnings'},
 	                       {'name': 'traceback'},
 	                       {'name': 'collections'},
 	                       {'name': 'uuid'},

@@ -218,8 +218,10 @@ SetGet.prototype.propSet = function(prop, bl) {
 			/* check if it has the correct type */
 			cmd.push(this.gbl(bl+1) + 
 					'if not(isinstance(val, ' + this.getClassPathFromType(prop.type)  + ')):');
+//			cmd.push(this.gbl(bl+2) + 
+//					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
 			cmd.push(this.gbl(bl+2) + 
-					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
+					'warnings.warn("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed. Make sure they are compatible.", RuntimeWarning)');
 
 		}
 		/* simple assignment */

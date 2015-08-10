@@ -1,0 +1,17 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "Forced motion study of a vessel in wamit.",
+	
+	"extends": ["marmo:wamit:Study"],
+	   
+	"properties": [
+
+	{"name": "scenarios", 
+			"type": "Scenario", 
+			"dim": "*",
+			"description": "a list of scenarios"}
+	]
+	
+}

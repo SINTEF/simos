@@ -1,0 +1,14 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a VERES scenario.",
+	
+    "extends": ["marmo:veres:roll:Scenario"],
+	
+	"properties": [
+
+
+	]
+	
+}

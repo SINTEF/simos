@@ -1,0 +1,20 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Free motions scenario of a vessel in waves in wamit.",
+	
+    "extends": ["marmo:wamit:Scenario"],
+	
+	"properties": [
+			
+	{"name": "domain", 
+			"type": "Domain", 
+			"description": "Computational domain."},
+	
+	{"name": "cfdDomain", 
+		"type": "johanRoll:cfd:Domain", 
+		"description": "Computational domain."}
+	]
+	
+}

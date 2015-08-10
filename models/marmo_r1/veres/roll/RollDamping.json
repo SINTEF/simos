@@ -19,6 +19,7 @@
         {"name": "Bv2", 
             "type": "marmo:containers:NonEquallySpacedSignal",
             "description": "non-linear viscous damping."},
+            
         {"name": "Bv2L", 
             "type": "marmo:containers:NonEquallySpacedSignal",
             "description": "linearized non-linear viscous damping."}

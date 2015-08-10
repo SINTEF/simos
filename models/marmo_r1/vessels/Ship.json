@@ -38,7 +38,25 @@
             "__dependencies": { "unit": "unit" },
             "description": "Star-board side bilge keel"},
             
+
+       {"name": "CB", 
+                "type": "marmo:containers:DimensionalScalar", 
+                "unit": "",
+    			"value": "0.0",
+                "description": "block Coeff."},
+
+        {"name": "CW", 
+            "type": "marmo:containers:DimensionalScalar", 
+            "unit": "",
+			"value": "0.0",
+            "description": "water plane Coeff."},
             
+        {"name": "CM", 
+            "type": "marmo:containers:DimensionalScalar", 
+            "unit": "",
+			"value": "0.0",
+            "description": "Mid-ship coeff."},
+                
         {"name": "sections", 
             "type": "ShipSection", 
             "dim": "*",

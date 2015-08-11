@@ -1,0 +1,21 @@
+
+{	
+	"name": "DomainStudy",
+	"type": "DomainStudy",
+	"description": "A ship roll study on meshes and domains.",
+	
+	"extends": ["marmo:cfd:Study"],
+	   
+	"properties": [
+
+  	{"name": "ship", 
+		"type": "marmo:vessels:Ship", 
+		"description": "complete ship geometry description."},
+		
+	{"name": "scenarios", 
+			"type": "Domain", 
+			"dim": "*",
+			"description": "a list of domains"}
+	]
+	
+}

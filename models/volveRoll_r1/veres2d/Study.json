@@ -1,0 +1,16 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "VERES study.",
+	
+	"extends": ["marmo:project:Study"],
+	   
+	"properties": [
+	           	{"name": "scenarios", 
+	    			"type": "Scenario", 
+	    			"dim": "*",
+	    			"description": "a list of scenarios"}
+	]
+	
+}

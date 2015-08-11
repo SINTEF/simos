@@ -1,0 +1,13 @@
+
+{	
+	"name": "Body",
+	"type": "Body",
+	"description": "Description of a WAMIT body.",
+
+	"extends": ["marmo:wamit:Body"],
+	
+	"properties": [
+
+	]
+	
+}

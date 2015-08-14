@@ -99,7 +99,7 @@ MatlabBase.prototype.getClassPathFromType = function(packagedTypeStr) {
 	var parsed = this.parsePackagedTypeStr(packagedTypeStr);
 	var modulePath = this.makeModulePath(parsed);
 	
-	return (modulePath + this.packagePathSep + parsed.name);
+	return (modulePath);
 };
 
 MatlabBase.prototype.getOutCodeFileNameFromVersionedPackagedTypeStr = function(modelID) {

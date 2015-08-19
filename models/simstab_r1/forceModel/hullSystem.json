@@ -1,7 +1,7 @@
 
 {	
-	"name": "hulls",
-	"type": "hulls",
+	"name": "hullSystem",
+	"type": "hullSystem",
 	"description": "class describing a system of hulls",
 	
 	"extends": ["marmo:basic:NamedEntity"],
@@ -9,7 +9,7 @@
 	"properties": [
 			
 	{"name": "hullArray", 
-			 "type": "simstab:entity:hull",
+			 "type": "simstab:forceModel:hull",
 			 "dim":"*", 
 			 "description": "Array of hull."}
 

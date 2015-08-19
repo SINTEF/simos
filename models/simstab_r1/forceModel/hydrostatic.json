@@ -25,7 +25,7 @@
 			},
 			
 	{"name": "hullSystem", 
-			"type": "simstab:system:hulls", 
+			"type": "simstab:forceModel:hullSystem", 
 			"description": "Hulls of the body. Used if model='hullIntegration'"
 			}
 				 

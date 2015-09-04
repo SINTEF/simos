@@ -38,7 +38,12 @@
 			 "type": "marmo:containers:Dimensional3DVector", 
 			 "unit": "m",
 			 "__dependencies": { "unit": "unit" },
-			 "description": "Coordinate for center of rotation. Used to calculate moments. in Body fixed coordinate."}
+			 "description": "Coordinate for center of rotation. Used to calculate moments. in Body fixed coordinate."},
+			 
+	{"name": "U", 
+		 "type": "marmo:containers:Dimensional3DVector", 
+		 "unit": "m/s", 
+		 "description": "Body velocity. "}
 	]
 	
 }

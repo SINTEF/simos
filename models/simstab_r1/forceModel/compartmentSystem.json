@@ -1,0 +1,17 @@
+{	
+	"name": "compartmentSystem",
+	"type": "compartmentSystem",
+	"description": "class describing a set of compartments",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+			
+	{"name": "compartmentArray", 
+			 "type": "simstab:forceModel:compartment", 
+			 "description": "Array of compartments."}
+			
+	]
+	
+}

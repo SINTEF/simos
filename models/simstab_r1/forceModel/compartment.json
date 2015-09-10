@@ -11,16 +11,22 @@
 	{"name": "geometry", 
 			 "type": "simstab:geometry:model", 
 			 "description": "Geometry of the compartment."},
-			
-	{"name": "positionInB", 
-			"type": "double",
-			"dim":"6",
-			"description": "Fixed position of the compartment in the coord. system fixed to the body that owns this compartment. [m m m rad rad rad]."
-			},	
-	
+
 	{"name": "damageType", 
 			"type": "integer", 
 			"description": "Type of damage. (0 = no damage, i = damage type number)"
+			},
+    
+    {"name": "positionInB", 
+			"type": "double",
+			"dim" : "6",
+			"description": "Position of the compartment in the body that owns it."
+			},
+			
+    {"name": "Rcb", 
+			"type": "double",
+			"dim" : "3,3",
+			"description": "Rotation matrix of the tank relative to the body coordinate system."
 			},
 			
 	{"name": "fluidDensity", 
@@ -31,6 +37,11 @@
     {"name": "fluidVolume", 
 			"type": "double", 
 			"description": "Volume of fluid that is present in the compartment. [m^3]"
+			},
+			
+   {"name": "fluidVolumeMax", 
+			"type": "double", 
+			"description": "Maximum volume of fluid that the compartment can contain. [m^3]"
 			},
 			
    {"name": "volumeFunctionIsPresent", 

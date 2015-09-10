@@ -15,7 +15,7 @@
 
 	{"name": "geometryFileType", 
 			"type": "string",
-			"description": "Type of the geometry file. Only options are ''lowOrderPanel'' and ''stepFile''."
+			"description": "Type of the geometry file. Only options are ''lowOrderPanel'' and ''triangularMesh''."
 			},
 			
 	
@@ -28,6 +28,11 @@
 	{"name": "identifier", 
 			"type": "integer", 
 			"description": "Identifier of the geometry in the calculation module."
+			},
+			
+	{"name": "trimesh", 
+			"type": "simstab:geometry:trimesh", 
+			"description": "Triangular mesh object"
 			}
 				 
 	]

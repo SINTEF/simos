@@ -27,7 +27,29 @@
 	{"name": "hullSystem", 
 			"type": "simstab:forceModel:hullSystem", 
 			"description": "Hulls of the body. Used if model='hullIntegration'"
-			}
+			},
+			
+    {"name": "globalStiffness", 
+			"type": "double",
+			"dim":"3", 
+			"description": "Global stiffness in X-dirrection, Y-direction and rotation about globall Z axis."
+			},
+			
+	 {"name": "globalReferencePosition", 
+			"type": "double",
+			"dim":"3", 
+			"description": "Reference position for global stiffness. (X,Y,Psi)."
+			},
+			
+	 {"name": "exists", 
+			"type": "boolean",
+			"description": "the object exists"
+			},
+			
+			{"name": "globalStiffnessIsPresent", 
+			"type": "boolean",
+			"description": "globalStiffness is defined"
+			}		
 				 
 	]
 	

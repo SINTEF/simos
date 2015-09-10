@@ -1,0 +1,17 @@
+
+{	
+	"name": "tdm",
+	"type": "tdm",
+	"description": "class describing a time dependent mass force model",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "compartmentSystem", 
+			 "type": "simstab:forceModel:compartmentSystem", 
+			 "description": "Set of compartments."}
+				 
+	]
+	
+}

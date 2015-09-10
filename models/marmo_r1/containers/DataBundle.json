@@ -12,7 +12,12 @@
             "type": "marmo:containers:SimpleString",  
             "dim": "*",
             "description": "an array of strings."},
-                        
+
+    {"name": "children", 
+            "type": "DataBundle",  
+            "dim": "*",
+            "description": "an array of strings."},
+
     {"name": "scalars", 
             "type": "marmo:containers:DimensionalScalar",  
             "dim": "*",

@@ -1,0 +1,20 @@
+{   
+    "name": "Project",
+    "type": "Project",
+    "description": "General project data.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+        {"name": "date", 
+            "type": "string", 
+            "description": "project date."},
+            
+        {"name": "number", 
+            "type": "integer", 
+            "value": "1",
+            "description": "project number."}
+
+    ]
+    
+}

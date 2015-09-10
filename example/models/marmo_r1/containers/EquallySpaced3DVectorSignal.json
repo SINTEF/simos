@@ -1,0 +1,26 @@
+{	
+	"name": "EquallySpaced3DVectorSignal",
+	"type": "EquallySpaced3DVectorSignal",
+	"description": "data model for a collection of equally spaced 3D vector signals, model test data for instance.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+		
+	"properties": [			 
+						 			 
+	{"name": "x", 
+			 "type": "EquallySpacedSignal", 
+			 "description": "x component value"
+			 },		
+			 
+	{"name": "y", 
+			 "type": "EquallySpacedSignal", 
+			 "description": "y component value"
+			 },
+			 			 
+	{"name": "z", 
+			 "type": "EquallySpacedSignal", 
+			 "description": "z component value"
+			 }			 
+	]
+	
+}

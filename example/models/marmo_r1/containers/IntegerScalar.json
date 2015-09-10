@@ -1,0 +1,19 @@
+
+{	
+	"name": "IntegerDimensionalScalar",
+	"type": "IntegerDimensionalScalar",
+	"description": "single scalar integer value with dimension",
+
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	"properties": [
+			 
+	{"name": "value", 
+			 "type": "integer", "value":"0",
+			 "description": "value"},
+			 
+    {"name": "label", 
+             "type": "string", "value":"",
+             "description": "label for the value."}		 
+	]
+	
+}

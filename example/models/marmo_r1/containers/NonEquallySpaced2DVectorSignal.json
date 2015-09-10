@@ -1,0 +1,20 @@
+
+{	
+	"name": "NonEquallySpaced2DVectorSignal",
+	"type": "NonEquallySpaced2DVectorSignal",
+	"description": "data model for a collection of non equally spaced 2D vector signals, model test data for instance.",
+	
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "x", 
+			 "type": "NonEquallySpacedSignal", 
+			 "description": "x component value"},		
+			 
+	{"name": "y", 
+			 "type": "NonEquallySpacedSignal", 
+			 "description": "y component value"}
+	]
+	
+}

@@ -1,0 +1,19 @@
+
+{	
+	"name": "ModelTestDataCollection",
+	"type": "ModelTestDataCollection",
+	"description": "data model for a collection data describing model test, model test data for instance.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+			 			 
+	{"name": "tests", 
+			 "type": "ModelTest", 
+			 "dim":"*",
+			 "description": "tests data."}
+			
+	]
+	
+}

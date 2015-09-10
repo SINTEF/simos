@@ -1,0 +1,22 @@
+
+{	
+	"name": "DimensionalComplexScalar",
+	"type": "DimensionalComplexScalar",
+	"description": "complex single scalar value with dimension",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	"properties": [	
+			 
+        {"name": "mod", 
+             "type": "DimensionalScalar",
+             "unit": "", 
+             "description": "modulus."},
+
+        {"name": "phs", 
+             "type": "DimensionalScalar", 
+             "unit": "deg", 
+             "description": "phase."}
+	 
+	]
+	
+}

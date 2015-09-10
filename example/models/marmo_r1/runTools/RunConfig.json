@@ -1,0 +1,38 @@
+{   
+    "name": "RunConfig",
+    "type": "RunConfig",
+    "description": "General run configuration",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+        {"name": "cpuTime", 
+            "type": "marmo:containers:DimensionalScalar", 
+            "value":"0.0",
+            "unit": "s",
+            "description": "CPU time (wall clock time) for running the case."},
+    
+        {"name": "nCPUs", 
+            "type": "integer",  
+            "value":"1",
+            "description": "Number of CPUs."},
+            
+        {"name": "template", 
+            "type": "string", "value":"",   
+            "description": "The template case which used to create this scenario."},
+
+        {"name": "rootPath", 
+            "type": "string", "value":"",   
+            "description": "Points to the relative ."},
+                    
+        {"name": "machineName", 
+            "type": "string", "value":"",   
+            "description": "Name of the machine used to run the scenario."},
+            
+        {"name": "application", 
+            "type": "Application", 
+            "description": "Application to be used for running, executable filename."}
+
+    ]
+    
+}

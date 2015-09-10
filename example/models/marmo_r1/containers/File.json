@@ -1,0 +1,21 @@
+
+{	
+	"name": "File",
+	"type": "File",
+	"description": "Description of a file.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+
+	"properties": [
+						
+	{"name": "type", 
+			"type": "string", "value": "",
+			"description": "geometry file type."},
+
+	{"name": "path", 
+			 "type": "string", "value":"", 
+			 "description": "path to the folder which has the file"}
+			 			 			
+	]
+	
+}

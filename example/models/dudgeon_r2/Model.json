@@ -1,0 +1,37 @@
+
+{   
+    "name": "Model",
+    "type": "Model",
+    "description": "Model of the monopile",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+	{"name": "diameter", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "m",
+            "description": "length"},
+						
+	{"name": "roughness", 
+			"type": "string",
+			"description": "Rough or smooth"},
+			
+	{"name": "stiffness", 
+			"type": "string",
+			"description": "Stiff or flexible"},
+			
+	{"name": "weight", 
+            "type": "marmo:containers:DimensionalScalar",  
+			"unit": "N",
+            "description": "weight of door"}, 
+			
+	{"name": "position", 
+            "type": "marmo:containers:Vector3D",  
+			"unit": "m",
+            "description": "position of the model"}
+            
+    ]
+    
+}
+
+

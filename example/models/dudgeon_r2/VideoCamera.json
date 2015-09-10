@@ -1,0 +1,27 @@
+
+{   
+    "name": "VideoCamera",
+    "type": "VideoCamera",
+    "description": "One video camera",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+     {"name": "sn", 
+            "type": "marmo:containers:SimpleString",  
+            "description": "Serialnumber"},
+		
+	 {"name": "position", 
+            "type": "marmo:containers:Vector3D",  
+			"unit": "m",
+            "description": "Position in global coord"},
+						
+    {"name": "images", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "description": "the video"}
+
+     ]
+    
+}
+
+

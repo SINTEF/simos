@@ -1,0 +1,31 @@
+
+{	
+	"name": "ComplexScalarResponse",
+	"type": "ComplexScalarResponse",
+	"description": "Description of a complex response from WAMIT.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+
+
+        {"name": "mod", 
+             "type": "NonEquallySpacedSignal", 
+             "description": "modulus."},
+
+        {"name": "phs", 
+             "type": "NonEquallySpacedSignal", 
+              "__assign": { "unit": "deg"},
+             "description": "phase."},
+             
+        {"name": "re", 
+             "type": "NonEquallySpacedSignal", 
+             "description": "real part."},
+             
+        {"name": "im", 
+             "type": "NonEquallySpacedSignal", 
+             "description": "imaginary part."} 
+            
+	]
+	
+}

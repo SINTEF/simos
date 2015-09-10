@@ -1,0 +1,25 @@
+
+{	
+	"name": "SuperArray",
+	"type": "SuperArray",
+	"description": "An array of values with extra data.",
+	"extends": ["marmo:basic:NamedEntityWithUnit"],
+	
+	"properties": [
+			 			 
+	{"name": "value", 
+			 "type": "double", "dim": "*", 
+			 "description": "array of data."
+			 },
+			 
+    {"name": "label", 
+            "type": "string", "value": "",
+            "description": "label for the value."},
+         
+    {"name": "legend", 
+            "type": "string", "value": "",
+            "description": "description of values to be used as legend."}
+
+	]
+	
+}

@@ -1,4 +1,4 @@
-exports.simosPath = '.';
+//exports.simosPath = '.';
 
 /*
 exports.langs = {'python': {'id': 'py', 

@@ -1,5 +1,5 @@
 path = require('path');
 
-exports.outPath = path.join(__dirname, 'example');
-exports.modelsPaths = [path.join(__dirname, 'example', 'models')];
+exports.outPath = path.resolve(path.join(__dirname, '..', 'example'));
+exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'models'))];
 

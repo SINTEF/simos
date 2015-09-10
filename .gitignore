@@ -91,4 +91,8 @@ doc/Doxygen/DTAGS
 .settings
 # python binaries
 *.pyc
+
+#ignore local config files
+pathConfig.js
 # end-of-file
+

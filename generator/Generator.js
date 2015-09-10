@@ -3,9 +3,11 @@ var fs = require('fs');
 var path = require('path');
 var njs = require('./njs')();
 
-var simosPath = require('./config.js').simosPath;
+//var simosPath = require('./config.js').simosPath;
 
-var config = require(path.join(simosPath,'config.js'));
+var simosPath = "..";
+
+var config = require(path.join(simosPath,'langConfig.js'));
 
 var ModelParser = require('./lang/ModelParser.js').ModelParser;
 
@@ -60,14 +62,19 @@ Generator.prototype.constructor = function(lang) {
 Generator.prototype.setSimosPath = function(p) {
 	this.simosPath = path.resolve(p);
 	
-	this.modelsPath = path.join(this.simosPath, 'models');
+	//this.modelsPath = path.join(this.simosPath, 'models');
 	
 	if (this.lang != undefined)
 		if (this.lang.packaging != undefined){
 			this.lang.packaging.outPath = this.outPath;
 			this.lang.packaging.simosPath = this.simosPath;
 		}
-}
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.setModelsPath = function(p) {
+	this.modelsPath = path.resolve(p);
+};
+
 /*----------------------------------------------------------------------------*/
 Generator.prototype.toString = function(){
 	return "Generator";

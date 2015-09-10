@@ -14,7 +14,7 @@ var config = require(relSimosPath + 'langConfig.js');
 
 var simosPath 	= pathConfig.simosPath;
 var outPath 	= pathConfig.outPath;
-var modelsPath 	= pathConfig.modelsPath;
+var modelsPaths = pathConfig.modelsPaths;
 
 
 var replServer = repl.start({
@@ -41,7 +41,7 @@ replServer.context.loadGenerators = function() {
 		replServer.context[genName].setOutPath( 
 			replServer.context.path.join(outPath,config.langs[lang].interp, 'models')
 												);
-		replServer.context[genName].setModelsPath( replServer.context.path.join(modelsPath) );
+		replServer.context[genName].setModelsPaths( modelsPaths );
 		
 	}
 

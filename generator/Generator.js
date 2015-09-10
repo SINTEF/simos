@@ -57,13 +57,12 @@ Generator.prototype.constructor = function(lang) {
 	this.generatedPackages = [];
 	this.externalPackageDependencies = [];
 	
+	this.modelsPaths = [];
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.setSimosPath = function(p) {
 	this.simosPath = path.resolve(p);
-	
-	//this.modelsPath = path.join(this.simosPath, 'models');
-	
+		
 	if (this.lang != undefined)
 		if (this.lang.packaging != undefined){
 			this.lang.packaging.outPath = this.outPath;
@@ -71,8 +70,13 @@ Generator.prototype.setSimosPath = function(p) {
 		}
 };
 /*----------------------------------------------------------------------------*/
-Generator.prototype.setModelsPath = function(p) {
-	this.modelsPath = path.resolve(p);
+Generator.prototype.setModelsPaths = function(ps) {
+	for (var i = 0; i<ps.length; i++) {
+		this.modelsPaths.push(path.resolve(ps[i]));
+	}
+};
+Generator.prototype.appendModelsPath = function(p) {
+	this.modelsPaths.push(path.resolve(p));
 };
 
 /*----------------------------------------------------------------------------*/
@@ -181,7 +185,28 @@ Generator.prototype.getPackageModels = function(packageID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.sourcePackageIDtoPath = function(packageID) {
 	 var packagePath = packageID.split(this.lang.packageSep).join('/');
-	 return path.join(this.modelsPath, packagePath); 
+	 
+	 for (var i = 0; i<this.modelsPaths.length; i++) {
+		 var packPath = path.join(this.modelsPaths[i], packagePath)
+		 //console.log(packPath);
+		 if (fs.existsSync(packPath)) {
+			 return packPath;
+		 }
+	 }
+	 throw(packageID + " not found in models paths " + this.modelsPaths);
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.sourceModelIDtoPath = function(modelID) {
+	 var modelPath = modelID.split(this.lang.packageSep).join('/');
+	 
+	 for (var i = 0; i<this.modelsPaths.length; i++) {
+		 var mPath = path.join(this.modelsPaths[i], modelPath)
+		 //console.log(mPath+ '.' + this.modelExt);
+		 if (fs.existsSync(mPath+ '.' + this.modelExt)) {
+			 return mPath;
+		 }
+	 }
+	 throw(mPath + " not found in models paths " + this.modelsPaths);
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.targetPackageIDtoPath = function(packageID) {
@@ -228,7 +253,7 @@ Generator.prototype.createOutPath = function(outppath) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.getModel = function(modelID) {
 	
-	var modelPath = this.sourcePackageIDtoPath(modelID);
+	var modelPath = this.sourceModelIDtoPath(modelID);
 	
 	//console.log(path.resolve(modelPath) + '.' + this.modelExt);
 	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];

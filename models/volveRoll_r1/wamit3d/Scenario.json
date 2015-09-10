@@ -10,11 +10,8 @@
 			
 	{"name": "domain", 
 			"type": "Domain", 
-			"description": "Computational domain."},
-	
-	{"name": "cfdDomain", 
-		"type": "johanRoll:cfd:Domain", 
-		"description": "Computational domain."}
+			"description": "Computational domain."}
+
 	]
 	
 }

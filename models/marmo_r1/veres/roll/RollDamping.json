@@ -22,7 +22,12 @@
             
         {"name": "Bv2L", 
             "type": "marmo:containers:NonEquallySpacedSignal",
-            "description": "linearized non-linear viscous damping."}
+            "description": "linearized non-linear viscous damping."},
+            
+        {"name": "ampComps", 
+            "type": "RollDampingAmpDep",
+            "dim": "*",
+            "description": "amplitude dependent roll damping components."}    
 	]
 	
 }

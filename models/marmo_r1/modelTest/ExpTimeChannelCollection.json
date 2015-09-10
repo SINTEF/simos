@@ -1,0 +1,34 @@
+
+{   
+    "name": "ExpTimeChannelCollection",
+    "type": "ExpTimeChannelCollection",
+    "description": "Data for a single test in channels.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+  
+    {"name": "strings", 
+            "type": "marmo:containers:SimpleString",  
+            "dim": "*",
+            "description": "an array of strings."},
+                        
+    {"name": "numbers", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "dim": "*",
+            "description": "an array of dimensional scalars."},
+            
+    {"name": "channels", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "description": "an array of NonEquallySpacedSignals."},
+            
+    {"name": "channelSpecs", 
+            "type": "ChannelSpec", 
+            "dim": "*",
+            "description": "an array of channel specs."}
+    ]
+    
+}
+
+

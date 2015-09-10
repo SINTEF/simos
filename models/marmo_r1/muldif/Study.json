@@ -1,0 +1,13 @@
+
+{	
+	"name": "Study",
+	"type": "Study",
+	"description": "Wamit study.",
+	
+	"extends": ["marmo:project:Study"],
+	   
+	"properties": [
+
+	]
+	
+}

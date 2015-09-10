@@ -1,0 +1,23 @@
+
+{	
+	"name": "PotenParameters",
+	"type": "PotenParameters",
+	"description": "Poten parameters for WAMIT run.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+	   {"name": "infinitDepth", 
+			"type": "integer", "from": [0,1],
+			"value": "1",
+			"description": "0: consider the depth, 1: infinite depth."},
+
+	   {"name": "runFlag", 
+			"type": "integer", "from": [0,1],
+			"value": "1",
+			"description": "0: do not run, 1: run."}
+
+	]
+	
+}

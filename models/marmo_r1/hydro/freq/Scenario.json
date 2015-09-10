@@ -12,6 +12,11 @@
 			"type": "marmo:hydro:freq:Waves",
 			"description": "wave spec."},
 
+	{"name": "current", 
+			"type": "marmo:hydro:freq:Current",
+			"optional": "true",
+			"description": "current spec."},
+				
 	{"name": "radiations", 
 			"type": "marmo:hydro:freq:radiation:FieldResults",
 			"dim": "*",

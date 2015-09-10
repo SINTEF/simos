@@ -1,0 +1,16 @@
+{   
+    "name": "RunConfig",
+    "type": "RunConfig",
+    "description": "Wamit run configuration",
+    
+    "extends": ["marmo:runTools:RunConfig"],
+    
+    "properties": [
+        
+         {"name": "application", 
+            "type": "Application", 
+            "description": "muldif program."}
+
+    ]
+    
+}

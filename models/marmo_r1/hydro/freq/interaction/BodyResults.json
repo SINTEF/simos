@@ -11,7 +11,17 @@
    	    {"name": "raos", 
    	            "type": "RAO",
    	            "dim": "*",
-   	            "description": "linear response amplitude operators."}	
+   	            "description": "linear response amplitude operators."},
+   	            
+         {"name": "meanDrifts", 
+   	            "type": "MeanDrift",
+   	            "dim": "*",
+   	            "description": "mean drift coefficients."},
+   	            
+         {"name": "multiDirMeanDrifts", 
+   	            "type": "HeadingDependentMeanDrift",
+   	            "dim": "*",
+   	            "description": "mean drift coefficients."}
 
 	]
 	

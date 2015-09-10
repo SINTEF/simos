@@ -1,0 +1,49 @@
+
+{	
+	"name": "SingleInput",
+	"type": "SingleInput",
+	"description": "Description of a single case input.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	   "properties": [
+
+   	   {"name": "modelName", 
+		"type": "string", 
+		"description": "modelName."},
+	       			
+	   {"name": "muldifExePath", 
+			"type": "string", 
+			"description": "path to application."},
+			
+	   {"name": "templatePath", 
+			"type": "string",
+			"description": "template path."},
+			
+	   {"name": "T", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "s",
+			"value": "0.0",
+			"description": "period"},
+			
+    	{"name": "waveDir", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "deg",
+			"value": "0.0",
+			"description": "wave direction"},
+			
+		{"name": "U", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m/s",
+			"value": "0.0",
+			"description": "current velocity"},
+			
+		{"name": "curDir", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "deg",
+			"value": "0.0",
+			"description": "current direction"}		
+
+	]
+	
+}

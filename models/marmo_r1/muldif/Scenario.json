@@ -1,0 +1,39 @@
+
+{	
+	"name": "Scenario",
+	"type": "Scenario",
+	"description": "Description of a MULDIF scenario.",
+	
+    "extends": ["marmo:project:Scenario", "marmo:hydro:freq:Scenario"],
+	
+	"properties": [
+			
+    {"name": "modelName", 
+            "type": "string",
+            "value":"temp", 
+            "description": "name for the muldif model."},
+            
+	{"name": "domain", 
+		"type": "Domain", 
+		"description": "Computational domain."},
+		
+	{"name": "poten", 
+			"type": "PotenParameters", 
+			"description": "poten parameters."},
+
+    {"name": "force", 
+            "type": "ForceParameters", 
+            "description": "force parameters."},
+            
+    {"name": "config", 
+            "type": "ConfigParameters", 
+            "description": "configuration."},
+			
+    {"name": "runConfig", 
+            "type": "RunConfig", 
+            "description": "wamit run configuration."}
+
+
+	]
+	
+}

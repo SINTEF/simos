@@ -1,0 +1,18 @@
+
+{	
+	"name": "ForceParameters",
+	"type": "ForceParameters",
+	"description": "Force configuration for wamit.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+	   {"name": "runFlag", 
+			"type": "integer", "from": [0,1],
+			"value": "1",
+			"description": "0: do not run, 1: run."}
+			
+	]
+	
+}

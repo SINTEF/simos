@@ -1,0 +1,18 @@
+
+{	
+	"name": "ConfigParameters",
+	"type": "ConfigParameters",
+	"description": "WAMIT configuration parameters.",
+
+    "extends": ["marmo:basic:NamedEntity"],
+    	
+	"properties": [
+
+        {"name": "nCPUs", 
+            "type": "integer",  
+            "value":"1",
+            "description": "Number of CPUs."}	
+            
+	]
+	
+}

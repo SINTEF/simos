@@ -11,11 +11,8 @@
 		{"name": "excitations", 
 	            "type": "Excitation",
 	            "dim": "*",
-	            "description": "first order waves excitation forces."},
+	            "description": "first order waves excitation forces."}
 
-       {"name": "driftCoeff", 
-            "type": "string",
-            "description": "mean drift coefficients."}	
 
 	]
 	

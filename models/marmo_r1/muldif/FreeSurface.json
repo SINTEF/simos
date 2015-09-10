@@ -1,0 +1,37 @@
+
+{	
+	"name": "FreeSurface",
+	"type": "FreeSurface",
+	"description": "Description of a free surface.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	   "properties": [
+
+	   {"name": "modelFile", 
+			"type": "marmo:geometry:GeometryFileDescription", 
+			"unit": "m",
+			"optional": "true",
+			"description": "geometry file."},
+			
+	   {"name": "lowGDF", 
+			"type": "marmo:wamit:GDFLow",
+			"optional": "true",
+			"description": "low order gdf data."},
+			
+	   {"name": "l", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"description": "length"},
+			
+    	{"name": "b", 
+			"type": "marmo:containers:DimensionalScalar", 
+			"unit": "m",
+			"value": "0.0",
+			"description": "beam"}
+			
+
+	]
+	
+}

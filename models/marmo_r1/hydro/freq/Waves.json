@@ -2,9 +2,9 @@
 {	
 	"name": "Waves",
 	"type": "Waves",
-	"description": "Description of a VERES scenario.",
+	"description": "Description of a Waves scenario.",
 	
-    "extends": ["marmo:project:Scenario"],
+    "extends": ["marmo:basic:NamedEntity"],
 	
 	"properties": [
             

@@ -1,0 +1,32 @@
+
+{	
+	"name": "MeanDrift",
+	"type": "MeanDrift",
+	"description": "Description the mean drift forces.",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+       	{"name": "modeInd", 
+   			"type": "integer", 
+   			"value": "1",
+   			"description": "index for the mode of motion."},
+		           	
+	   {"name": "surf", 
+			"type": "marmo:containers:ComplexScalarResponse", 
+			"optional": "true",
+			"description": "Mean drift force by control surface integration."},
+            
+       {"name": "pre", 
+            "type": "marmo:containers:ComplexScalarResponse",
+            "optional": "true",
+            "description": "Mean drift force by pressure integration."},
+            
+        {"name": "far", 
+            "type": "marmo:containers:ComplexScalarResponse",
+            "optional": "true",
+            "description": "Mean drift force by far-field momentum."}
+            
+	]
+	
+}

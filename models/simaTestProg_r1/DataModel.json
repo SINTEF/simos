@@ -1,0 +1,39 @@
+
+{	
+	"name": "DataModel",
+	"type": "DataModel",
+	"description": "A case with for sima input output.",
+		
+	"properties": [
+	            {"name": "name", 
+	   				 "type": "string", 
+	   				 "value": "none",
+	   				 "description": "variable name for named accessing"
+	   			},
+
+	   	    	{"name": "description", 
+	   	    		  "type": "string", 
+	   	    		  "value": "",
+	   	    		  "description": "instance description"
+	   	    	},	 
+	   	    	
+	            {"name": "num", 
+	   				 "type": "double", 
+	   				 "value": "0.0",
+	   				 "description": "a double number"
+	   			},
+	   			
+	            {"name": "arr", 
+	   				 "type": "double", 
+	   				 "dim": "*",
+	   				 "description": "a double array"
+	   			},
+	   			
+	            {"name": "arrout", 
+	   				 "type": "double", 
+	   				 "dim": "*",
+	   				 "description": "a double array"
+	   			}
+	   	]
+	
+}

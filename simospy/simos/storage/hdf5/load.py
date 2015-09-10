@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 
-def load(filePath):
+def load(filePath, hdfPath=None):
     print("loading hdf file %s"%filePath)
     
     f = h5py.File(filePath)
@@ -9,7 +9,7 @@ def load(filePath):
     if 'type' in f.attrs.keys():
         return loadOldSimos(f)
     else:
-        return loadNewSimos(f)
+        return loadNewSimos(f, hdfPath)
     
     
 def loadOldSimos(f): 
@@ -23,7 +23,7 @@ def loadOldSimos(f):
     
     return [obj]
 
-def loadNewSimos(f): 
+def loadNewSimos(f, hdfPath=None): 
     versions = getVersions(f)
     objs = [];
     

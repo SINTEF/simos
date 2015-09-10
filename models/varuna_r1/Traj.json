@@ -1,0 +1,47 @@
+
+{	
+	"name": "Traj",
+	"type": "Traj",
+	"description": "Traj data for Varuna.",
+	
+	"properties": [
+			
+	{"name": "name", 
+			"type": "string", 
+			"value": "signal",
+			"description": "variable name for named accessing"
+			},
+
+	{"name": "description", 
+			"type": "string", 
+			"value": "",
+			"description": "instance description"},
+
+	{"name": "time", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"}, 
+
+	{"name": "E", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"},
+	{"name": "D", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"},
+	{"name": "phi", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"},
+	{"name": "theta", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"},
+	{"name": "psi", 
+			"type": "double", 
+			"dim": "*",
+			"description": "instance description"}
+	]
+	
+}

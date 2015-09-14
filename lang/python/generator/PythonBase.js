@@ -65,7 +65,7 @@ PythonBase.prototype.constructor = function(model) {
 	                       {'name': 'traceback'},
 	                       {'name': 'collections'},
 	                       {'name': 'uuid'},
-	                       {'name': 'pyfoma.dataStorage', 'alias': 'pyds'},
+	                       {'name': 'simos.storage', 'alias': 'pyds'},
 	                       {'name': 'json', 'try': true},
 	                       {'name': 'bson', 'try': true},
 	                       {'name': 'h5py', 'try': true},

@@ -1,7 +1,7 @@
 {	
 	"name": "compartment",
 	"type": "compartment",
-	"description": "class describing a compartment that can be flooded",
+	"description": "class describing a compartment that can be flooded. Note: the coord. sys. of the compartment {c} is always parallel to the coord.sys. of the body {b} that owns it. THe geometry of the compartment can however be defined with a position and an attitude in {c}",
 	
 	"extends": ["marmo:basic:NamedEntity"],
 	
@@ -19,14 +19,8 @@
     
     {"name": "positionInB", 
 			"type": "double",
-			"dim" : "6",
-			"description": "Position of the compartment in the body that owns it."
-			},
-			
-    {"name": "Rcb", 
-			"type": "double",
-			"dim" : "3,3",
-			"description": "Rotation matrix of the tank relative to the body coordinate system."
+			"dim" : "3",
+			"description": "Position (x,yz) of the compartment in the body coord. sys. that owns it. No rotation are permitted."
 			},
 			
 	{"name": "fluidDensity", 

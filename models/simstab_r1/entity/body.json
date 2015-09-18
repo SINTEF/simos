@@ -41,7 +41,12 @@
 	{"name": "hydrostaticForceModel", 
 			"type": "simstab:forceModel:hydrostatic", 
 			"description": "Hydrostatic force model."
-			}
+			},
+			
+	{"name": "tdmForceModel", 
+			"type": "simstab:forceModel:tdm", 
+			"description": "Time dependent mass force model."
+			}			
 				 
 	]
 	

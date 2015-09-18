@@ -8,9 +8,32 @@
 	
 	"properties": [
 			
+			
+	 {"name": "exists", 
+			"type": "boolean",
+			"description": "the object exists"
+			},
+					
+			
 	{"name": "compartmentSystem", 
 			 "type": "simstab:forceModel:compartmentSystem", 
-			 "description": "Set of compartments."}
+			 "description": "Set of compartments."},
+			 
+	{"name": "gravityForceInB", 
+			 "type": "double",
+			 "dim" : "6", 
+			 "description": "Total gravity force contribution given in the coordinate system of the body that owns the tdm force model."},
+			 
+	{"name": "massMatrixInB", 
+			 "type": "double",
+			 "dim" : "6,6", 
+			 "description": "Total mass matrix contribution given in the coordinate system of the body that owns the tdm force model."},
+			 
+	{"name": "cogInB", 
+			 "type": "double",
+			 "dim" : "3", 
+			 "description": "Position of the center of gravity given in the coordinate system of the body that owns the tdm force model."}		 
+			
 				 
 	]
 	

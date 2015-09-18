@@ -9,9 +9,10 @@
 
 			
 	{"name": "compartmentArray", 
-			 "type": "simstab:forceModel:compartment", 
+			 "type": "simstab:forceModel:compartment",
+			 "dim" : "*", 
 			 "description": "Array of compartments."}
-			
+			 
 	]
 	
 }

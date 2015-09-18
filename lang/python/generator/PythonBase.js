@@ -61,10 +61,11 @@ PythonBase.prototype.constructor = function(model) {
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'numpy', 'alias': 'np'},
 	                       {'name': 'os'},
+	                       {'name': 'warnings'},
 	                       {'name': 'traceback'},
 	                       {'name': 'collections'},
 	                       {'name': 'uuid'},
-	                       {'name': 'pyfoma.dataStorage', 'alias': 'pyds'},
+	                       {'name': 'simos.storage', 'alias': 'pyds'},
 	                       {'name': 'json', 'try': true},
 	                       {'name': 'bson', 'try': true},
 	                       {'name': 'h5py', 'try': true},
@@ -83,6 +84,15 @@ PythonBase.prototype.constructor = function(model) {
 	//make packaging module
 	this.packaging = new Packaging(this);
 	
+	this.userCodes = {  "import"  : {	"start" : "#@@@@@ USER DEFINED IMPORTS START @@@@@",
+										"end"   : "#@@@@@ USER DEFINED IMPORTS End   @@@@@",
+										"code"  : ""},
+						"prop"    : {	"start" : "#@@@@@ USER DEFINED PROPERTIES START @@@@@",
+										"end"   : "#@@@@@ USER DEFINED PROPERTIES End   @@@@@",
+										"code"  : ""},
+						"method"  : {	"start" : "#@@@@@ USER DEFINED METHODS START @@@@@",
+										"end"   : "#@@@@@ USER DEFINED METHODS End   @@@@@",
+										"code"  : ""} };
 };
 /*----------------------------------------------------------------------------*/
 PythonBase.prototype.stringify = function(str) {
@@ -587,3 +597,53 @@ PythonBase.prototype.factoryFunc = function(bl) {
 	
 	return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+/*   Handling user specified code in generator functions */
+/*----------------------------------------------------------------------------*/
+
+PythonBase.prototype.findStrInLines = function(lines, str) {
+    for (var i = 0; i<lines.length; i++) {
+    	if (lines[i].indexOf(str) != -1)
+    		return i;
+    }
+    return -1;
+}
+
+PythonBase.prototype.extractUserDefinedCode = function(code) {
+    if ((code == undefined) || (code == '')){
+    	/*files does not exist, clean the existing code */
+    	for (key in this.userCodes) {
+    		var part = this.userCodes[key];
+    		part.code = "";
+    	}
+        return;
+    }
+    
+    var lines = code.split('\n');
+
+    for (key in this.userCodes) {
+        var part = this.userCodes[key];
+        var sind = this.findStrInLines(lines,part.start);
+        if (sind != -1) {
+            var eind = this.findStrInLines(lines,part.end);
+            if ((eind - sind) > 1){
+                console.log("            user code for (" + key + ") betweeb lines : " + sind  + " and " + eind);
+                part.code = lines.slice(sind+1,eind).join('\n');
+            }
+            else
+                part.code = "";
+        }
+        else
+            part.code = "";
+    }
+};
+
+PythonBase.prototype.getUserDefinedCode = function(flag) {
+    if (this.userCodes[flag].code == "")
+            return [this.userCodes[flag].start,this.userCodes[flag].end].join('\n'); 
+    else
+        return [this.userCodes[flag].start,this.userCodes[flag].code, this.userCodes[flag].end].join('\n'); 
+};
+
+/*----------------------------------------------------------------------------*/
+

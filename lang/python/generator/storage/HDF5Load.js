@@ -11,7 +11,7 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 	'def loadHDF5(self,name=None, filePath=None, dsType = \'hdf5\', action="init"):');
+	cmd.push(this.gbl(bl) + 	'def loadHDF5(self,name=None, filePath=None, dsType = \'hdf5\', action="init", hdfPath=None):');
 	cmd.push(this.gbl(bl+1) + 	'if not(name == None):');
 	cmd.push(this.gbl(bl+2) +		'self.name = name');
 	cmd.push(this.gbl(bl+1) + 	'if (name == None) and not(filePath == None):');
@@ -28,7 +28,10 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'self.STORAGE = pyds.getDataStorageBackEndServer(dsType)');
 	cmd.push(this.gbl(bl+1) + 	'self.STORAGE.filePath = filePath');
 	cmd.push(this.gbl(bl));     
-	cmd.push(this.gbl(bl+1) + 	'self.STORAGE.path = self.STORAGE.path + self.name');
+	cmd.push(this.gbl(bl+1) + 	'if hdfPath == None:');
+	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.path = self.STORAGE.path + self.name');
+	cmd.push(this.gbl(bl+1) + 	'else:');
+	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.path = hdfPath');
 	cmd.push(this.gbl(bl));       
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.backEnd == \'hdf5\':');
 	cmd.push(this.gbl(bl+2) + 		'self.loadFromHDF5Handle(action = action)');

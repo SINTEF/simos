@@ -378,10 +378,15 @@ Init.prototype.classInit = function(bl) {
 		cmd.push(this.gbl(bl+1) + 
 				'self.' + this.modelDesAtt(prop) + ' = ' + this.stringify(prop) );
 		
+
+
 		cmd.push(this.gbl(bl+1));
 
 	}
 
+	cmd.push('#------------------------------------------------------------------------------');
+	cmd.push(this.getUserDefinedCode("prop"));
+	cmd.push('#------------------------------------------------------------------------------');
 
 	return cmd.join('\n');
 };

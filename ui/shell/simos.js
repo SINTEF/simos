@@ -1,9 +1,23 @@
 var repl = require("repl");
+var fs = require('fs');
+path = require('path');
 
 /*start the server*/
-var simosPath = require('./config.js').simosPath;
+var pathConfig = '';
+var relSimosPath = '../..'
+try{
+    pathConfig = require(path.join(relSimosPath, 'pathConfig.js'));
+}
+catch (e) {
+    pathConfig = require(path.join(relSimosPath, 'config', 'pathConfig-org.js'));
+}
 
-var config = require(simosPath + '/config.js');
+var config = require(path.join(relSimosPath, 'config', 'langConfig.js'));
+
+var simosPath 	= path.resolve(path.join(__dirname,relSimosPath));
+var outPath 	= pathConfig.outPath;
+var modelsPaths = pathConfig.modelsPaths;
+
 
 var replServer = repl.start({
 prompt: "simos > ",
@@ -12,8 +26,8 @@ useGlobal: true,
 ignoreUndefined: false});
 
 /* load system packages */
-replServer.context.fs =  require('fs');
-replServer.context.path =  require('path');
+replServer.context.fs =  fs;
+replServer.context.path =  path;
 
 /* load packages */
 replServer.context.loadGenerators = function() {
@@ -26,9 +40,10 @@ replServer.context.loadGenerators = function() {
 		replServer.context[genName] =  new Generator();
 		replServer.context[genName].setSimosPath(simosPath);
 		replServer.context[genName].setLang(lang);
-		replServer.context[genName].setOutPath( 
-			replServer.context.path.join(simosPath,config.langs[lang].interp, 'models')
+		replServer.context[genName].setOutPath( path.resolve(
+			replServer.context.path.join(outPath,config.langs[lang].interp, 'models') )
 												);
+		replServer.context[genName].setModelsPaths( modelsPaths );
 		
 	}
 

@@ -3,9 +3,11 @@ var fs = require('fs');
 var path = require('path');
 var njs = require('./njs')();
 
-var simosPath = require('./config.js').simosPath;
+//var simosPath = require('./config.js').simosPath;
 
-var config = require(path.join(simosPath,'config.js'));
+var simosPath = "..";
+
+var config = require(path.join(simosPath,'config','langConfig.js'));
 
 var ModelParser = require('./lang/ModelParser.js').ModelParser;
 
@@ -55,19 +57,28 @@ Generator.prototype.constructor = function(lang) {
 	this.generatedPackages = [];
 	this.externalPackageDependencies = [];
 	
+	this.modelsPaths = [];
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.setSimosPath = function(p) {
 	this.simosPath = path.resolve(p);
-	
-	this.modelsPath = path.join(this.simosPath, 'models');
-	
+		
 	if (this.lang != undefined)
 		if (this.lang.packaging != undefined){
 			this.lang.packaging.outPath = this.outPath;
 			this.lang.packaging.simosPath = this.simosPath;
 		}
-}
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.setModelsPaths = function(ps) {
+	for (var i = 0; i<ps.length; i++) {
+		this.modelsPaths.push(path.resolve(ps[i]));
+	}
+};
+Generator.prototype.appendModelsPath = function(p) {
+	this.modelsPaths.push(path.resolve(p));
+};
+
 /*----------------------------------------------------------------------------*/
 Generator.prototype.toString = function(){
 	return "Generator";
@@ -117,11 +128,9 @@ Generator.prototype.setLang = function(lang) {
 /*----------------------------------------------------------------------------*/
 /* Package and model name and path manipulation */
 /*----------------------------------------------------------------------------*/
-
 /*----------------------------------------------------------------------------*/
-Generator.prototype.getSubPackages = function(packageID) {
-    
-	var ppath = this.sourcePackageIDtoPath(packageID); 
+Generator.prototype.packagesIn = function(ppath) {
+	
 	var files = fs.readdirSync(ppath);
 
     subPackages = [];
@@ -130,19 +139,58 @@ Generator.prototype.getSubPackages = function(packageID) {
 		var file = files[i];
 		var filePath = path.join(ppath, file);
 		
-		if (fs.statSync(filePath).isDirectory()){
+		if (fs.statSync(filePath).isDirectory() && (file[0] != '.')){
 			/* probably another package, try to generate it too!*/
-			subPackages.push(packageID + this.lang.packageSep + file);
+			subPackages.push(file);
 		}
 		
 	}
 	
 	return subPackages
-
-}
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.packages = function(p) {
+    if (p != undefined)
+    	return this.getSubPackages(p);
+	
+    subPackages = [];
+    
+	for (var i = 0; i<this.modelsPaths.length; i++) {
+		var ppath = this.modelsPaths[i]; 
+		
+		subPackages = subPackages.concat(this.packagesIn(ppath));
+	}
+	
+	return subPackages
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getSubPackages = function(packageID) {
+    
+	var ppath = this.sourcePackageIDtoPath(packageID); 
+	
+	return this.packagesIn(ppath);
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getSubPackagesCompleteID = function(packageID) {
+    
+	var subPackages = this.getSubPackages(packageID); 
+	var subPackIDs = [];
+	
+	for (var i = 0; i<subPackages.length; i++) {
+		subPackIDs.push(packageID + this.lang.packageSep + subPackages[i]);
+	}
+	return subPackIDs;
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.models = function(packageID) {
+	return this.getPackageModels(packageID);
+	
+};
 /*----------------------------------------------------------------------------*/
 Generator.prototype.getPackageModels = function(packageID) {
-    
+    console.log(packageID);
 	var ppath = this.sourcePackageIDtoPath(packageID); 
 	var files = fs.readdirSync(ppath);
 
@@ -174,7 +222,28 @@ Generator.prototype.getPackageModels = function(packageID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.sourcePackageIDtoPath = function(packageID) {
 	 var packagePath = packageID.split(this.lang.packageSep).join('/');
-	 return path.join(this.modelsPath, packagePath); 
+	 
+	 for (var i = 0; i<this.modelsPaths.length; i++) {
+		 var packPath = path.join(this.modelsPaths[i], packagePath)
+		 //console.log(packPath);
+		 if (fs.existsSync(packPath)) {
+			 return packPath;
+		 }
+	 }
+	 throw(packageID + " not found in models paths " + this.modelsPaths);
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.sourceModelIDtoPath = function(modelID) {
+	 var modelPath = modelID.split(this.lang.packageSep).join('/');
+	 
+	 for (var i = 0; i<this.modelsPaths.length; i++) {
+		 var mPath = path.join(this.modelsPaths[i], modelPath)
+		 //console.log(mPath+ '.' + this.modelExt);
+		 if (fs.existsSync(mPath+ '.' + this.modelExt)) {
+			 return mPath;
+		 }
+	 }
+	 throw(mPath + " not found in models paths " + this.modelsPaths);
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.targetPackageIDtoPath = function(packageID) {
@@ -202,8 +271,11 @@ Generator.prototype.targetPackageIDtoPath = function(packageID) {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generatedPackageIDtoPath = function(packageID) {
-	var genPackageID = 'generated:' + packageID;
-	return this.sourcePackageIDtoPath(genPackageID);
+	var packagePath = packageID.split(this.lang.packageSep).join('/');
+	var genPackagePath = path.join(this.outPath, 'generatedModels', 
+									packagePath);
+	//console.log(genPackagePath)
+	return genPackagePath;
 };
 
 /*----------------------------------------------------------------------------*/
@@ -221,7 +293,7 @@ Generator.prototype.createOutPath = function(outppath) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.getModel = function(modelID) {
 	
-	var modelPath = this.sourcePackageIDtoPath(modelID);
+	var modelPath = this.sourceModelIDtoPath(modelID);
 	
 	//console.log(path.resolve(modelPath) + '.' + this.modelExt);
 	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
@@ -441,7 +513,7 @@ Generator.prototype.generatePackagesRecursively = function(packageID) {
 	this.generateOnePackage(packageID);	
 
 	//generate subpackages
-	var subPackages = this.getSubPackages(packageID);
+	var subPackages = this.getSubPackagesCompleteID(packageID);
 				
 	if (subPackages.length > 0)
 		console.log("sub-packages are : \n" + subPackages.join('\n'));

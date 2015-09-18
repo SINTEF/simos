@@ -1,0 +1,46 @@
+
+{	
+	"name": "Traj",
+	"type": "Traj",
+	"description": "Traj data for Varuna.",
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+
+	{"name": "time", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"description": "time"}, 
+
+	{"name": "N", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "location "},
+
+	{"name": "E", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "location"},
+			
+	{"name": "D", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "location"},
+			
+	{"name": "phi", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "rotation"},
+			
+	{"name": "theta", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "rotation"},
+			
+	{"name": "psi", 
+			"type": "marmo:containers:EquallySpacedSignal",
+			"unit": "m",
+			"description": "rotation"}
+	]
+	
+}

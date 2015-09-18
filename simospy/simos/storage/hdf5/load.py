@@ -1,6 +1,7 @@
 import h5py
+import numpy as np
 
-def load(filePath):
+def load(filePath, hdfPath=None):
     print("loading hdf file %s"%filePath)
     
     f = h5py.File(filePath)
@@ -8,7 +9,7 @@ def load(filePath):
     if 'type' in f.attrs.keys():
         return loadOldSimos(f)
     else:
-        return loadNewSimos(f)
+        return loadNewSimos(f, hdfPath)
     
     
 def loadOldSimos(f): 
@@ -22,16 +23,25 @@ def loadOldSimos(f):
     
     return [obj]
 
-def loadNewSimos(f): 
+def loadNewSimos(f, hdfPath=None): 
     versions = getVersions(f)
     objs = [];
     
     fileName = f.filename
     for entityName,entity in f.iteritems():
-        print("\t loading a %s"%entity.attrs["type"])
+        fullTypeName = entity.attrs["type"]
+        print type(fullTypeName)
+        if isinstance(fullTypeName, list) or isinstance(fullTypeName, np.ndarray):
+            if len(fullTypeName) > 1:
+                raise Exception("only one element is expected, %d found."%len(fullTypeName))
+            fullTypeName = fullTypeName[0]
         
-        typePath, typeName = makeTypePath(entity.attrs["type"], versions)
-
+        print("\t loading a %s"%fullTypeName)
+        
+        
+        typePath, typeName = makeTypePath(fullTypeName, versions)
+        
+        
         Obj = getattr(__import__(typePath, fromlist=[typeName]), typeName)
     
         obj = Obj(entityName)
@@ -77,6 +87,10 @@ def makeTypePath(fullTypeName, versions):
 def getVersions(f):
     versions = {}
     for package,ver in f.attrs.iteritems():
+        if isinstance(ver, list) or isinstance(ver, np.ndarray):
+            if len(ver) > 1:
+                raise Exception("only one element is expected, %d found."%len(ver))
+            ver = ver[0]
         versions[package] = ver
         
     return versions   

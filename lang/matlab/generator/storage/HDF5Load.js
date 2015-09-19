@@ -59,8 +59,11 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	 */
 	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
 	
-	cmd.push(this.gbl(bl+1) + 	this.objName() + '.ID = h5readatt(' + filePath + ',handle,\'ID\');' );
-
+	cmd.push(this.gbl(bl+1) + 	'try');
+	cmd.push(this.gbl(bl+2) + 		this.objName() + '.ID = h5readatt(' + filePath + ',handle,\'ID\');' );
+	cmd.push(this.gbl(bl+1) + 	'catch err');
+	cmd.push(this.gbl(bl+1) + 	'end');
+	
 	cmd.push(this.gbl(bl+1) + 	this.objName() + '.loadDataFromHDF5Handle(handle);' );
 	
 	cmd.push(this.gbl(bl) + 'end');

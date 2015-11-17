@@ -63,6 +63,7 @@ Base.prototype.constructor = function(model) {
 
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
+	                       {'name': 'StringUtil', 'lib': 'fcore'},
 	                       {'name': 'h5accessor_f', 'lib': 'soft_storage_f'}];
 	
 	this.name = 'fortran';

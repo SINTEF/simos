@@ -64,13 +64,15 @@ Init.prototype.saveH5 = function(bl) {
 
 	cmd.push(this.gbl(bl) + "end subroutine save_HDF5_toNewDataBase");
 
+	cmd.push(this.gbl(bl) + "");
+
 	cmd.push(this.gbl(bl) + "subroutine save_HDF5_toExistingDataBase(this,groupIndex,defaultName)");
 	//cmd.push(this.gbl(bl+1) + "implicit none");
 	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
 	cmd.push(this.gbl(bl+1) + "integer, intent(in) :: groupIndex");
 	cmd.push(this.gbl(bl+1) + "type(String), intent(in) :: defaultName");
 	cmd.push(this.gbl(bl+1) + "! Internal variables");
-	cmd.push(this.gbl(bl+1) + "integer :: error, entityID");
+	cmd.push(this.gbl(bl+1) + "integer :: error, entityID, entityID2");
 	cmd.push(this.gbl(bl+1) + "type(String) :: entityName");
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml,logicalToIntArray");
 	cmd.push(this.gbl(bl+1) + "integer :: logicalToIntSingle,idx");
@@ -179,16 +181,25 @@ Init.prototype.saveH5 = function(bl) {
 			cmd.push(this.gbl(bl+1) + "entityName='" + prop.name + "'");
 			cmd.push(this.gbl(bl+1) + "call this%" + prop.name + "%save_hdf5(entityID,entityName)");
 		}
-		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (this.isAllocatable(prop))){
-			//dimList = this.getDimensionList(prop);
-			//if (dimList.length > 1)
-			//	throw "destroyClass is not implemented for object array of more than one dimension.";
-			//cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
-			//cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-			//cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%destroy()");
-			//cmd.push(this.gbl(bl+2) + "end do");
-			//cmd.push(this.gbl(bl+2) + "deallocate(this%" + prop.name + ")");	
-			//cmd.push(this.gbl(bl+1) + "end if");
+		else if (this.isArray(prop) && (! this.isAtomic(prop))){
+			dimList = this.getDimensionList(prop);
+			if (dimList.length > 1)
+				throw "destroyClass is not implemented for object array of more than one dimension.";
+			if (this.isAllocatable(prop)){
+				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
+				cmd.push(this.gbl(bl+2) + "entityID2 = H5A_OpenOrCreateEntity(entityID, '"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
+				cmd.push(this.gbl(bl+2) + "entityName='" + prop.name + "_' + toString(idx)");
+				cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%save_hdf5(entityID2,entityName)");
+				cmd.push(this.gbl(bl+2) + "end do");	
+				cmd.push(this.gbl(bl+1) + "end if");
+			}else{
+				cmd.push(this.gbl(bl+2) + "entityID2 = H5A_OpenOrCreateEntity(entityID, '"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
+				cmd.push(this.gbl(bl+2) + "entityName='" + prop.name + "_' + toString(idx)");
+				cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%save_hdf5(entityID2,entityName)");
+				cmd.push(this.gbl(bl+2) + "end do");				
+			}
 
 		}
 

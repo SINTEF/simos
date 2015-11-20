@@ -189,7 +189,7 @@ SetGet.prototype.propSet = function(prop, bl) {
 	    cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
 	    cmd.push(this.gbl(bl+1) + 	'character(*) :: chbdy');
 	    cmd.push(this.gbl(bl+1));
-        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy');
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=trim(adjustL(chbdy))');
         cmd.push(this.gbl(bl+1));
         cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromChar');
         cmd.push(this.gbl(bl));
@@ -199,7 +199,7 @@ SetGet.prototype.propSet = function(prop, bl) {
         cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
         cmd.push(this.gbl(bl+1) + 	'type(String) :: chbdy');
         cmd.push(this.gbl(bl+1));
-        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy');
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy%strip()');
         cmd.push(this.gbl(bl+1));
         cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromString');	  
 

@@ -61,6 +61,8 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.destroyDeclaration(3));
 	cmd.push(entity.setEqualToDeclaration(3));
 	cmd.push(entity.saveH5Declaration(3));
+	cmd.push(entity.defaultInitDeclaration(3));
+	cmd.push(entity.isValidDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
     cmd.push(entity.getUserDefinedCode("funcSig"));
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -69,19 +71,24 @@ Generator.prototype.generate = function(model) {
 	cmd.push('contains');    
 	cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.initClass(1));
-	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !-------------------------------Finalizer-----------------------------------');
 	cmd.push(entity.finalizeClassS(1));
 	cmd.push('    !---------------------------------------------------------------------------');
 	cmd.push(entity.finalizeClassArr(1));
-	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !-------------------------------Destroyer-----------------------------------');
 	cmd.push(entity.destroyClass(1));
-	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !-------------------------------SetEqualTo----------------------------------');
 	cmd.push(entity.setEqualTo(1));
-	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !-------------------------------Default initialization----------------------');
+	cmd.push(entity.defaultInit(1));
+	cmd.push('    !-------------------------------Set and get---------------------------------');
 	cmd.push(entity.propSetGet(1));
-	cmd.push('    !---------------------------------------------------------------------------');
+	cmd.push('    !-----------------------------  Save and load-------------------------------');
 	cmd.push(entity.saveH5(1));
+	cmd.push('    !-------------------------------Is valid -----------------------------------');
+	cmd.push(entity.isValid(1));
 	cmd.push('    !---------------------------------------------------------------------------');
+
 	//cmd.push(entity.reprFunc(1));
 	//cmd.push('    !---------------------------------------------------------------------------');
 	//cmd.push(entity.typeReprFunc(1));

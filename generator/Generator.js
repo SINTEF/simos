@@ -565,7 +565,11 @@ Generator.prototype.generatePackage = function(packageID) {
 	this.externalPackageDependencies = extPackages.concat(this.lang.getGeneralModulesTypes());
 	
 	this.lang.packaging.writeExternalDependenciesList(this.externalPackageDependencies, this.getOutPath(), packageID);
-	this.lang.packaging.writeGeneratedPackagesList(this.generatedPackages, this.getOutPath(), packageID);
+	
+	// for now it is assumed that all libraries are compiled under the root package name
+	// Therefore, in case a subpackages only is generated we need to estract the root name
+	rootPackageID = packageID.split(this.lang.packageSep)[0]
+	this.lang.packaging.writeGeneratedPackagesList(this.generatedPackages, this.getOutPath(), rootPackageID);
 	
 	this.externalPackageDependencies
 	return 'Package generator finished!';

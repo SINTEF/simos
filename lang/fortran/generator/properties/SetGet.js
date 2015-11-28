@@ -3,6 +3,114 @@ function SetGet(){
 };
 exports.SetGet = SetGet;
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.setEqualToDeclaration = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "procedure, public :: setEqualTo");
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.setEqualTo = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine setEqualTo(this, obj)");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "type(" + this.getTypeName() + "),intent(in)"+ " :: obj");
+	cmd.push(this.gbl(bl+1) + "integer :: idx");
+	cmd.push(this.gbl(bl+1) + "integer,dimension(:),allocatable :: diml");
+
+	cmd.push(this.gbl(bl+1) + "call this%destroy()");
+
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+
+
+	/* Loop over each property */
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+
+				if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){			
+
+					cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+					dimList = this.getDimensionList(prop);
+
+					cmd.push(this.gbl(bl+2) + "allocate(diml(" + dimList.length + "))");
+					cmd.push(this.gbl(bl+2) + "diml=shape(obj%" + prop.name + ")");
+					var sizeList=[];
+					for(var k=0; k< dimList.length;k++) {
+						p=k+1
+								sizeList += ["diml(" + p + ")"]
+										if (k<(dimList.length-1)){
+											sizeList += [","]
+										}
+
+					}
+
+					cmd.push(this.gbl(bl+2) + "allocate(this%" + prop.name + "(" + sizeList + "))");
+					cmd.push(this.gbl(bl+2) + "this%" + prop.name + "=obj%" + prop.name);
+					cmd.push(this.gbl(bl+2) + "deallocate(diml)");
+					cmd.push(this.gbl(bl+1) + "end if");
+
+
+				}
+				else if (this.isArray(prop) && this.isAtomic(prop) && prop.type != 'string' && (! this.isAllocatable(prop))){
+					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+				}
+				else if (this.isSingle(prop) && (this.isAtomic(prop))){
+					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+				}
+				else if (this.isSingle(prop) && (! this.isAtomic(prop))){
+					cmd.push(this.gbl(bl+1) + "call this%"+ prop.name + "%setEqualTo(obj%" + prop.name + ")"); 
+				}
+				else if ((this.isSingle(prop)) && (prop.type == 'string')){
+					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+				}
+				else if ((this.isArray(prop)) && (prop.type == 'string')){
+					throw "setEqualTo is not implemented for array of String instances.";
+				}
+				else if (this.isArray(prop) && (! this.isAtomic(prop)) && (! this.isAllocatable(prop))){
+					dimList = this.getDimensionList(prop);
+					if (dimList.length > 1)
+						throw "destroyClass is not implemented for object array of more than one dimension.";
+					cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(obj%" + prop.name + ",1)");
+					cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%setEqualTo(obj%" + prop.name + "(idx))");
+					cmd.push(this.gbl(bl+2) + "end do");
+				}
+				else if (this.isArray(prop) && (! this.isAtomic(prop)) && (this.isAllocatable(prop))){
+					dimList = this.getDimensionList(prop);
+					if (dimList.length > 1)
+						throw "destroyClass is not implemented for object array of more than one dimension.";
+					cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+					cmd.push(this.gbl(bl+2) + "allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1)))");
+					cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(obj%" + prop.name + ",1)");
+					cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%setEqualTo(obj%" + prop.name + "(idx))");
+					cmd.push(this.gbl(bl+2) + "end do");
+					cmd.push(this.gbl(bl+1) + "end if");
+
+				}
+
+
+
+
+	} /* end of property loop*/
+
+	cmd.push(this.gbl(bl) + "end subroutine setEqualTo");
+
+
+	return cmd.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
 	if (bl == undefined) {
 		bl = 0;

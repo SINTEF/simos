@@ -31,7 +31,13 @@ packageParts = ['./storage/SaveLoad',
                     './properties/Representation'];
 */
 packageParts = ['./properties/Init',
-                './properties/SetGet']
+                './properties/Destroy',
+                
+                './properties/Query',
+                './properties/SetGet',
+                
+                './storage/HDF5Load',
+                './storage/HDF5Save']
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {
 	var packPath = packageParts[ip];

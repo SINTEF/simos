@@ -3,6 +3,37 @@ function Query(){
 };
 exports.Query = Query;
 /*----------------------------------------------------------------------------*/
+Query.prototype.isValidDeclaration = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "procedure, public :: isValid");
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+Query.prototype.isValid = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "function isValid(this) result(content)");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "logical :: content");
+	cmd.push(this.gbl(bl+1) + "if (this%name%isEmpty()) then");
+	cmd.push(this.gbl(bl+2) + "content=.false.");
+	cmd.push(this.gbl(bl+1) + "else");
+	cmd.push(this.gbl(bl+2) + "content=.true.");
+	cmd.push(this.gbl(bl+1) + "end if");
+	cmd.push(this.gbl(bl) + "end function");
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+    /*
 Query.prototype.lookForEntityFunc = function(bl) {
     if (bl == undefined) {
         bl = 0;
@@ -44,7 +75,9 @@ Query.prototype.lookForEntityFunc = function(bl) {
     
     return cmd.join('\n');
 };
+*/
 /*----------------------------------------------------------------------------*/
+/*    
 Query.prototype.hasEntityFunc = function(bl) {
     if (bl == undefined) {
         bl = 0;
@@ -68,7 +101,9 @@ Query.prototype.hasEntityFunc = function(bl) {
     
     return cmd.join('\n');
 };
+*/
 /*----------------------------------------------------------------------------*/
+/*
 Query.prototype.getEntityFunc = function(bl) {
     if (bl == undefined) {
         bl = 0;
@@ -92,3 +127,4 @@ Query.prototype.getEntityFunc = function(bl) {
     
     return cmd.join('\n');
 };
+*/

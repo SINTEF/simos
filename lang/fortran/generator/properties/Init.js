@@ -10,8 +10,9 @@ Init.prototype.defaultInitDeclaration = function(bl) {
 	}	
 	var cmd = [];
 
-	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle");
+	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle, default_initFromSingleWiName");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingle");
+	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiName");
 	cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
 
 	return cmd.join('\n');
@@ -24,22 +25,46 @@ Init.prototype.defaultInit = function(bl) {
 	}	
 	var cmd = [];
 
+	cmd.push(this.gbl(bl) + "subroutine default_initFromSingleWiName(this, insName)");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"character(*), intent(in) :: insName");
+	cmd.push(this.gbl(bl+1) + 	"");
+	cmd.push(this.gbl(bl+1) + 	"call this%default_initFromSingle()");
+	cmd.push(this.gbl(bl+1) + 	"! Set the default name of the object");
+	cmd.push(this.gbl(bl+1) + 	"call this%set_name(insName)");
+	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingleWiName");
+	cmd.push(this.gbl(bl) + "");
+
+	
 	cmd.push(this.gbl(bl) + "subroutine default_initFromSingle(this)");
-	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
-	cmd.push(this.gbl(bl+1) + "");
-	cmd.push(this.gbl(bl+1) + "! Set the default name of the object");
-	cmd.push(this.gbl(bl+1) + "call this%set_name('"  + this.getTypeName() +  "')");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"");
+	cmd.push(this.gbl(bl+1) + 	"! Set the default name of the object");
+	cmd.push(this.gbl(bl+1) + 	"call this%set_name('"  + this.getName() +  "')");
+	
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ( (this.isSingle(prop)) && (! this.isAtomic(prop)) && (! this.isOptional(prop)) ) {
+		    cmd.push(this.gbl(bl+1) + 	"call this%"  + prop.name +  "%default_initFromSingleWiName('" + prop.name + "')");
+		}
+	}
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingle");
-	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl) + "");
+
+
 	cmd.push(this.gbl(bl) + "subroutine default_initFromArray(this,nameOfArray)");
-	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + "), dimension(:)"+ " :: this");
-	cmd.push(this.gbl(bl+1) + "type(String), intent(in) :: nameOfArray");
-	cmd.push(this.gbl(bl+1) + "integer :: idx");
-	cmd.push(this.gbl(bl+1) + "");
-	cmd.push(this.gbl(bl+1) + "! Set the default name of the array components");
-	cmd.push(this.gbl(bl+1) + "do idx=1,size(this,1)");
-	cmd.push(this.gbl(bl+2) + "call this(idx)%set_name(nameOfArray + '_' + toString(idx))");
-	cmd.push(this.gbl(bl+1) + "end do");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + "), dimension(:)"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"type(String), intent(in) :: nameOfArray");
+	cmd.push(this.gbl(bl+1) + 	"integer :: idx");
+	cmd.push(this.gbl(bl+1) + 	"");
+	cmd.push(this.gbl(bl+1) + 	"! Set the default name of the array components");
+	cmd.push(this.gbl(bl+1) + 	"do idx=1,size(this,1)");
+	cmd.push(this.gbl(bl+2) + 		"call this(idx)%set_name(nameOfArray + '_' + toString(idx))");
+	cmd.push(this.gbl(bl+1) + 	"end do");
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromArray");
 
 	return cmd.join('\n');

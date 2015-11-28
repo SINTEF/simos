@@ -16,5 +16,7 @@ include (customlibsettings)
 #
 # Testing
 #
-enable_testing ()
-add_subdirectory (tests)
+if (${Testing} MATCHES "ON")
+    enable_testing ()
+    add_subdirectory (tests)
+endif ()

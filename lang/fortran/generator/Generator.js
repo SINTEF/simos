@@ -64,6 +64,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.loadH5Declaration(3));
 	cmd.push(entity.defaultInitDeclaration(3));
 	cmd.push(entity.isValidDeclaration(3));
+	cmd.push(entity.atomicArrayResizeDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
     cmd.push(entity.getUserDefinedCode("funcSig"));
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -90,6 +91,8 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.loadH5(1));
 	cmd.push('    !-------------------------------Is valid -----------------------------------');
 	cmd.push(entity.isValid(1));
+	cmd.push('    !-------------------------------Resize functions----------------------------');
+	cmd.push(entity.atomicArrayResize(1));
 	cmd.push('    !---------------------------------------------------------------------------');
 
 	//cmd.push(entity.reprFunc(1));

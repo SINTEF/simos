@@ -47,13 +47,10 @@ HDF5Save.prototype.save_HDF5_toNewDataBaseWiDefaultName = function(bl) {
 	var cmd = [];
 
 	cmd.push(this.gbl(bl) + "subroutine save_HDF5_toNewDataBaseWiDefaultName(this,error)");
-	cmd.push(this.gbl(bl+1) + "implicit none");
-	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
-	//cmd.push(this.gbl(bl+1) + "type(String), intent(in) :: fileName");
-	cmd.push(this.gbl(bl+1) + "integer, intent(out) :: error ! =0: ok, =1: error during the saving procedure");
-
-	cmd.push(this.gbl(bl+1) + "call this%save_HDF5_toNewDataBase(this%name%toChars()+'.h5', error)");
-
+	cmd.push(this.gbl(bl+1) + 	"implicit none");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"integer, intent(out) :: error ! =0: ok, =1: error during the saving procedure");
+	cmd.push(this.gbl(bl+1) + 	"call this%save_HDF5_toNewDataBase(this%name%toChars()+'.h5', error)");
 	cmd.push(this.gbl(bl) + "end subroutine save_HDF5_toNewDataBaseWiDefaultName");
 	
 	return cmd.join('\n');

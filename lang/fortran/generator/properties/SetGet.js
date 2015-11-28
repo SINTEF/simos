@@ -111,6 +111,72 @@ SetGet.prototype.setEqualTo = function(bl) {
 
 };
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.atomicArrayResizeDeclaration = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	cmd.push(this.gbl(bl) + "!--- resize functions for single atomic arrays ----"	);
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+	
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
+			
+			cmd.push(this.gbl(bl) + "procedure, public :: resize_" + prop.name );
+		}
+	}	
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.atomicArrayResize = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+	
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
+		    dimList = this.getDimensionList(prop);
+			var sizeList=[];
+			for(var k=0; k< dimList.length;k++) {
+				sizeList.push("n" + k)
+			}
+			
+			cmd.push(this.gbl(bl) + "subroutine resize_" + prop.name + "(this, " + sizeList.join(', ') + ")");
+			cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+			cmd.push(this.gbl(bl+1) + "integer,intent(in) :: " + sizeList.join(', ') );
+
+			cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
+			cmd.push(this.gbl(bl+2) + 	"deallocate(this%" + prop.name + ")");
+			cmd.push(this.gbl(bl+1) + "end if");
+
+			cmd.push(this.gbl(bl+2) + "allocate(this%" + prop.name + "(" + sizeList + "))");
+			
+			cmd.push(this.gbl(bl) + "end subroutine resize_" + prop.name);
+
+		}
+	}	
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
 	if (bl == undefined) {
 		bl = 0;

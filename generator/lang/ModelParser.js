@@ -86,8 +86,11 @@ ModelParser.prototype.setModel = function(model){
 /*----------------------------------------------------------------------------*/
 /* name */
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.getName = function() {
-    return this.getModel().name;
+ModelParser.prototype.getName = function(model) {
+	if (model == undefined) 
+		return this.getModel().name;
+	else
+		return this.model.name;
 };
 
 ModelParser.prototype.setName = function(name) {
@@ -129,13 +132,19 @@ ModelParser.prototype.setDescription = function(desc) {
 /* type */
 /*----------------------------------------------------------------------------*/
 
-ModelParser.prototype.getType = function() {
+ModelParser.prototype.getType = function(model) {
     
-	if (this.getModel().type==undefined){
-		return(this.getName() );
+	if (model == undefined) {
+		if (this.getModel().type==undefined)
+			return(this.getName() );
+		else 
+			return this.getModel().type;
 	}
-	else {
-		return this.getModel().type;
+	else{
+		if (model.type==undefined)
+			return model.name;
+		else
+			return model.type;		
 	}
 };
 
@@ -247,17 +256,17 @@ ModelParser.prototype.setPackages = function(packages) {
 		}
 	}
 	
-	var packages = this.splitPackageStr(model.type);
+	var packages = this.splitPackageStr(this.getType(model));
 	if (packages.length == 1) {
-		model.type = model["package"] + this.packageSep + model.type;
+		model.type = model["package"] + this.packageSep + this.getType(model);
 	}
 
 
 };
 
 ModelParser.prototype.updateFromVersionedPackagedTypeStr = function(str, localVersion) {
-	var type = this.parseVersionedPackagedTypeStr(str);
 	
+	var type = this.parseVersionedPackagedTypeStr(str);
 	this.setPackages(type.packages);
 
 	model[this.versionFlag] =  localVersion;

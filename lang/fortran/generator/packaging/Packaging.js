@@ -54,7 +54,7 @@ Packaging.prototype.constructor = function(lang) {
 								  "end"   : "#@@@@@ SIMOS GENERATED LIB DEPS END @@@@@",
 								  "comment": "# SIMOS generated source files libs, DO NOT EDIT",
 								  "varName" : "LIB_DEPENDENCIES_SIMOS",
-								  "files" : []}
+								  "files" : []}					
 						};
 	
 };
@@ -118,6 +118,16 @@ Packaging.prototype.initPackage = function(packageStr) {
          
     } 
 
+    var cmakeListsPath = path.join(packagePath, 'cmake', 'customlibsettings.cmake');
+    
+    if (! fs.existsSync(cmakeListsPath)) {
+        fsextra.copy(path.join(this.getTemplatePath(),'cmake', 'customlibsettings.cmake'), cmakeListsPath , function (err) {
+          if (err) {
+            throw err;
+          }     
+        });
+         
+    } 
     
     //initializing the file lists
 	for (key in this.packageFiles) {
@@ -257,6 +267,9 @@ Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     if ((code == undefined) || (code == ''))
         return;
     
+    if ((part.start == '') || (part.end == ''))
+        return;
+        
     var lines = code.split('\n');
     var newCode = '';
     

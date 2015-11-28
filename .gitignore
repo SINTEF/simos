@@ -44,6 +44,7 @@ SiCortex*Gcc*/
 solaris*Gcc*/
 SunOS*Gcc*/
 platforms/
+build/
 
 # reinstate wmake/rules that might look like build directories
 !wmake/rules/*/

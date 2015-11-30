@@ -311,12 +311,12 @@ Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, pack
 	
 	//write a dummy file
 	var cmds = [];
-	cmds.push('subroutine dummy()');
+	cmds.push('subroutine ' +packName + '()');
 	cmds.push('    implicit none');
 	cmds.push('    !Do nothing..');
-	cmds.push('end subroutine dummy');
+	cmds.push('end subroutine ' + packName);
 
-	var outFilePath = path.join(outPath, packName, 'dummy.f90');
+	var outFilePath = path.join(outPath, packName, packName+'.f90');
 	fs.writeFileSync( outFilePath, cmds.join('\n'));
 	
 	//write a CMAKE file for the libraary
@@ -331,7 +331,7 @@ Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, pack
 		cmds.push('add_subdirectory (' + packNames[i] + ')');
 	}
 	cmds.push('# library');
-	cmds.push('add_library (' + packName + ' dummy.f90)');
+	cmds.push('add_library (' + packName + ' ' + packName + '.f90)');
 	cmds.push('# linking sub-packages');
 	cmds.push('target_link_libraries (' + packName);
 	cmds.push(packNames.join('\n'));

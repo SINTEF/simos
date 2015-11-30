@@ -110,7 +110,13 @@ Base.prototype.makeModulePath = function(packagedTypeStr) {
     
 	//var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
 
-	return (type.packages.join(this.packagePathSep) + this.packagePathSep + type.name);
+    var rootPackage = type.packages.join(this.packagePathSep)
+    console.log(rootPackage)
+    console.log(rootPackage + this.packagePathSep + type.name)
+    if (rootPackage != '')
+    	return (rootPackage + this.packagePathSep + type.name);
+    else
+    	return (type.name);
 
 };
 

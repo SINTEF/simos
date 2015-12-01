@@ -1,0 +1,14 @@
+[submodule "fcore"]
+	path = simosf/libs/fcore
+	url = ssh://git@git.code.sintef.no:7999/mns/fcore.git
+	branch = stable
+[submodule "buildinfo"]
+	path = simosf/cmake/buildinfo
+	url = ssh://git@git.code.sintef.no:7999/mns/buildinfo.git
+	branch = stable
+[submodule "cmake-global"]
+	path = simosf/cmake/cmake-global
+	url = ssh://git@git.code.sintef.no:7999/mns/cmake-global.git
+[submodule "pFUnit"]
+	path = simosf/libs/pFUnit
+	url = ssh://git@git.code.sintef.no:7999/mns/pfunit.git

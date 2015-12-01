@@ -104,6 +104,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push(entity.loadFromHDF5HandleItemAtomicArray(1));
 	cmd.push(entity.loadFromHDF5HandleItemNonAtomicSingle(1));
 	cmd.push(entity.loadFromHDF5HandleItemNonAtomicArray(1));
+	cmd.push(entity.loadFromHDF5HandleItemNonAtomicArrayUngroup(1));	
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.saveHDF5Func(1));
 	cmd.push(entity.saveVertionsToHDF5Handle(1));
@@ -114,6 +115,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push(entity.saveToHDF5HandleItemAtomicArray(1));
 	cmd.push(entity.saveToHDF5HandleItemNonAtomicSingle(1));
 	cmd.push(entity.saveToHDF5HandleItemNonAtomicArray(1));
+	cmd.push(entity.saveToHDF5HandleItemNonAtomicArrayUngroup(1));	
 	cmd.push('');
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.saveMDBFunc(1));

@@ -41,7 +41,6 @@ Init.prototype.defaultInitDeclaration = function(bl) {
 
 	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingle");
-	cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
 
 	return cmd.join('\n');
 };
@@ -60,16 +59,6 @@ Init.prototype.defaultInit = function(bl) {
 	cmd.push(this.gbl(bl+1) + "call this%set_name('"  + this.getTypeName() +  "')");
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingle");
 	cmd.push(this.gbl(bl+1) + "");
-	cmd.push(this.gbl(bl) + "subroutine default_initFromArray(this,nameOfArray)");
-	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + "), dimension(:)"+ " :: this");
-	cmd.push(this.gbl(bl+1) + "type(String), intent(in) :: nameOfArray");
-	cmd.push(this.gbl(bl+1) + "integer :: idx");
-	cmd.push(this.gbl(bl+1) + "");
-	cmd.push(this.gbl(bl+1) + "! Set the default name of the array components");
-	cmd.push(this.gbl(bl+1) + "do idx=1,size(this,1)");
-	cmd.push(this.gbl(bl+2) + "call this(idx)%set_name(nameOfArray + '_' + toString(idx))");
-	cmd.push(this.gbl(bl+1) + "end do");
-	cmd.push(this.gbl(bl) + "end subroutine default_initFromArray");
 
 	return cmd.join('\n');
 };
@@ -274,7 +263,7 @@ Init.prototype.loadH5 = function(bl) {
 				cmd.push(this.gbl(bl+1) + "end if");
 
 			}else if (prop.type=='string'){
-				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, 'name' // c_null_char,orderSize)");
+				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, '" + prop.name + "' // c_null_char,orderSize)");
 				cmd.push(this.gbl(bl+1) + "if (errorj.ge.0) then");
 				cmd.push(this.gbl(bl+2) + "allocate(character(len=orderSize) :: cc_a)");
 				cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,cc_a)");		

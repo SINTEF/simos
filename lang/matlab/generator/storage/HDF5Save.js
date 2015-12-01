@@ -340,3 +340,82 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
 	
     return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'function saveToHDF5HandleItemNonAtomicArrayUngroup(' + this.objName() + ', handle, varName, propType)');
+
+	/*
+	cmd.push(this.gbl(bl+1) + 
+		'ref_dtype = h5py.special_dtype(ref=h5py.Reference)' );
+	*/			
+
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i]; 
+		
+		if ( (!(this.isAtomicType(prop.type))) && (this.isArray(prop)) ) {
+		cmd.push(this.gbl(bl+1) + 'if (strcmp(varName, ' + this.stringify(prop.name) + ') && ' + this.objName() + '.isSet(varName))' );
+		/*
+		cmd.push(this.gbl(bl+2) + 
+			'maindgrp = handle.create_group(' + JSON.stringify(prop.name) + ')');
+		cmd.push(this.gbl(bl+2) +
+			'dset = maindgrp.create_dataset("values"' + ',(len(getattr(self,varName)),), dtype=ref_dtype )' );
+		 */
+
+
+		cmd.push(this.gbl(bl+2) + 	'order = {};');
+
+		cmd.push(this.gbl(bl+2) + 	'if (' + this.objName() + '.isContained(varName))');
+		
+		var loopBlock = this.loopBlockForArray(bl+3,prop);
+		cmd.push(loopBlock.cmd);
+		cmd.push(this.gbl(loopBlock.bl+1) +	'item = ' + this.objName() + '.' + this.makePrivate(prop.name) + 
+												'{' +loopBlock.indArray + '};'	);	
+		cmd.push(this.gbl(loopBlock.bl+1) + 'item.' + this.makeInternal("FilePath") + ' = ' + 
+												this.objName() + '.' + this.makeInternal("FilePath") + ';');
+		cmd.push(this.gbl(loopBlock.bl+1) + 'path = [handle \'/\' item.name ];');	
+		cmd.push(this.gbl(loopBlock.bl+1) + 'item.saveToHDF5Handle([path \'/\']);' );		
+		cmd.push(this.gbl(loopBlock.bl+1) + 'order{end+1} = item.name;');
+		cmd.push(loopBlock.ends);
+
+		/*
+		cmd.push(this.gbl(bl+3) + 
+				'hdf5write(' + filePath + ',[handle ' + this.stringify(prop.name) + ' \'/values\' ] , refs' +
+				', \'WriteMode\', \'append\' );'
+				);
+		 */
+		
+		cmd.push(this.gbl(bl+3) + 		'h5writeatt(' + filePath + ',[handle \'/\' varName],\'order\', strjoin(order,\',\') );'	);
+		
+		cmd.push(this.gbl(bl+2) + 	'else');
+		cmd.push(this.gbl(bl+3) +		'error(\'referenced array is not implemented.\')' );
+		cmd.push(this.gbl(bl+2) +	'end');
+
+			/* put the reference in place*/ 
+			/*
+			cmd.push(this.gbl(loopBlock.bl+1) + 
+				 'dset' + loopBlock.indArray + ' = dgrp.ref');
+			*/
+		/*	
+		cmd.push(this.gbl(bl+2) + 
+			'self._saveToHDF5HandleItemAttrs(handle, varName)' );
+		*/
+
+		cmd.push(this.gbl(bl+1) + 'end');
+		
+		}
+	}
+	
+	cmd.push(this.gbl(bl) + 'end');
+	
+    return cmd.join('\n');
+};

@@ -24,9 +24,9 @@ Query.prototype.isValid = function(bl) {
 	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
 	cmd.push(this.gbl(bl+1) + "logical :: content");
 	cmd.push(this.gbl(bl+1) + "if (this%name%isEmpty()) then");
-	cmd.push(this.gbl(bl+2) + "content=.false.");
+	cmd.push(this.gbl(bl+2) + 	"content=.false.");
 	cmd.push(this.gbl(bl+1) + "else");
-	cmd.push(this.gbl(bl+2) + "content=.true.");
+	cmd.push(this.gbl(bl+2) + 	"content=.true.");
 	cmd.push(this.gbl(bl+1) + "end if");
 	cmd.push(this.gbl(bl) + "end function");
 

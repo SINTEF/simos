@@ -13,7 +13,7 @@ Init.prototype.defaultInitDeclaration = function(bl) {
 	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle, default_initFromSingleWiName");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingle");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiName");
-	cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
+	//cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
 
 	return cmd.join('\n');
 };
@@ -55,7 +55,7 @@ Init.prototype.defaultInit = function(bl) {
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingle");
 	cmd.push(this.gbl(bl) + "");
 
-
+	/*
 	cmd.push(this.gbl(bl) + "subroutine default_initFromArray(this,nameOfArray)");
 	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + "), dimension(:)"+ " :: this");
 	cmd.push(this.gbl(bl+1) + 	"type(String), intent(in) :: nameOfArray");
@@ -66,7 +66,8 @@ Init.prototype.defaultInit = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		"call this(idx)%set_name(nameOfArray + '_' + toString(idx))");
 	cmd.push(this.gbl(bl+1) + 	"end do");
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromArray");
-
+	 */
+	
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/

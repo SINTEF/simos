@@ -1,7 +1,7 @@
 [submodule "fcore"]
 	path = simosf/libs/fcore
 	url = ssh://git@git.code.sintef.no:7999/mns/fcore.git
-	branch = stable
+	branch = simos
 [submodule "buildinfo"]
 	path = simosf/cmake/buildinfo
 	url = ssh://git@git.code.sintef.no:7999/mns/buildinfo.git

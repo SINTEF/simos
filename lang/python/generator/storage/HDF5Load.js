@@ -545,10 +545,10 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 	cmd.push(this.gbl(bl+5) + 					'allOrders = np.array(allOrders.split(","))');
 	
 	cmd.push(this.gbl(bl+3) + 			'for anOrder in allOrders:');
-	cmd.push(this.gbl(bl+4) + 				'if ("group" in handle[anOrder].attrs.keys()):');
-	cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["group"] == varName):');
-	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
-	cmd.push(this.gbl(bl+4) + 				'elif ("type" in handle[anOrder].attrs.keys()):');
+	//cmd.push(this.gbl(bl+4) + 				'if ("group" in handle[anOrder].attrs.keys()):');
+	//cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["group"] == varName):');
+	//cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
+	cmd.push(this.gbl(bl+4) + 				'if ("type" in handle[anOrder].attrs.keys()):');
 	cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["type"] == propType):');
 	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
 	

@@ -74,14 +74,11 @@ HDF5Save.prototype.saveToHDF5Handle = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 
-	'def saveToHDF5Handle(self, handle):');
+	cmd.push(this.gbl(bl) +	'def saveToHDF5Handle(self, handle):');
 
 	
-	cmd.push(this.gbl(bl+1) + 
-		'#first pass to save all contained items' );	
-	cmd.push(this.gbl(bl+1) + 
-		'self._saveDataToHDF5Handle(handle)' );
+	cmd.push(this.gbl(bl+1) +	'#first pass to save all contained items' );	
+	cmd.push(this.gbl(bl+1) + 	'self._saveDataToHDF5Handle(handle)' );
 	
 
 	/*
@@ -91,8 +88,7 @@ HDF5Save.prototype.saveToHDF5Handle = function(bl) {
 		'self._saveDataToHDF5Handle(handle)' );
 	*/
 	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
+	cmd.push(this.gbl(bl+1) + 	'pass');
 	cmd.push(this.gbl(bl+1));
 	
 	return cmd.join('\n');
@@ -124,10 +120,13 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 
 	cmd.push(this.gbl(bl+1) + 	'handle.attrs["ID"] = self.ID' );
 
-	/* writing properties */
+	cmd.push(this.gbl(bl+1) + 			'if ("order" in handle.attrs.keys()):');
+	cmd.push(this.gbl(bl+2) + 				'handle.attrs["order"] = []');
+	
 	var properties = this.getProperties();
 	var propNum = properties.length;
-	
+
+	/* writing properties */
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 
@@ -170,8 +169,26 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 		cmd.push(this.gbl(bl+1));
 
 	}
-	cmd.push(this.gbl(bl+1) + 
-	'pass');
+
+
+	cmd.push(this.gbl(bl+1) +  	'order = []');
+    /* creating order attribute */
+	for(var j = 0; j < propNum; j++) {
+		var prop = properties[j];  
+
+		if (!(this.isUngroup(prop))) {
+			cmd.push(this.gbl(bl+1) +  	'if (self.isSet(' + this.stringify(prop.name) +')):');
+			cmd.push(this.gbl(bl+2) +  		'order.append(' + this.stringify(prop.name) +')');
+		}
+		
+	}
+
+	cmd.push(this.gbl(bl+1) + 	'if ("order" in handle.attrs.keys()):');
+	cmd.push(this.gbl(bl+2) + 		'curOrders = handle.attrs["order"]');	
+	cmd.push(this.gbl(bl+2) + 		'if ( len(list(curOrders)) > 0 ):');	
+	cmd.push(this.gbl(bl+3) + 			'order = list(curOrders) + order');
+	cmd.push(this.gbl(bl+1) + 	'handle.attrs["order"] = order' );
+	
 	
     return cmd.join('\n');
 };
@@ -268,19 +285,20 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+3) + 			'if not(varName in handle.keys()):' );
 	cmd.push(this.gbl(bl+4) + 				'dgrp = handle.create_group(varName)' );
 	cmd.push(this.gbl(bl+3) + 			'else:' );
-	cmd.push(this.gbl(bl+4) + 				'dgrp = handle[varName]' );
-	cmd.push(this.gbl(bl+3) + 			'if ("order" in dgrp.attrs.keys()):');
-	cmd.push(this.gbl(bl+4) + 				'dgrp.attrs["order"] = ""');
+	cmd.push(this.gbl(bl+4) + 				'dgrp = handle[varName]' );	
+	//cmd.push(this.gbl(bl+3) + 			'if ("order" in dgrp.attrs.keys()):');
+	//cmd.push(this.gbl(bl+4) + 				'dgrp.attrs["order"] = ""');
 	cmd.push(this.gbl(bl+3) + 			'getattr(self, varName)._saveDataToHDF5Handle(dgrp)');
 	cmd.push(this.gbl(bl+2) + 		'elif not(getattr(self, varName).REF == None ):');
-	cmd.push(this.gbl(bl+3) +			'handle.create_dataset(varName,data=getattr(self, varName).REF, dtype=ref_dtype )' );
+	cmd.push(this.gbl(bl+3) +			'raise Exception("referenced single value is not implemented.")' );
+
+	//cmd.push(this.gbl(bl+3) +			'handle.create_dataset(varName,data=getattr(self, varName).REF, dtype=ref_dtype )' );
 	/*
 	 * cmd.push(this.gbl(bl+2) + 'dset =
 	 * maindgrp.create_dataset("values"' + ',(len(getattr(self,varName)),),
 	 * dtype=ref_dtype )' ); cmd.push(this.gbl(loopBlock.bl+1) +
 	 * 'dset' + loopBlock.indArray + ' = dgrp.ref');
 	 */
-	cmd.push(this.gbl(bl+3) +			'raise Exception("referenced single value is not implemented.")' );
 
 	/* put the reference in place */ 
 	/*
@@ -409,7 +427,7 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 		cmd.push(this.gbl(loopBlock.bl+2) + 	'dgrp = maindgrp.create_group(item.name)' );
 		cmd.push(this.gbl(loopBlock.bl+1) + 'else:' );
 		cmd.push(this.gbl(loopBlock.bl+2) + 	'dgrp = maindgrp[item.name]' );
-		cmd.push(this.gbl(loopBlock.bl+1) + 'dgrp.attrs["group"] = ' + this.stringify(prop.name) );		
+		//cmd.push(this.gbl(loopBlock.bl+1) + 'dgrp.attrs["group"] = ' + this.stringify(prop.name) );		
 		cmd.push(this.gbl(loopBlock.bl+1) + 'self.' + prop.name + loopBlock.indList + '._saveDataToHDF5Handle(dgrp)');
 
 		cmd.push(this.gbl(bl+3) +		'existingOrder = None');				

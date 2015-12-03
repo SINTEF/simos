@@ -14,7 +14,6 @@ Init.prototype.defaultInitDeclaration = function(bl) {
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingle");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiName");
 	//cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
-
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/

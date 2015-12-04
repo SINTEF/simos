@@ -48,7 +48,7 @@ Init.prototype.defaultInit = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];
 		if ( (this.isSingle(prop)) && (! this.isAtomic(prop)) && (! this.isOptional(prop)) ) {
-		    cmd.push(this.gbl(bl+1) + 	"call this%"  + prop.name +  "%default_initFromSingleWiName('" + prop.name + "')");
+		    cmd.push(this.gbl(bl+1) + 	"call this%"  + prop.name +  "%default_init('" + prop.name + "')");
 		}
 	}
 	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingle");

@@ -1,4 +1,4 @@
 #!/bin/bash
-curPath=$CurrentDirectory
+curPath=`pwd`
 cd "$(dirname "$0")"
 nodejs simos.js $curPath/$1

@@ -3,20 +3,39 @@ var fs = require('fs');
 path = require('path');
 
 /*start the server*/
-var pathConfig = '';
+var config = '';
 var relSimosPath = '../..'
+    
+
+
+
+var configFilePath = '';
 try{
-    pathConfig = require(path.join(relSimosPath, 'pathConfig.js'));
+    configFilePath = process.argv[2];
+    config = require(configFilePath);
+    
 }
 catch (e) {
-    pathConfig = require(path.join(relSimosPath, 'config', 'pathConfig-org.js'));
+	try{
+	    configFilePath = path.join(relSimosPath, 'pathConfig.js');
+	    config = require(configFilePath);
+	}
+	catch (e) {
+	    configFilePath = path.join(relSimosPath, 'config', 'pathConfig-org.js')
+	    config = require(configFilePath);
+	}
 }
+	
+console.log('Starting SIMOS ...');
+console.log('\treading config file: ' + configFilePath);
 
-var config = require(path.join(relSimosPath, 'config', 'langConfig.js'));
+var langConfigFile = path.join(relSimosPath, 'config', 'langConfig.js');
+var langConfig = require(langConfigFile);
+console.log('\treading lang config file: ' + langConfigFile);
 
 var simosPath 	= path.resolve(path.join(__dirname,relSimosPath));
-var outPath 	= pathConfig.outPath;
-var modelsPaths = pathConfig.modelsPaths;
+var outPath 	= config.outPath;
+var modelsPaths = config.modelsPaths;
 
 
 var replServer = repl.start({
@@ -35,15 +54,15 @@ replServer.context.loadGenerators = function() {
 	//replServer.context.matgen = '';
 	var Generator = replServer.context.require(replServer.context.path.join(simosPath, 'generator'));
 	
-	for (lang in config.langs) {
-		var genName = config.langs[lang].id+'gen';
+	for (lang in config.codeGenerators) {
+		var genName = langConfig.langs[lang].id+'gen';
 		replServer.context[genName] =  new Generator();
 		replServer.context[genName].setSimosPath(simosPath);
 		replServer.context[genName].setLang(lang);
 		replServer.context[genName].setOutPath( path.resolve(
-			replServer.context.path.join(outPath,config.langs[lang].interp, 'models') )
+			replServer.context.path.join(config.outPath,config.codeGenerators[lang].outPath) )
 												);
-		replServer.context[genName].setModelsPaths( modelsPaths );
+		replServer.context[genName].setModelsPaths( config.modelsPaths );
 		
 	}
 

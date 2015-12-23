@@ -1,3 +1,2 @@
-:: SET mypath=%~dp0
-:: echo %mypath:~0,-1%
-node %~dp0simos.js
+set "curpath=%cd%"
+node %~dp0simos.js %curpath%\%1

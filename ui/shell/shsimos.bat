@@ -1,2 +1,1 @@
-set "curpath=%cd%"
-node %~dp0simos.js %curpath%\%1
+node %~dp0simos.js %1

@@ -188,6 +188,7 @@ Generator.prototype.models = function(packageID) {
 	return this.getPackageModels(packageID);
 	
 };
+
 /*----------------------------------------------------------------------------*/
 Generator.prototype.getPackageModels = function(packageID) {
     console.log(packageID);
@@ -303,6 +304,7 @@ Generator.prototype.getModel = function(modelID) {
 	return new ModelParser(model);
 	
 };
+
 /*----------------------------------------------------------------------------*/
 Generator.prototype.getLocalModelVersion = function(packageID) {
 
@@ -570,5 +572,44 @@ Generator.prototype.generatePackage = function(packageID) {
 	this.externalPackageDependencies
 	return 'Package generator finished!';
 };
+
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* Interactive use functions */
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+Generator.prototype.parseModel = function(modelID) {
+	if (modelID==undefined) {
+		throw("please provide modelID, example marmo_r1:basic:NamedEntity.")
+	} 
+	return new ModelParser(modelID);
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.getModelParser = function() {
+
+	return new ModelParser();
+	
+};
+/*----------------------------------------------------------------------------*/
+Generator.prototype.ls = function(packageID) {
+	if (packageID==undefined) {
+		throw("please provide packageID, example marmo_r1.")
+	} 
+	
+	var packages = this.packages(packageID)
+	var models = this.models(packageID);
+	
+	console.log("Looking into " + packageID);
+	console.log("Contained Sub-packages ...");
+	console.log(packages)
+	console.log("Contained Models ...");
+	console.log(models)
+	
+};
+/*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/* instantiate a generator */
+/*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 module.exports = function() { return new Generator(); };

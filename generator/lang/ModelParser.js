@@ -708,6 +708,16 @@ ModelParser.prototype.isOptional = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+ModelParser.prototype.isUngroup = function(prop) {
+	if ((prop.ungroup == undefined) ||
+		(prop.ungroup == 'false')){
+		return false;
+	}
+	else {
+		return true;
+	}
+};
+/*----------------------------------------------------------------------------*/
 ModelParser.prototype.isParentProp = function(prop) {
 	var props = this.getProperties();
 	

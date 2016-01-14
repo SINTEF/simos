@@ -173,7 +173,7 @@ SetGet.prototype.propSet = function(prop, bl) {
 			 * no chekcs here, TODO: add casting or checks for atomic type
 			 * arrays
 			 */
-			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');			
+			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = np.array(val)');			
 		}
 		else {
 			/* type casting between atomic types */
@@ -213,6 +213,7 @@ SetGet.prototype.propSet = function(prop, bl) {
 			 * cheks if all elements is array has the correct type TODO: add the
 			 * check
 			 */
+			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');	
 		}
 		else {
 			/* check if it has the correct type */

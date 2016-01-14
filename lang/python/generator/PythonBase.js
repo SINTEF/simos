@@ -416,17 +416,18 @@ PythonBase.prototype.cloneFunc = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 
-	'def clone(self):');	
-	cmd.push(this.gbl(bl+1) + 
-			'newObj = ' + this.getClassName() + '()' );	     
-	cmd.push(this.gbl(bl+1) + 
-			'return self._cloneTo(newObj)' );	     
-
+	cmd.push(this.gbl(bl) + 'def clone(self):');	
+	cmd.push(this.gbl(bl+1) +	'newObj = ' + this.getClassName() + '()' );	     
+	cmd.push(this.gbl(bl+1) + 	'return self._cloneTo(newObj)' );	     
 	cmd.push(this.gbl(bl+1));
+	
+	
+	cmd.push(this.gbl(bl) + 'def cloneTo(self, newObj):');	
+	cmd.push(this.gbl(bl+1) + 	'self._cloneTo(newObj)' );	     
+	cmd.push(this.gbl(bl+1));
+	
 	/* =============================================== */
-	cmd.push(this.gbl(bl) + 
-	'def _cloneTo(self,newObj):');	    
+	cmd.push(this.gbl(bl) +	'def _cloneTo(self,newObj):');	    
 
 	if (this.isDerived()) {
 		var superTypes = this.superTypes();
@@ -477,8 +478,7 @@ PythonBase.prototype.cloneFunc = function(bl) {
 		}
 	}
 	
-	cmd.push(this.gbl(bl+1) + 
-	'return newObj' );	     
+	cmd.push(this.gbl(bl+1) + 'return newObj' );	     
 	
 	
 	return cmd.join('\n');

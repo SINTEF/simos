@@ -378,6 +378,7 @@ Generator.prototype.initModel = function(modelID) {
 	
 	var pmodel = this.getModel(modelID);
 	
+	pmodel.setType(pmodel.getName());
 	
 	var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
 

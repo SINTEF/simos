@@ -87,7 +87,9 @@ HDF5Load.prototype.loadH5 = function(bl) {
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml,logicalToIntArray");
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:,:), allocatable :: logicalToIntArray2");	
 	cmd.push(this.gbl(bl+1) + "integer :: idx,idy");
-	cmd.push(this.gbl(bl+1) + "integer :: orderSize,sv");	
+	cmd.push(this.gbl(bl+1) + "integer :: idxMod, idx1,idx2,idx3");	
+	cmd.push(this.gbl(bl+1) + "integer :: orderSize,arrDimSize, sv");
+	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: arrDim");	
 	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 	cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: cc_a");
 	cmd.push(this.gbl(bl+1) + "type(String), allocatable ::listOfNames(:)");
@@ -262,74 +264,87 @@ HDF5Load.prototype.loadH5 = function(bl) {
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "savehdf5 is not implemented for object array of more than one dimension.";
+			//if (dimList.length > 1)
+			//	throw "savehdf5 is not implemented for object array of more than one dimension.";
 			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
+			
+			cmd.push(this.gbl(bl+1) + "! Open the array group");
+			cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
+			cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");
+			
+			cmd.push(this.gbl(bl+2) + 	"! Read the order attribute");
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderSize(subGroupIndex,orderSize)");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order not found for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");
+			cmd.push(this.gbl(bl+2) + 	"allocate(character(len=orderSize) :: cc_a)");
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
+			cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"orderList=String(cc_a)");
+			cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
+			cmd.push(this.gbl(bl+2) + 	"call orderList%split(',', listOfNames)");
+
+			cmd.push(this.gbl(bl+2) + 	"! Read the arrDim attribute");
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetDimSize(subGroupIndex,arrDimSize)");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", arrDim not found for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");
+			cmd.push(this.gbl(bl+2) + 	"if (arrDimSize.ne." + dimList.length + ") then");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", arrDim length is not consistent with the data model for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"error = -1");
+			cmd.push(this.gbl(bl+2) + 	"end if");			
+			cmd.push(this.gbl(bl+2) + 	"allocate(arrDim(" + dimList.length + "),stat=sv)");
+			cmd.push(this.gbl(bl+2) + 	"if (sv.ne.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error=error-1");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", error when trying to allocate arrDim array for " + prop.name + "'");
+			cmd.push(this.gbl(bl+2) + 	"end if");			
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, arrDim)");
+			cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+
+			var allocateSizeList = []
+			for (var dimi=1; dimi<=dimList.length; dimi++) {
+			    allocateSizeList.push("arrDim(" + dimi + ")");
+			}
+			var allocateSize = allocateSizeList.join(',');
+			
 			if (this.isAllocatable(prop)){
-				cmd.push(this.gbl(bl+1) + "! Open the array group");
-				cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
-				cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");			
-				cmd.push(this.gbl(bl+2) + 	"! Read the order attribute");
-				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderSize(subGroupIndex,orderSize)");
-				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
-				cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order not found for array: " + prop.name + "'");
-				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
-				cmd.push(this.gbl(bl+2) + 	"end if");
-				cmd.push(this.gbl(bl+2) + 	"allocate(character(len=orderSize) :: cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
-				cmd.push(this.gbl(bl+2) + 	"orderList=String(cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"call orderList%split(',', listOfNames)");
 				cmd.push(this.gbl(bl+2) + 	"! Allocate the array");
-				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(listOfNames,1)),stat=sv)");
+				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(" + allocateSize + "),stat=sv)");
 				cmd.push(this.gbl(bl+2) + 	"if (sv.ne.0) then");
 				cmd.push(this.gbl(bl+3) + 		"error=error-1");
 				cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during saving of "+ this.getTypeName() + ", error when trying to allocate " + prop.name + "'");
 				cmd.push(this.gbl(bl+2) + 	"end if");
-				cmd.push(this.gbl(bl+2) + 	"! Read each component");
-				cmd.push(this.gbl(bl+2) + 	"do idx=1,size(listOfNames)");
-				cmd.push(this.gbl(bl+3) + 		"subGroupIndex2 = H5A_OpenEntity(subGroupIndex, listOfNames(idx)%toChars() // c_null_char)");
-				cmd.push(this.gbl(bl+3) + 		"if (subGroupIndex2.gt.0) then");
-				cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "(idx)%load_HDF5_fromGroupIndex(subGroupIndex2,errorj)");			
-				cmd.push(this.gbl(bl+4) + 			"error=error+errorj");			
-				cmd.push(this.gbl(bl+3) + 		"else");
-				cmd.push(this.gbl(bl+4) + 			"error=error-1");
-				cmd.push(this.gbl(bl+4) + 			"write(*,*) 'Error during saving of "+ this.getTypeName() + ", group not found: ',listOfNames(idx)%toChars()");
-				cmd.push(this.gbl(bl+3) + 		"end if");
-				cmd.push(this.gbl(bl+2) + 	"end do");
-				cmd.push(this.gbl(bl+1) + "end if");
-				cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
-			}else{
-				cmd.push(this.gbl(bl+1) + "! Open the array group");
-				cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
-				cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");			
-				cmd.push(this.gbl(bl+2) + 	"! Read the order attribute");
-				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderSize(subGroupIndex,orderSize)");
-				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
-				cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order not found for array: " + prop.name + "'");
-				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
-				cmd.push(this.gbl(bl+2) + 	"end if");
-				cmd.push(this.gbl(bl+2) + 	"allocate(character(len=orderSize) :: cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
-				cmd.push(this.gbl(bl+2) + 	"orderList=String(cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"call orderList%split(',', listOfNames)");
-				cmd.push(this.gbl(bl+2) + 	"! Read each component");
-				cmd.push(this.gbl(bl+2) + 	"do idx=1,size(listOfNames)");
-				cmd.push(this.gbl(bl+3) + 		"subGroupIndex2 = H5A_OpenEntity(subGroupIndex, listOfNames(idx)%toChars() // c_null_char)");
-				cmd.push(this.gbl(bl+3) + 		"if (subGroupIndex2.gt.0) then");
-				cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "(idx)%load_HDF5_fromGroupIndex(subGroupIndex2,errorj)");			
-				cmd.push(this.gbl(bl+4) + 			"error=error+errorj");			
-				cmd.push(this.gbl(bl+3) + 		"else");
-				cmd.push(this.gbl(bl+4) + 			"error=error-1");
-				cmd.push(this.gbl(bl+4) + 			"write(*,*) 'Error during saving of "+ this.getTypeName() + ", group not found: ',listOfNames(idx)%toChars()");
-				cmd.push(this.gbl(bl+3) + 		"end if");
-				cmd.push(this.gbl(bl+2) + 	"end do");
-				cmd.push(this.gbl(bl+1) + "end if");
-				cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
 			}
+			
+			cmd.push(this.gbl(bl+2) + 	"! Read each component");
+			cmd.push(this.gbl(bl+2) + 	"do idx=1,size(listOfNames)");
+			cmd.push(this.gbl(bl+3) + 		"subGroupIndex2 = H5A_OpenEntity(subGroupIndex, listOfNames(idx)%toChars() // c_null_char)");
+			cmd.push(this.gbl(bl+3) + 		"idxMod = idx");
+			
+			var dimListVarNames = [] 
+			for (var dimi=1; dimi<dimList.length; dimi++) {	
+				dimListVarNames.push("idx" + dimi)
+				cmd.push(this.gbl(bl+3) + 		"idx" + dimi + " = idxMod/("+ allocateSizeList.slice(dimi).join('*') + ") + 1");
+				cmd.push(this.gbl(bl+3) + 		"if (mod(idxMod, "+ allocateSizeList.slice(dimi).join('*') + ") .eq. 0 ) then");
+				cmd.push(this.gbl(bl+4) + 			"idx" + dimi + " = idx" + dimi + " - 1");
+				cmd.push(this.gbl(bl+3) + 		"end if");				
+				cmd.push(this.gbl(bl+3) + 		"idxMod = idxMod - (idx" + dimi + "-1)*("+ allocateSizeList.slice(dimi).join('*') + ")" );
+			}
+			var dimi = dimList.length;
+			cmd.push(this.gbl(bl+3) + 		"idx" + dimi + " = idxMod");
+
+			cmd.push(this.gbl(bl+3) + 		"if (subGroupIndex2.gt.0) then");
+			cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "("+ dimListVarNames.join(',') +")%load_HDF5_fromGroupIndex(subGroupIndex2,errorj)");			
+			cmd.push(this.gbl(bl+4) + 			"error=error+errorj");			
+			cmd.push(this.gbl(bl+3) + 		"else");
+			cmd.push(this.gbl(bl+4) + 			"error=error-1");
+			cmd.push(this.gbl(bl+4) + 			"write(*,*) 'Error during loading of "+ this.getTypeName() + ", group not found: ',listOfNames(idx)%toChars()");
+			cmd.push(this.gbl(bl+3) + 		"end if");
+			cmd.push(this.gbl(bl+2) + 	"end do");
+			cmd.push(this.gbl(bl+1) + "end if");
+			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
 
 		}
 

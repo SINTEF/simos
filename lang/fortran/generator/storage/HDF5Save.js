@@ -132,6 +132,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: logicalToIntArray,logicalToIntArray2");
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:,:), allocatable :: logicalToIntArray2");	
 	cmd.push(this.gbl(bl+1) + "integer :: logicalToIntSingle,idx, idy, idz");
+	cmd.push(this.gbl(bl+1) + "integer :: idx1, idx2, idx3");	
 	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 
 	/* initializing properties */
@@ -185,7 +186,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 					cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,logicalToIntArray)");						
 					cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
 					cmd.push(this.gbl(bl+addBL+1) + "deallocate(logicalToIntArray)");
-				}
+				}	
 				else if (dimList.length == 2){
 					cmd.push(this.gbl(bl+addBL+1) + "allocate(logicalToIntArray2(diml(1), diml(2)))");
 					cmd.push(this.gbl(bl+addBL+1) + "do idx=1,diml(1)");
@@ -248,46 +249,49 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "savehdf5 is not implemented for object array of more than one dimension.";
+			
 			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
+
+			var addBL = 0;
+			
 			if (this.isAllocatable(prop)){
 				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
-				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex, '"  + prop.name +  "' // c_null_char)");
-				cmd.push(this.gbl(bl+2) + 	"do " + "idx=1,size(this%" + prop.name + ",1)");
-				cmd.push(this.gbl(bl+3) + 		"if (this%"+ prop.name + "(idx)%isValid()) then");
-				cmd.push(this.gbl(bl+4) + 			"subGroupIndex2 = H5A_OpenOrCreateEntity(subGroupIndex, this%"  + prop.name +  "(idx)%name%toChars() // c_null_char)");				
-				cmd.push(this.gbl(bl+4) + 			"call this%"+ prop.name + "(idx)%save_hdf5(subGroupIndex2,errorj)");
-				cmd.push(this.gbl(bl+4) + 			"error=error+errorj");
-				cmd.push(this.gbl(bl+4) + 			"if (.not.(orderList%isEmpty())) then");
-				cmd.push(this.gbl(bl+5) + 				"orderList=orderList+','");
-				cmd.push(this.gbl(bl+4) + 			"end if");
-				cmd.push(this.gbl(bl+4) + 			"orderList=orderList+this%" + prop.name + "(idx)%name%toChars()");
-				cmd.push(this.gbl(bl+3) + 		"end if");
-				cmd.push(this.gbl(bl+2) + 	"end do");	
-				cmd.push(this.gbl(bl+1) + "end if");
-				cmd.push(this.gbl(bl+1) + "if (.not.(orderList%isEmpty())) then");
-				cmd.push(this.gbl(bl+2) + 	"errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
-				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
-				cmd.push(this.gbl(bl+1) + "end if");
-			}else{
-				cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenOrCreateEntity(groupIndex, '"  + prop.name +  "' // c_null_char)");
-				cmd.push(this.gbl(bl+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-				cmd.push(this.gbl(bl+2) + "if (this%"+ prop.name + "(idx)%isValid()) then");
-				cmd.push(this.gbl(bl+3) + "subGroupIndex2 = H5A_OpenOrCreateEntity(subGroupIndex, this%"  + prop.name +  "(idx)%name%toChars() // c_null_char)");				
-				cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%save_hdf5(subGroupIndex2,errorj)");
-				cmd.push(this.gbl(bl+3) + "error=error+errorj");
-				cmd.push(this.gbl(bl+3) + "if (.not.(orderList%isEmpty())) then");
-				cmd.push(this.gbl(bl+4) + "orderList=orderList+','");
-				cmd.push(this.gbl(bl+3) + "end if");
-				cmd.push(this.gbl(bl+3) + "orderList=orderList+this%" + prop.name + "(idx)%name%toChars()");
-				cmd.push(this.gbl(bl+2) + "end if");
-				cmd.push(this.gbl(bl+1) + "end do");
-				cmd.push(this.gbl(bl+1) + "if (.not.(orderList%isEmpty())) then");
-				cmd.push(this.gbl(bl+2) + "errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
-				cmd.push(this.gbl(bl+2) + "error=error+errorj");
-				cmd.push(this.gbl(bl+1) + "end if");
+				addBL = 1;
 			}
+			
+			if (dimList.length > 3) {
+				throw "savehdf5 is not implemented for object array of more than three dimensions.";
+			}
+			
+			cmd.push(this.gbl(bl+addBL+1) + 	"allocate(diml(" + dimList.length + "))");
+			cmd.push(this.gbl(bl+addBL+1) + 	"diml=shape(this%" + prop.name + ")");
+			cmd.push(this.gbl(bl+addBL+1) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex, '"  + prop.name +  "' // c_null_char)");
+			
+			var loopBlock = this.getLoopBlockForArray(bl+addBL+1,prop);
+			var nbl = loopBlock.bl;
+			cmd.push(loopBlock.cmd);
+				cmd.push(this.gbl(nbl+1) +	"if (this%"+ prop.name + loopBlock.indArray + "%isValid()) then");   
+				cmd.push(this.gbl(nbl+2) + 		"subGroupIndex2 = H5A_OpenOrCreateEntity(subGroupIndex, this%"  + prop.name +  loopBlock.indArray + "%name%toChars() // c_null_char)");				
+				cmd.push(this.gbl(nbl+2) + 		"call this%"+ prop.name + loopBlock.indArray + "%save_hdf5(subGroupIndex2,errorj)");
+				cmd.push(this.gbl(nbl+2) + 		"error=error+errorj");
+				cmd.push(this.gbl(nbl+2) + 		"if (.not.(orderList%isEmpty())) then");
+				cmd.push(this.gbl(nbl+3) + 			"orderList=orderList+','");
+				cmd.push(this.gbl(nbl+2) + 		"end if");
+				cmd.push(this.gbl(nbl+2) + 		"orderList=orderList+this%" + prop.name + loopBlock.indArray + "%name%toChars()");
+				cmd.push(this.gbl(nbl+1) + 	"end if");	
+			cmd.push(loopBlock.endCmd);
+				
+			cmd.push(this.gbl(bl+addBL+1) + "error = error + H5A_SetDim(subGroupIndex,size(diml,1), diml)");
+			cmd.push(this.gbl(bl+addBL+1) + "deallocate(diml)");
+
+			if (this.isAllocatable(prop)){
+			    cmd.push(this.gbl(bl+1) + "end if");
+			}
+			
+			cmd.push(this.gbl(bl+1) + "if (.not.(orderList%isEmpty())) then");
+			cmd.push(this.gbl(bl+2) + 	"errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
+			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+			cmd.push(this.gbl(bl+1) + "end if");
 
 		}
 

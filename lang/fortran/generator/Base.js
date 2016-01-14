@@ -426,33 +426,66 @@ Base.prototype.gbl = function(blockLevel) {
 	return this.getBlockSpace(blockLevel);
 };
 
-
+/*----------------------------------------------------------------------------*/
+Base.prototype.getArrayDimList = function(prop) {
+	
+	if (this.isArray(prop)){
+		var dimList = this.getDimensionList(prop);
+		for (var i = 0; i<dimList.length; i++){
+			/* check if the dimension is a number */
+			if (!isNaN(parseFloat(dimList[i])) && isFinite(dimList[i])){
+				dimList[i] = dimList[i];
+			}
+			else {
+				if (dimList[i] == "*") {
+					dimList[i] = "1";
+				}
+				else {
+					dimList[i] = 'this%' + this.makePrivate(dimList[i]);
+				}
+			}
+		}
+		return dimList;
+	}
+	else {
+		throw ('Illigal non-array input.',prop);
+	}
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getArrayShape = function(prop) {
+	
+	if (this.isArray(prop)){
+		return '(' + this.getArrayDimList(prop).join() + ')';
+	}
+	else {
+		throw ('Illigal non-array input.',prop);
+	}
+};
 /*----------------------------------------------------------------------------*/
 Base.prototype.getLoopBlockForArray = function(bl, prop) {
 	var cmd = [];
+	var endCmd = [];
 	
-	var dimList = this.getPythonArrayDimList(prop);
+	var dimList = this.getDimensionList(prop);
 	var indNames = [];
-	for (var di =dimList.length-1; di>=0; di--) {
-		var indName = 'i' + di;
+	for (var di =1; di<=dimList.length; di++) {
+		var indName = 'idx' + (di);
 		indNames.push(indName);
 		
-		var levelInd = '';
-		for (var level = 0; level < di; level++){
-			levelInd = levelInd + '[0]';
-		}
-		cmd.push(this.gbl(bl+ (dimList.length-1)-di ) + 
-				 'for ' + indName + ' in range(0,len(self.' + prop.name +levelInd +')):' );
+		cmd.push(this.gbl(bl+ (di-1) ) + 	 'do ' + indName + ' = 1,size(this%' + prop.name + ', ' + di + ')' );
+
+		endCmd.push(this.gbl(bl+ (di-1) ) +  'end do' );
 
 	}
-	var indList = '[' + indNames.reverse().join('][') + ']';
-	var indArray = '[' + indNames.join(',') + ']';
+	var indList = '';
+	var indArray = '(' + indNames.join(',') + ')';
 
 	return {'cmd' : cmd.join('\n'),
 			'indNames': indNames,
 			'indList': indList,
 			'indArray': indArray,
-			'bl': bl+(dimList.length)-1};
+			'bl': bl+(dimList.length)-1,
+			'endCmd': endCmd.reverse().join('\n') };
 };
 
 /*----------------------------------------------------------------------------*/

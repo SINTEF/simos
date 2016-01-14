@@ -23,7 +23,7 @@ Destroy.prototype.destroyClass = function(bl) {
 
 	cmd.push(this.gbl(bl) + "subroutine destroy(this)");
 	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
-	cmd.push(this.gbl(bl+1) + "integer :: idx");
+	cmd.push(this.gbl(bl+1) + "integer :: idx,idy,idz");
 
 	/* initializing properties */
 	var properties = this.getProperties();
@@ -48,29 +48,47 @@ Destroy.prototype.destroyClass = function(bl) {
 			cmd.push(this.gbl(bl+1) + "call this%"+ prop.name + "%destroy()");
 			throw "destroyClass is not implemented for array of String instances.";
 		}
-		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (! this.isAllocatable(prop))){
+		else if (this.isArray(prop) && (! this.isAtomic(prop)) ){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
-			cmd.push(this.gbl(bl+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-			cmd.push(this.gbl(bl+2) + "call this%"+ prop.name + "(idx)%destroy()");
-			cmd.push(this.gbl(bl+1) + "end do");
-		}
-		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (this.isAllocatable(prop))){
-			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
-			cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
-			cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-			cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%destroy()");
-			cmd.push(this.gbl(bl+2) + "end do");
-			cmd.push(this.gbl(bl+2) + "deallocate(this%" + prop.name + ")");	
-			cmd.push(this.gbl(bl+1) + "end if");
+			
+			var addBL = 0;
+			
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
+				addBL = 1;
+			}
+				
+			if (dimList.length == 1) {
+				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call this%"+ prop.name + "(idx)%destroy()");
+				cmd.push(this.gbl(bl+addBL+1) + "end do");
+			}
+			else if (dimList.length == 2) {
+				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
+				cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(this%" + prop.name + ",2)");
+				cmd.push(this.gbl(bl+addBL+3) + 		"call this%"+ prop.name + "(idx,idy)%destroy()");
+				cmd.push(this.gbl(bl+addBL+2) + 	"end do");
+				cmd.push(this.gbl(bl+addBL+1) + "end do");
+			}			
+			else if (dimList.length == 3) {
+				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
+				cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(this%" + prop.name + ",2)");
+				cmd.push(this.gbl(bl+addBL+3) + 		"do " + "idz=1,size(this%" + prop.name + ",3)");				
+				cmd.push(this.gbl(bl+addBL+4) + 			"call this%"+ prop.name + "(idx,idy,idz)%destroy()");
+				cmd.push(this.gbl(bl+addBL+3) + 		"end do");				
+				cmd.push(this.gbl(bl+addBL+2) + 	"end do");
+				cmd.push(this.gbl(bl+addBL+1) + "end do");
+			}				
+			else {
+				throw "destroyClass is not implemented for object array of more than three dimensions.";
+			}
+			
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+2) + 	"deallocate(this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
 
 		}
-
-
-
 
 	} /* end of property loop*/
 
@@ -120,16 +138,16 @@ Destroy.prototype.finalizeClassS = function(bl) {
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (! this.isAllocatable(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
+			//if (dimList.length > 1)
+			//	throw "destroyClass is not implemented for object array of more than one dimension.";
 			/*cmd.push(this.gbl(bl+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
 			/*cmd.push(this.gbl(bl+2) + "call this%"+ prop.name + "(idx)%destroy()");
 			/*cmd.push(this.gbl(bl+1) + "end do");*/
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (this.isAllocatable(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
+			//if (dimList.length > 1)
+			//	throw "destroyClass is not implemented for object array of more than one dimension.";
 			cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
 			/*cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
 			cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%destroy()");
@@ -182,16 +200,16 @@ Destroy.prototype.finalizeClassArr = function(bl) {
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (! this.isAllocatable(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
+			//if (dimList.length > 1)
+			//	throw "destroyClass is not implemented for object array of more than one dimension.";
 			/*cmd.push(this.gbl(bl+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
 			/*cmd.push(this.gbl(bl+2) + "call this%"+ prop.name + "(idx)%destroy()");
 			/*cmd.push(this.gbl(bl+1) + "end do");*/
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop)) && (this.isAllocatable(prop))){
 			dimList = this.getDimensionList(prop);
-			if (dimList.length > 1)
-				throw "destroyClass is not implemented for object array of more than one dimension.";
+			//if (dimList.length > 1)
+			//	throw "destroyClass is not implemented for object array of more than one dimension.";
 			cmd.push(this.gbl(bl+1) + "if (allocated(this(idx)%" + prop.name + ")) then");
 			/*cmd.push(this.gbl(bl+2) + "do " + "idx=1,size(this%" + prop.name + ",1)");
 			cmd.push(this.gbl(bl+3) + "call this%"+ prop.name + "(idx)%destroy()");

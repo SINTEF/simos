@@ -85,7 +85,9 @@ HDF5Load.prototype.loadH5 = function(bl) {
 	cmd.push(this.gbl(bl+1) + "! Internal variables");
 	cmd.push(this.gbl(bl+1) + "integer :: errorj, subGroupIndex, subGroupIndex2,logicalToIntSingle");
 	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml,logicalToIntArray");
-	cmd.push(this.gbl(bl+1) + "integer :: idx,orderSize,sv");
+	cmd.push(this.gbl(bl+1) + "integer, dimension(:,:), allocatable :: logicalToIntArray2");	
+	cmd.push(this.gbl(bl+1) + "integer :: idx,idy");
+	cmd.push(this.gbl(bl+1) + "integer :: orderSize,sv");	
 	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 	cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: cc_a");
 	cmd.push(this.gbl(bl+1) + "type(String), allocatable ::listOfNames(:)");
@@ -137,20 +139,36 @@ HDF5Load.prototype.loadH5 = function(bl) {
 					cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, this%" +  prop.name  + ")");	
 					cmd.push(this.gbl(bl+2) + "error=error+errorj");
 				}else if (prop.type=='boolean'){
-					if (dimList.length > 1){
-						throw "load_hdf5 is not implemented for logical array of more than one dimension.";
-					}else{
+					if (dimList.length == 1){
 						cmd.push(this.gbl(bl+2) + "allocate(IntArrayToLogical(diml(1)))");
 						cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, IntArrayToLogical)");
 						cmd.push(this.gbl(bl+2) + "error=error+errorj");
 						cmd.push(this.gbl(bl+2) + "do idx=1,diml(1)");
-						cmd.push(this.gbl(bl+3) + "if (IntArrayToLogical(idx).eq.1) then ");
-						cmd.push(this.gbl(bl+4) + "this%" + prop.name + "(idx)=.true.");
-						cmd.push(this.gbl(bl+3) + "else");
-						cmd.push(this.gbl(bl+4) + "this%" + prop.name + "(idx)=.false.");
-						cmd.push(this.gbl(bl+3) + "end if");
+						cmd.push(this.gbl(bl+3) + 	"if (IntArrayToLogical(idx).eq.1) then ");
+						cmd.push(this.gbl(bl+4) + 		"this%" + prop.name + "(idx)=.true.");
+						cmd.push(this.gbl(bl+3) + 	"else");
+						cmd.push(this.gbl(bl+4) + 		"this%" + prop.name + "(idx)=.false.");
+						cmd.push(this.gbl(bl+3) + 	"end if");
 						cmd.push(this.gbl(bl+2) + "end do");
 						cmd.push(this.gbl(bl+2) + "deallocate(IntArrayToLogical)");
+					}
+					else if (dimList.length == 2){
+						cmd.push(this.gbl(bl+2) + "allocate(IntArrayToLogical2(diml(1),diml(2)))");
+						cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, IntArrayToLogical2)");
+						cmd.push(this.gbl(bl+2) + "error=error+errorj");
+						cmd.push(this.gbl(bl+2) + "do idx=1,diml(1)");
+						cmd.push(this.gbl(bl+3) + 	"do idy=1,diml(2)");						
+						cmd.push(this.gbl(bl+4) + 		"if (IntArrayToLogical2(idx,idy).eq.1) then ");
+						cmd.push(this.gbl(bl+5) + 			"this%" + prop.name + "(idx,idy)=.true.");
+						cmd.push(this.gbl(bl+4) + 		"else");
+						cmd.push(this.gbl(bl+5) + 			"this%" + prop.name + "(idx,idy)=.false.");
+						cmd.push(this.gbl(bl+4) + 		"end if");
+						cmd.push(this.gbl(bl+3) + 	"end do");
+						cmd.push(this.gbl(bl+2) + "end do");						
+						cmd.push(this.gbl(bl+2) + "deallocate(IntArrayToLogical2)");
+					}					
+					else {
+						throw "load_hdf5 is not implemented for logical array of more than two dimension.";
 					}
 				}else if (prop.type=='string'){
 					throw "loadH5 does not support arrays of string yet.";	
@@ -165,24 +183,40 @@ HDF5Load.prototype.loadH5 = function(bl) {
 					cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, this%" +  prop.name  + ")");	
 					cmd.push(this.gbl(bl+1) + "error=error+errorj");
 				}else if (prop.type=='boolean'){
-					if (dimList.length > 1){
-						throw "load_hdf5 is not implemented for logical array of more than one dimension.";
-					}else{
-						cmd.push(this.gbl(bl+1) + "allocate(diml(" + dimList.length + "))");
-						cmd.push(this.gbl(bl+1) + "diml=shape(this%" + prop.name + ")");
-						cmd.push(this.gbl(bl+1) + "allocate(IntArrayToLogical(diml(1)))");
-						cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, IntArrayToLogical)");
-						cmd.push(this.gbl(bl+1) + "error=error+errorj");
-						cmd.push(this.gbl(bl+1) + "do idx=1,diml(1)");
-						cmd.push(this.gbl(bl+2) + "if (IntArrayToLogical(idx).eq.1) then ");
-						cmd.push(this.gbl(bl+3) + "this%" + prop.name + "(idx)=.true.");
-						cmd.push(this.gbl(bl+2) + "else");
-						cmd.push(this.gbl(bl+3) + "this%" + prop.name + "(idx)=.false.");
-						cmd.push(this.gbl(bl+2) + "end if");
-						cmd.push(this.gbl(bl+1) + "end do");
-						cmd.push(this.gbl(bl+1) + "deallocate(IntArrayToLogical)");
-						cmd.push(this.gbl(bl+1) + "deallocate(diml)");
+				    cmd.push(this.gbl(bl+1) + "allocate(diml(" + dimList.length + "))");
+					cmd.push(this.gbl(bl+1) + "diml=shape(this%" + prop.name + ")");
+					if (dimList.length == 1){
+						cmd.push(this.gbl(bl+2) + "allocate(IntArrayToLogical(diml(1)))");
+						cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, IntArrayToLogical)");
+						cmd.push(this.gbl(bl+2) + "error=error+errorj");
+						cmd.push(this.gbl(bl+2) + "do idx=1,diml(1)");
+						cmd.push(this.gbl(bl+3) + 	"if (IntArrayToLogical(idx).eq.1) then ");
+						cmd.push(this.gbl(bl+4) + 		"this%" + prop.name + "(idx)=.true.");
+						cmd.push(this.gbl(bl+3) + 	"else");
+						cmd.push(this.gbl(bl+4) + 		"this%" + prop.name + "(idx)=.false.");
+						cmd.push(this.gbl(bl+3) + 	"end if");
+						cmd.push(this.gbl(bl+2) + "end do");
+						cmd.push(this.gbl(bl+2) + "deallocate(IntArrayToLogical)");
 					}
+					else if (dimList.length == 2){
+						cmd.push(this.gbl(bl+2) + "allocate(IntArrayToLogical2(diml(1),diml(2)))");
+						cmd.push(this.gbl(bl+2) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, IntArrayToLogical2)");
+						cmd.push(this.gbl(bl+2) + "error=error+errorj");
+						cmd.push(this.gbl(bl+2) + "do idx=1,diml(1)");
+						cmd.push(this.gbl(bl+3) + 	"do idy=1,diml(2)");						
+						cmd.push(this.gbl(bl+4) + 		"if (IntArrayToLogical2(idx,idy).eq.1) then ");
+						cmd.push(this.gbl(bl+5) + 			"this%" + prop.name + "(idx,idy)=.true.");
+						cmd.push(this.gbl(bl+4) + 		"else");
+						cmd.push(this.gbl(bl+5) + 			"this%" + prop.name + "(idx,idy)=.false.");
+						cmd.push(this.gbl(bl+4) + 		"end if");
+						cmd.push(this.gbl(bl+3) + 	"end do");
+						cmd.push(this.gbl(bl+2) + "end do");						
+						cmd.push(this.gbl(bl+2) + "deallocate(IntArrayToLogical2)");
+					}		
+					else {
+						throw "load_hdf5 is not implemented for logical array of more than two dimensions.";
+					}
+					cmd.push(this.gbl(bl+1) + "deallocate(diml)");
 				}else if (prop.type=='string'){
 					throw "saveH5 does not support arrays of string yet.";	
 				}

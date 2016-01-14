@@ -128,8 +128,10 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "integer, intent(out) :: error");
 	cmd.push(this.gbl(bl+1) + "! Internal variables");
 	cmd.push(this.gbl(bl+1) + "integer :: errorj, subGroupIndex, subGroupIndex2");
-	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml,logicalToIntArray");
-	cmd.push(this.gbl(bl+1) + "integer :: logicalToIntSingle,idx");
+	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml");
+	cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: logicalToIntArray,logicalToIntArray2");
+	cmd.push(this.gbl(bl+1) + "integer, dimension(:,:), allocatable :: logicalToIntArray2");	
+	cmd.push(this.gbl(bl+1) + "integer :: logicalToIntSingle,idx, idy, idz");
 	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 
 	/* initializing properties */
@@ -157,67 +159,59 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 
 		if (this.isAtomic(prop) && this.isArray(prop)){
 			dimList = this.getDimensionList(prop);
+			var addBL = 0;
 			if (this.isAllocatable(prop)){ 
 				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
-				cmd.push(this.gbl(bl+2) + "allocate(diml(" + dimList.length + "))");
-				cmd.push(this.gbl(bl+2) + "diml=shape(this%" + prop.name + ")");
-				if (prop.type=='double'){
-					cmd.push(this.gbl(bl+2) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");
-					cmd.push(this.gbl(bl+2) + "error=error+errorj");
-				}else if (prop.type=='integer'){
-					cmd.push(this.gbl(bl+2) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");	
-					cmd.push(this.gbl(bl+2) + "error=error+errorj");
-				}else if (prop.type=='boolean'){
-					if (dimList.length > 1){
-						throw "save_hdf5 is not implemented for logical array of more than one dimension.";
-					}else{
-						cmd.push(this.gbl(bl+2) + "allocate(logicalToIntArray(diml(1)))");
-						cmd.push(this.gbl(bl+2) + "do idx=1,diml(1)");
-						cmd.push(this.gbl(bl+3) + "if (this%" + prop.name + "(idx)) then ");
-						cmd.push(this.gbl(bl+4) + "logicalToIntArray(idx)=1");
-						cmd.push(this.gbl(bl+3) + "else");
-						cmd.push(this.gbl(bl+4) + "logicalToIntArray(idx)=0");
-						cmd.push(this.gbl(bl+3) + "end if");
-						cmd.push(this.gbl(bl+2) + "end do");
-						cmd.push(this.gbl(bl+2) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,logicalToIntArray)");						
-						cmd.push(this.gbl(bl+2) + "error=error+errorj");
-						cmd.push(this.gbl(bl+2) + "deallocate(logicalToIntArray)");
-					}
-				}else if (prop.type=='string'){
-					throw "saveH5 does not support arrays of string yet.";	
-				}
-				cmd.push(this.gbl(bl+2) + "deallocate(diml)");
-				cmd.push(this.gbl(bl+1) + "end if");
-			}else{
-				cmd.push(this.gbl(bl+1) + "allocate(diml(" + dimList.length + "))");
-				cmd.push(this.gbl(bl+1) + "diml=shape(this%" + prop.name + ")");
-				if (prop.type=='double'){
-					cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");
-					cmd.push(this.gbl(bl+1) + "error=error+errorj");
-				}else if (prop.type=='integer'){
-					cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");	
-					cmd.push(this.gbl(bl+1) + "error=error+errorj");
-				}else if (prop.type=='boolean'){
-					if (dimList.length > 1){
-						throw "save_hdf5 is not implemented for logical array of more than one dimension.";
-					}else{
-						cmd.push(this.gbl(bl+1) + "allocate(logicalToIntArray(diml(1)))");
-						cmd.push(this.gbl(bl+1) + "do idx=1,diml(1)");
-						cmd.push(this.gbl(bl+2) + "if (this%" + prop.name + "(idx)) then ");
-						cmd.push(this.gbl(bl+3) + "logicalToIntArray(idx)=1");
-						cmd.push(this.gbl(bl+2) + "else");
-						cmd.push(this.gbl(bl+3) + "logicalToIntArray(idx)=0");
-						cmd.push(this.gbl(bl+2) + "end if");
-						cmd.push(this.gbl(bl+1) + "end do");
-						cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,logicalToIntArray)");
-						cmd.push(this.gbl(bl+1) + "error=error+errorj");
-						cmd.push(this.gbl(bl+1) + "deallocate(logicalToIntArray)");
-					}	
-				}else if (prop.type=='string'){
-					throw "saveH5 does not support arrays of string yet.";	
-				}			
-				cmd.push(this.gbl(bl+1) + "deallocate(diml)");
+				addBL = 1;
 			}
+			cmd.push(this.gbl(bl+addBL+1) + 	"allocate(diml(" + dimList.length + "))");
+			cmd.push(this.gbl(bl+addBL+1) + 	"diml=shape(this%" + prop.name + ")");
+			if (prop.type=='double'){
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+			}else if (prop.type=='integer'){
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");	
+				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+			}else if (prop.type=='boolean'){
+				if (dimList.length == 1){
+					cmd.push(this.gbl(bl+addBL+1) + "allocate(logicalToIntArray(diml(1)))");
+					cmd.push(this.gbl(bl+addBL+1) + "do idx=1,diml(1)");
+					cmd.push(this.gbl(bl+addBL+2) + 	"if (this%" + prop.name + "(idx)) then ");
+					cmd.push(this.gbl(bl+addBL+3) + 		"logicalToIntArray(idx)=1");
+					cmd.push(this.gbl(bl+addBL+2) + 	"else");
+					cmd.push(this.gbl(bl+addBL+3) + 		"logicalToIntArray(idx)=0");
+					cmd.push(this.gbl(bl+addBL+2) + 	"end if");
+					cmd.push(this.gbl(bl+addBL+1) + "end do");
+					cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,logicalToIntArray)");						
+					cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+					cmd.push(this.gbl(bl+addBL+1) + "deallocate(logicalToIntArray)");
+				}
+				else if (dimList.length == 2){
+					cmd.push(this.gbl(bl+addBL+1) + "allocate(logicalToIntArray2(diml(1), diml(2)))");
+					cmd.push(this.gbl(bl+addBL+1) + "do idx=1,diml(1)");
+					cmd.push(this.gbl(bl+addBL+2) + 	"do idy=1,diml(2)");						
+					cmd.push(this.gbl(bl+addBL+3) + 		"if (this%" + prop.name + "(idx,idy)) then ");
+					cmd.push(this.gbl(bl+addBL+4) + 			"logicalToIntArray2(idx,idy)=1");
+					cmd.push(this.gbl(bl+addBL+3) + 		"else");
+					cmd.push(this.gbl(bl+addBL+4) + 			"logicalToIntArray2(idx,idy)=0");
+					cmd.push(this.gbl(bl+addBL+3) + 		"end if");
+					cmd.push(this.gbl(bl+addBL+2) + 	"end do");
+					cmd.push(this.gbl(bl+addBL+1) + "end do");						
+					cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,logicalToIntArray2)");						
+					cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+					cmd.push(this.gbl(bl+addBL+1) + "deallocate(logicalToIntArray2)");
+				}					
+				else {
+					throw "save_hdf5 is not implemented for logical array of more than two dimensions.";
+				}
+			}else if (prop.type=='string'){
+				throw "saveH5 does not support arrays of string yet.";	
+			}
+			cmd.push(this.gbl(bl+addBL+1) + "deallocate(diml)");
+			
+			if (this.isAllocatable(prop)){ 
+				cmd.push(this.gbl(bl+1) + "end if");
+			}			
 		}
 		else if (this.isSingle(prop) && (this.isAtomic(prop))){
 			if (prop.type=='double'){
@@ -228,16 +222,16 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(bl+1) + "error=error+errorj");
 			}else if (prop.type=='boolean'){
 				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + ") then ");
-				cmd.push(this.gbl(bl+2) + "logicalToIntSingle=1");
+				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=1");
 				cmd.push(this.gbl(bl+1) + "else");
-				cmd.push(this.gbl(bl+2) + "logicalToIntSingle=0");
+				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=0");
 				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteInt(groupIndex, '" + prop.name + "' // c_null_char,logicalToIntSingle)");	
 				cmd.push(this.gbl(bl+1) + "error=error+errorj");
 			}else if (prop.type=='string'){
 				cmd.push(this.gbl(bl+1) + "if (.not.(this%" + prop.name + "%isEmpty())) then");
-				cmd.push(this.gbl(bl+2) + "errorj = H5A_writeStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + "%toChars() // c_null_char)");		
-				cmd.push(this.gbl(bl+2) + "error=error+errorj");
+				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_writeStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + "%toChars() // c_null_char)");		
+				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
 				cmd.push(this.gbl(bl+1) + "end if");
 			}	
 		}

@@ -430,6 +430,13 @@ Generator.prototype.generate = function(model, outFileContent) {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generateModel = function(modelID, outppath) {
+	if (modelID==undefined){
+		throw ("please enter (modelID,outppath) !");
+	}
+	if (outppath==undefined){
+		throw ("please enter (modelID,outppath) !");
+	}
+	
 	console.log("\t generating Model " + modelID + ' !');
 	var modelParser = this.initModel(modelID);
 			
@@ -587,7 +594,12 @@ Generator.prototype.parseModel = function(modelID) {
 	if (modelID==undefined) {
 		throw("please provide modelID, example marmo_r1:basic:NamedEntity.")
 	} 
-	return new ModelParser(modelID);
+	
+	var modelPath = this.sourceModelIDtoPath(modelID);	
+	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
+	var model = require(modelPath);
+	
+	return this.lang.getModelParser(model);
 	
 };
 /*----------------------------------------------------------------------------*/

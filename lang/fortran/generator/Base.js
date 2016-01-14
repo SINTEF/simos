@@ -98,6 +98,22 @@ Base.prototype.constructor = function(model) {
                                      "code"  : ""} };
 };
 
+/*----------------------------------------------------------------------------*/
+Base.prototype.setModel = function(model){
+	CommonLangBase.prototype.setModel(model);
+	
+	this.numericTypeList.push('complex');
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getModelParser = function(model){
+	newBase =  new Base(model);
+	
+	newBase.setModel(model);
+	
+	return newBase;
+};
+/*----------------------------------------------------------------------------*/
+
 Base.prototype.makeModulePath = function(packagedTypeStr) {
 	var type = '';
 	

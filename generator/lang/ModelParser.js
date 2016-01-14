@@ -26,20 +26,23 @@ ModelParser.prototype.constructor = function(model) {
 	
 	this.modelExt = 'json';
 	
+	this.numericTypeList = ["float", "double", "short", "integer", "tiny"];
+	this.stringTypeList = ["string", "char"];
+	this.logicalTypeList = ["boolean"];
 };
 /******************************************************************************/
 /* Type Functions */
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.numericTypes = function(){
-	return ["float", "double", "short", "integer", "tiny"];
+	return this.numericTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.stringTypes = function(){
-	return ["string", "char"];
+	return this.stringTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.logicalTypes = function(){
-	return ["boolean"];
+	return this.logicalTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.allAtomicTypes = function(){

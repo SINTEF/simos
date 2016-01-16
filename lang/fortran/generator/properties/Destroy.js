@@ -23,8 +23,9 @@ Destroy.prototype.destroyClass = function(bl) {
 
 	cmd.push(this.gbl(bl) + "subroutine destroy(this)");
 	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
-	cmd.push(this.gbl(bl+1) + "integer :: idx,idy,idz");
-
+	if (this.hasNonAtomicArray())
+		cmd.push(this.indexVariablesForLooping(bl+1, this.maxRankOfNonAtomicArrays()) );
+	
 	/* initializing properties */
 	var properties = this.getProperties();
 	var propNum = properties.length;
@@ -58,31 +59,12 @@ Destroy.prototype.destroyClass = function(bl) {
 				addBL = 1;
 			}
 				
-			if (dimList.length == 1) {
-				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-				cmd.push(this.gbl(bl+addBL+2) + 	"call this%"+ prop.name + "(idx)%destroy()");
-				cmd.push(this.gbl(bl+addBL+1) + "end do");
-			}
-			else if (dimList.length == 2) {
-				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-				cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(this%" + prop.name + ",2)");
-				cmd.push(this.gbl(bl+addBL+3) + 		"call this%"+ prop.name + "(idx,idy)%destroy()");
-				cmd.push(this.gbl(bl+addBL+2) + 	"end do");
-				cmd.push(this.gbl(bl+addBL+1) + "end do");
-			}			
-			else if (dimList.length == 3) {
-				cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(this%" + prop.name + ",1)");
-				cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(this%" + prop.name + ",2)");
-				cmd.push(this.gbl(bl+addBL+3) + 		"do " + "idz=1,size(this%" + prop.name + ",3)");				
-				cmd.push(this.gbl(bl+addBL+4) + 			"call this%"+ prop.name + "(idx,idy,idz)%destroy()");
-				cmd.push(this.gbl(bl+addBL+3) + 		"end do");				
-				cmd.push(this.gbl(bl+addBL+2) + 	"end do");
-				cmd.push(this.gbl(bl+addBL+1) + "end do");
-			}				
-			else {
-				throw "destroyClass is not implemented for object array of more than three dimensions.";
-			}
-			
+			var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
+			var nbl = loopBlock.bl;
+			cmd.push(loopBlock.cmd);
+				cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%destroy()");
+			cmd.push(loopBlock.endCmd);
+						
 			if ( this.isAllocatable(prop) ) {
 				cmd.push(this.gbl(bl+2) + 	"deallocate(this%" + prop.name + ")");
 				cmd.push(this.gbl(bl+1) + "end if");

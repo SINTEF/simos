@@ -64,9 +64,12 @@ Base.prototype.constructor = function(model) {
 	    "char"		:"character",
 	    "char256"	:"character",
 	    "tiny"		:"int",
+	    "complex"	:"complex",
 	    "object"	:"object"
 	};
-
+	if (this.numericTypeList.indexOf('complex') == -1)
+		this.numericTypeList.push('complex');
+	
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
 	                       {'name': 'StringUtil', 'lib': 'fcore'},
@@ -102,7 +105,8 @@ Base.prototype.constructor = function(model) {
 Base.prototype.setModel = function(model){
 	CommonLangBase.prototype.setModel(model);
 	
-	this.numericTypeList.push('complex');
+	if (this.numericTypeList.indexOf('complex') == -1)
+		this.numericTypeList.push('complex');
 };
 /*----------------------------------------------------------------------------*/
 Base.prototype.getModelParser = function(model){
@@ -478,17 +482,26 @@ Base.prototype.getArrayShape = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
-Base.prototype.getLoopBlockForArray = function(bl, prop) {
+Base.prototype.getLoopBlockForProp = function(bl, prop) {
+	/*
+	 * looping over a prop*/
+
+	return this.getLoopBlockForArray(bl, "this%" + prop.name, this.getDimensionList(prop).length);
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getLoopBlockForArray = function(bl, arr, rank) {
+	/*
+	 * arr: the variable to do loop over
+	 * rank: the rank of the array for looping*/
 	var cmd = [];
 	var endCmd = [];
 	
-	var dimList = this.getDimensionList(prop);
 	var indNames = [];
-	for (var di =1; di<=dimList.length; di++) {
+	for (var di =1; di<=rank; di++) {
 		var indName = 'idx' + (di);
 		indNames.push(indName);
 		
-		cmd.push(this.gbl(bl+ (di-1) ) + 	 'do ' + indName + ' = 1,size(this%' + prop.name + ', ' + di + ')' );
+		cmd.push(this.gbl(bl+ (di-1) ) + 	 'do ' + indName + ' = 1,size(' + arr + ', ' + di + ')' );
 
 		endCmd.push(this.gbl(bl+ (di-1) ) +  'end do' );
 
@@ -500,7 +513,7 @@ Base.prototype.getLoopBlockForArray = function(bl, prop) {
 			'indNames': indNames,
 			'indList': indList,
 			'indArray': indArray,
-			'bl': bl+(dimList.length)-1,
+			'bl': bl+(rank)-1,
 			'endCmd': endCmd.reverse().join('\n') };
 };
 
@@ -704,6 +717,298 @@ Base.prototype.isAllocatable = function(prop) {
         return true;
     else
         return false;
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasBoolean = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean'))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasBooleanSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasBooleanArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasAtomicArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (this.isAtomic(prop) && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasNonAtomic = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) )
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasNonAtomicArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplex = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex'))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplexSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplexArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex') && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
+	
+	if (bl == undefined) {
+		bl = 0;
+	}
+	if (varName == undefined) {
+		throw "allocation command must be specified.";
+	}
+	if (statVar == undefined) {
+		statVar = "sv";
+	}
+	if (errorVar == undefined) {
+		errorVar = "error";
+	}	
+	if (msg == undefined) {
+		msg = "Error when allocating memory.";
+	}	
+	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 	"allocate("+ varName + ",stat=" + statVar +")");
+	cmd.push(this.gbl(bl) + 	"if (" + statVar + ".ne.0) then");
+	cmd.push(this.gbl(bl+1) + 		errorVar + "=-1");
+	cmd.push(this.gbl(bl+1) + 		"write(*,*) '" + msg + "'");
+	cmd.push(this.gbl(bl) + 	"end if");			
+
+	return cmd.join('\n'); 
+};
+
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempVariablesForSavingAndLoadingLogicals = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var tempVariables = []
+	var dec = ''
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		
+		if (prop.type=='boolean'){
+		    
+		    if (this.isArray(prop)) {
+		        var dimList = this.getDimensionList(prop);
+		        var arrDim = Array.apply(null, Array(dimList.length)).map(function(){return ':'})
+		        
+		        dec = this.gbl(bl) + 'integer, dimension(' + arrDim.join(',') +'), allocatable :: logicalToIntArray' + dimList.length;
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		    else {
+		        dec = this.gbl(bl) + 'integer :: logicalToIntSingle';
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		}
+	}
+	
+	return tempVariables.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempVariablesForLoadingComplexVariables = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var tempVariables = []
+	var dec = ''
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		
+		if (prop.type=='complex'){
+		    
+		    if (this.isArray(prop)) {
+		        var dimList = this.getDimensionList(prop);
+		        var arrDim = Array.apply(null, Array(dimList.length)).map(function(){return ':'})
+		        
+		        dec = this.gbl(bl) + 'double precision, dimension(' + arrDim.join(',') +'), allocatable :: readOfComplexArr' + dimList.length + ', imagOfComplexArr' + dimList.length;
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);		        
+		    }
+		    else {
+		        dec = this.gbl(bl) + 'double precision :: realOfComplexSingle, imagOfComplexSingle';
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		}
+	}
+	
+	return tempVariables.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempIndexVariablesForSavingAndLoading = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	
+	var maxDim = 0;
+	
+	if (this.maxRankOfBooleanArrays() > maxDim)
+		maxDim = this.maxRankOfBooleanArrays();
+	if (this.maxRankOfNonAtomicArrays() > maxDim)
+		maxDim = this.maxRankOfNonAtomicArrays();
+	
+	return this.indexVariablesForLooping(bl, maxDim);
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.maxRankOfBooleanArrays = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var maxDim = 0;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type=='boolean') && this.isArray(prop)){
+	        var dimList = this.getDimensionList(prop);
+	        if (dimList.length > maxDim)
+	        	maxDim = dimList.length;
+		}
+		
+	}
+	
+	return maxDim;
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.maxRankOfNonAtomicArrays = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var maxDim = 0;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) && this.isArray(prop)){
+	        var dimList = this.getDimensionList(prop);
+	        if (dimList.length > maxDim)
+	        	maxDim = dimList.length;    
+		}
+		
+	}
+	
+	return maxDim;
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.indexVariablesForLooping = function(bl, num) {
+
+	var tempVariables = [];
+	                     
+	for (var i=1; i<=num; i++){
+	    tempVariables.push('idx' + i);
+	}
+	
+	return (this.gbl(bl) + 'integer :: ' +tempVariables.join(','));
 
 };
 /*----------------------------------------------------------------------------*/

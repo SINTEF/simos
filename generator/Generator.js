@@ -302,7 +302,7 @@ Generator.prototype.getModel = function(modelID) {
 	var model = require(modelPath);
 	
 	return new ModelParser(model);
-	
+	//return this.lang.getModelParser(model);
 };
 
 /*----------------------------------------------------------------------------*/

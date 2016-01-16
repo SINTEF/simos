@@ -23,14 +23,29 @@ SetGet.prototype.setEqualTo = function(bl) {
 	cmd.push(this.gbl(bl) + "subroutine setEqualTo(this, obj)");
 	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
 	cmd.push(this.gbl(bl+1) + "type(" + this.getTypeName() + "),intent(in)"+ " :: obj");
-	cmd.push(this.gbl(bl+1) + "integer :: idx,idy");
-	cmd.push(this.gbl(bl+1) + "integer,dimension(:),allocatable :: diml");
-
-	cmd.push(this.gbl(bl+1) + "call this%destroy()");
-
-	/* initializing properties */
+	
+	/* internal variables */
+	
+	if (this.hasNonAtomicArray()) {
+		cmd.push(this.indexVariablesForLooping(bl+1, this.maxRankOfNonAtomicArrays()) );
+	}
+		
 	var properties = this.getProperties();
 	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
+		    cmd.push(this.gbl(bl+1) + "integer,dimension(:),allocatable :: diml");
+		    break
+		}
+	}
+	
+	    
+	
+    /* end of internal variables */
+	
+	cmd.push(this.gbl(bl+1) + "call this%destroy()");
 
 
 	/* Loop over each property */
@@ -39,84 +54,65 @@ SetGet.prototype.setEqualTo = function(bl) {
 		var dimList = 0;
 		var p=0
 
-				if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){			
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){			
 
-					cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
-					dimList = this.getDimensionList(prop);
+			cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+			dimList = this.getDimensionList(prop);
 
-					cmd.push(this.gbl(bl+2) + "allocate(diml(" + dimList.length + "))");
-					cmd.push(this.gbl(bl+2) + "diml=shape(obj%" + prop.name + ")");
-					var sizeList=[];
-					for(var k=0; k< dimList.length;k++) {
-						p=k+1
-								sizeList += ["diml(" + p + ")"]
-										if (k<(dimList.length-1)){
-											sizeList += [","]
-										}
+			cmd.push(this.allocateBlock(bl+2, "diml(" + dimList.length + ")",
+													"sv", "error", 
+													"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
+			
+			cmd.push(this.gbl(bl+2) + 	"diml=shape(obj%" + prop.name + ")");
+			var sizeList=[];
+			for(var k=0; k< dimList.length;k++) {
+				sizeList.push("diml(" + k+1 + ")")
+			}
+			cmd.push(this.allocateBlock(bl+2, 	"this%" + prop.name + "(" + sizeList.join(',') + ")",
+												"sv", "error", 
+												"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate array for " + prop.name));
+			cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=obj%" + prop.name);
+			cmd.push(this.gbl(bl+2) + 	"deallocate(diml)");
+			cmd.push(this.gbl(bl+1) + "end if");
 
-					}
 
-					cmd.push(this.gbl(bl+2) + "allocate(this%" + prop.name + "(" + sizeList + "))");
-					cmd.push(this.gbl(bl+2) + "this%" + prop.name + "=obj%" + prop.name);
-					cmd.push(this.gbl(bl+2) + "deallocate(diml)");
-					cmd.push(this.gbl(bl+1) + "end if");
+		}
+		else if (this.isArray(prop) && this.isAtomic(prop) && prop.type != 'string' && (! this.isAllocatable(prop))){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if (this.isSingle(prop) && (this.isAtomic(prop))){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if (this.isSingle(prop) && (! this.isAtomic(prop))){
+			cmd.push(this.gbl(bl+1) + "call this%"+ prop.name + "%setEqualTo(obj%" + prop.name + ")"); 
+		}
+		else if ((this.isSingle(prop)) && (prop.type == 'string')){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if ((this.isArray(prop)) && (prop.type == 'string')){
+			throw "setEqualTo is not implemented for array of String instances.";
+		}
+		else if (this.isArray(prop) && (! this.isAtomic(prop)) ){
+			dimList = this.getDimensionList(prop);
+			var addBL = 0;
 
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1)))");
+				addBL = 1;
+			}
 
-				}
-				else if (this.isArray(prop) && this.isAtomic(prop) && prop.type != 'string' && (! this.isAllocatable(prop))){
-					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
-				}
-				else if (this.isSingle(prop) && (this.isAtomic(prop))){
-					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
-				}
-				else if (this.isSingle(prop) && (! this.isAtomic(prop))){
-					cmd.push(this.gbl(bl+1) + "call this%"+ prop.name + "%setEqualTo(obj%" + prop.name + ")"); 
-				}
-				else if ((this.isSingle(prop)) && (prop.type == 'string')){
-					cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
-				}
-				else if ((this.isArray(prop)) && (prop.type == 'string')){
-					throw "setEqualTo is not implemented for array of String instances.";
-				}
-				else if (this.isArray(prop) && (! this.isAtomic(prop)) ){
-					dimList = this.getDimensionList(prop);
-					var addBL = 0;
-
-					if ( this.isAllocatable(prop) ) {
-						cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
-						cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1)))");
-						addBL = 1;
-					}
-
-					if (dimList.length == 1){
-						cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(obj%" + prop.name + ",1)");
-						cmd.push(this.gbl(bl+addBL+2) + 	"call this%"+ prop.name + "(idx)%setEqualTo(obj%" + prop.name + "(idx))");
-						cmd.push(this.gbl(bl+addBL+1) + "end do");
-					}
-					else if (dimList.length == 2){
-						cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(obj%" + prop.name + ",1)");
-						cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(obj%" + prop.name + ",2)");
-						cmd.push(this.gbl(bl+addBL+3) + 		"call this%"+ prop.name + "(idx,idy)%setEqualTo(obj%" + prop.name + "(idx,idy))");
-						cmd.push(this.gbl(bl+addBL+2) + 	"end do");
-						cmd.push(this.gbl(bl+addBL+1) + "end do");						
-					}	
-					else if (dimList.length == 3){
-						cmd.push(this.gbl(bl+addBL+1) + "do " + "idx=1,size(obj%" + prop.name + ",1)");
-						cmd.push(this.gbl(bl+addBL+2) + 	"do " + "idy=1,size(obj%" + prop.name + ",2)");
-						cmd.push(this.gbl(bl+addBL+3) + 		"do " + "idz=1,size(obj%" + prop.name + ",3)");						
-						cmd.push(this.gbl(bl+addBL+4) + 			"call this%"+ prop.name + "(idx,idy,idz)%setEqualTo(obj%" + prop.name + "(idx,idy,idz))");
-						cmd.push(this.gbl(bl+addBL+3) + 		"end do");						
-						cmd.push(this.gbl(bl+addBL+2) + 	"end do");
-						cmd.push(this.gbl(bl+addBL+1) + "end do");						
-					}						
-					else {
-						throw "setEqualTo is not implemented for object array of more than three dimensions.";
-					}
-					if ( this.isAllocatable(prop) ) {
-						cmd.push(this.gbl(bl+1) + "end if");
-					}
-					
-				}
+			var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
+			var nbl = loopBlock.bl;
+			cmd.push(loopBlock.cmd);
+				cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%setEqualTo(obj%" + prop.name + loopBlock.indArray +")");								
+			cmd.push(loopBlock.endCmd);
+			
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
+			
+		}
 
 	} /* end of property loop*/
 

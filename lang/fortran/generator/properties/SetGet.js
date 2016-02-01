@@ -33,13 +33,19 @@ SetGet.prototype.setEqualTo = function(bl) {
 	var properties = this.getProperties();
 	var propNum = properties.length;
 	
-	for(var i = 0; i < propNum; i++) {
-		var prop = properties[i];
-		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
-		    cmd.push(this.gbl(bl+1) + "integer,dimension(:),allocatable :: diml");
-		    break
+	if (this.hasArray()){
+		cmd.push(this.gbl(bl+1) + "integer :: sv,error");
+		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml");
 		}
-	}
+	//if (this.hasBoolean())
+	//	cmd.push(this.tempVariablesForSavingAndLoadingLogicals(bl+1));
+	//if (this.hasBooleanArray() || this.hasNonAtomicArray())
+	//	cmd.push(this.tempIndexVariablesForSavingAndLoading(bl+1));
+	//if (this.hasNonAtomic())
+	//	cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex");	    
+	//if (this.hasNonAtomicArray())
+	//	cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
+	//	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 	
 	    
 	
@@ -98,8 +104,12 @@ SetGet.prototype.setEqualTo = function(bl) {
 
 			if ( this.isAllocatable(prop) ) {
 				cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+				if (dimList.length==1){
 				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1)))");
-				addBL = 1;
+				addBL = 1;}
+				if (dimList.length==2){
+				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1),size(obj%" + prop.name + ",2)))");
+				addBL = 1;}
 			}
 
 			var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);

@@ -64,7 +64,7 @@ Base.prototype.constructor = function(model) {
 	    "char"		:"character",
 	    "char256"	:"character",
 	    "tiny"		:"int",
-	    "complex"	:"complex",
+	    "complex"	:"complex(dp)",
 	    "object"	:"object"
 	};
 	if (this.numericTypeList.indexOf('complex') == -1)
@@ -72,8 +72,8 @@ Base.prototype.constructor = function(model) {
 	
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
-	                       {'name': 'StringUtil', 'lib': 'fcore'},
-	                       {'name': 'h5accessor_f', 'lib': 'h5accessor_f'}];
+	                       {'name': 'StringUtil', 'lib': 'fcore'}];
+	                      // {'name': 'h5accessor_f', 'lib': 'h5accessor_f'}];
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -93,6 +93,9 @@ Base.prototype.constructor = function(model) {
                         "prop"    : {"start" : "!@@@@@ USER DEFINED PROPERTIES START @@@@@",
                                      "end"   : "!@@@@@ USER DEFINED PROPERTIES End   @@@@@",
                                      "code"  : ""},
+                        "interface" : {"start" : "!@@@@@ USER DEFINED INTERFACE DECLARATIONS START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED INTERFACE DECLARATIONS End   @@@@@",
+                                     "code"  : ""},                                     
                         "funcSig" : {"start" : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS START @@@@@",
                                      "end"   : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS End   @@@@@",
                                      "code"  : ""},

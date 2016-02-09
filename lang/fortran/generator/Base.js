@@ -72,8 +72,8 @@ Base.prototype.constructor = function(model) {
 	
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
-	                       {'name': 'StringUtil', 'lib': 'fcore'}];
-	                      // {'name': 'h5accessor_f', 'lib': 'h5accessor_f'}];
+	                       {'name': 'StringUtil', 'lib': 'fcore'},
+	                       {'name': 'h5accessor_f', 'lib': 'h5accessor_f'}];
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -853,6 +853,19 @@ Base.prototype.hasComplexArray = function() {
 	return false;
 };
 /*----------------------------------------------------------------------------*/
+Base.prototype.hasStringSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ( (prop.type == 'string') && this.isSingle(prop) && this.isAtomic(prop) )
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
 Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
 	
 	if (bl == undefined) {
@@ -931,7 +944,7 @@ Base.prototype.tempVariablesForLoadingComplexVariables = function(bl) {
 		        var dimList = this.getDimensionList(prop);
 		        var arrDim = Array.apply(null, Array(dimList.length)).map(function(){return ':'})
 		        
-		        dec = this.gbl(bl) + 'double precision, dimension(' + arrDim.join(',') +'), allocatable :: readOfComplexArr' + dimList.length + ', imagOfComplexArr' + dimList.length;
+		        dec = this.gbl(bl) + 'double precision, dimension(' + arrDim.join(',') +'), allocatable :: realOfComplexArr' + dimList.length + ', imagOfComplexArr' + dimList.length;
 		        if (tempVariables.indexOf(dec) == -1)
 		            tempVariables.push(dec);		        
 		    }
@@ -1005,8 +1018,11 @@ Base.prototype.maxRankOfNonAtomicArrays = function(bl) {
 /*----------------------------------------------------------------------------*/
 Base.prototype.indexVariablesForLooping = function(bl, num) {
 
+	if (num==0)
+		return '';
+	
 	var tempVariables = [];
-	                     
+	
 	for (var i=1; i<=num; i++){
 	    tempVariables.push('idx' + i);
 	}

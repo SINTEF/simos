@@ -60,8 +60,8 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.finalizeDeclaration(3));
 	cmd.push(entity.destroyDeclaration(3));
 	cmd.push(entity.setEqualToDeclaration(3));
-	//cmd.push(entity.saveH5Declaration(3));
-	//cmd.push(entity.loadH5Declaration(3));
+	cmd.push(entity.saveH5Declaration(3));
+	cmd.push(entity.loadH5Declaration(3));
 	cmd.push(entity.defaultInitDeclaration(3));
 	cmd.push(entity.isValidDeclaration(3));
 	cmd.push(entity.atomicArrayResizeDeclaration(3));
@@ -88,9 +88,9 @@ Generator.prototype.generate = function(model) {
 	cmd.push('    !-------------------------------Set and get---------------------------------');
 	cmd.push(entity.propSetGet(1));
 	cmd.push('    !-----------------------------  Save  --------------------------------------');
-//	cmd.push(entity.saveH5(1));
+	cmd.push(entity.saveH5(1));
 	cmd.push('    !-----------------------------  Load  --------------------------------------');
-//	cmd.push(entity.loadH5(1));
+	cmd.push(entity.loadH5(1));
 	cmd.push('    !-------------------------------Is valid -----------------------------------');
 	cmd.push(entity.isValid(1));
 	cmd.push('    !-------------------------------Resize functions----------------------------');

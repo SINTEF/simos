@@ -129,19 +129,23 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "! Internal variables");
 	cmd.push(this.gbl(bl+1) + "integer :: errorj");
 	
-	if (this.hasArray())
+	if (this.hasArray()){
 		cmd.push(this.gbl(bl+1) + "integer :: sv");
 		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml");
+	}
 	if (this.hasBoolean())
 		cmd.push(this.tempVariablesForSavingAndLoadingLogicals(bl+1));
+	
 	if (this.hasBooleanArray() || this.hasNonAtomicArray())
 		cmd.push(this.tempIndexVariablesForSavingAndLoading(bl+1));
+	
 	if (this.hasNonAtomic())
 		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex");	    
-	if (this.hasNonAtomicArray())
+	
+	if (this.hasNonAtomicArray()){
 		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
 		cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
-
+	}
 	
 	/* initializing properties */
 	var properties = this.getProperties();
@@ -280,9 +284,6 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				addBL = 1;
 			}
 			
-			if (dimList.length > 3) {
-				throw "savehdf5 is not implemented for object array of more than three dimensions.";
-			}
 			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")",
 													"sv", "error", 
 													"Error during saving of "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
@@ -315,6 +316,8 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 			cmd.push(this.gbl(bl+2) + 	"errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
 			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
 			cmd.push(this.gbl(bl+1) + "end if");
+			
+			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
 
 		}
 
@@ -322,7 +325,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 
 
 	} /* end of property loop*/
-	cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
+	
 	cmd.push(this.gbl(bl+1) + "! Error check");
 	cmd.push(this.gbl(bl+1) + "if (error.ne.0) then");
 	cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ":'" + ",error");

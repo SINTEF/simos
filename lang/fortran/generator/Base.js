@@ -894,7 +894,8 @@ Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
 	cmd.push(this.gbl(bl) + 	"allocate("+ varName + ",stat=" + statVar +")");
 	cmd.push(this.gbl(bl) + 	"if (" + statVar + ".ne.0) then");
 	cmd.push(this.gbl(bl+1) + 		errorVar + "=-1");
-	cmd.push(this.gbl(bl+1) + 		"write(*,*) '" + msg + "'");
+	//cmd.push(this.gbl(bl+1) + 		"write(*,*) '" + msg + "'");
+	cmd.push(this.gbl(bl+1) + 		"call throw('" + msg + "')");
 	cmd.push(this.gbl(bl) + 	"end if");			
 
 	return cmd.join('\n'); 
@@ -990,7 +991,7 @@ Base.prototype.tempIndexVariablesForSavingAndLoading = function(bl) {
 	if (this.maxRankOfNonAtomicArrays() > maxDim)
 		maxDim = this.maxRankOfNonAtomicArrays();
 	
-	return this.indexVariablesForLooping(bl, maxDim);
+	return this.indexVariablesForLoopingDec(bl, maxDim);
 
 };
 /*----------------------------------------------------------------------------*/
@@ -1034,7 +1035,7 @@ Base.prototype.maxRankOfNonAtomicArrays = function(bl) {
 
 };
 /*----------------------------------------------------------------------------*/
-Base.prototype.indexVariablesForLooping = function(bl, num) {
+Base.prototype.indexVariablesForLooping = function(num) {
 
 	if (num==0)
 		return '';
@@ -1045,7 +1046,16 @@ Base.prototype.indexVariablesForLooping = function(bl, num) {
 	    tempVariables.push('idx' + i);
 	}
 	
-	return (this.gbl(bl) + 'integer :: ' +tempVariables.join(','));
+	return (tempVariables);
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.indexVariablesForLoopingDec = function(bl, num) {
+
+	if (num==0)
+		return '';
+	
+	return (this.gbl(bl) + 'integer :: ' + this.indexVariablesForLooping(num).join(','));
 
 };
 /*----------------------------------------------------------------------------*/

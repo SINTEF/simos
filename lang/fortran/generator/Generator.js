@@ -64,7 +64,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.loadH5Declaration(3));
 	cmd.push(entity.defaultInitDeclaration(3));
 	cmd.push(entity.isValidDeclaration(3));
-	cmd.push(entity.atomicArrayResizeDeclaration(3));
+	cmd.push(entity.arrayResizeDeclaration(3));
 	cmd.push('    !---------------------------------------------------------------------------');
     cmd.push(entity.getUserDefinedCode("funcSig"));
 	cmd.push('    !---------------------------------------------------------------------------');
@@ -81,6 +81,8 @@ Generator.prototype.generate = function(model) {
 	cmd.push(entity.finalizeClassArr(1));
 	cmd.push('    !-------------------------------Destroyer-----------------------------------');
 	cmd.push(entity.destroyClass(1));
+	cmd.push('    !-------------------------------Destroyers----------------------------------');
+	cmd.push(entity.destroyProperties(1));	
 	cmd.push('    !-------------------------------SetEqualTo----------------------------------');
 	cmd.push(entity.setEqualTo(1));
 	cmd.push('    !-------------------------------Default initialization----------------------');
@@ -94,7 +96,7 @@ Generator.prototype.generate = function(model) {
 	cmd.push('    !-------------------------------Is valid -----------------------------------');
 	cmd.push(entity.isValid(1));
 	cmd.push('    !-------------------------------Resize functions----------------------------');
-	cmd.push(entity.atomicArrayResize(1));
+	cmd.push(entity.arrayResize(1));
 	cmd.push('    !---------------------------------------------------------------------------');
 
 	//cmd.push(entity.reprFunc(1));

@@ -27,7 +27,7 @@ SetGet.prototype.setEqualTo = function(bl) {
 	/* internal variables */
 	
 	if (this.hasNonAtomicArray()) {
-		cmd.push(this.indexVariablesForLooping(bl+1, this.maxRankOfNonAtomicArrays()) );
+		cmd.push(this.indexVariablesForLoopingDec(bl+1, this.maxRankOfNonAtomicArrays()) );
 	}
 		
 	var properties = this.getProperties();
@@ -133,7 +133,7 @@ SetGet.prototype.setEqualTo = function(bl) {
 
 };
 /*----------------------------------------------------------------------------*/
-SetGet.prototype.atomicArrayResizeDeclaration = function(bl) {
+SetGet.prototype.arrayResizeDeclaration = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -150,16 +150,30 @@ SetGet.prototype.atomicArrayResizeDeclaration = function(bl) {
 		var dimList = 0;
 		var p=0
 	
-		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
-			
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string') ){
 			cmd.push(this.gbl(bl) + "procedure, public :: resize_" + prop.name );
 		}
+		if (this.isArray(prop) && this.isAllocatable(prop) && (! this.isAtomic(prop) ) ){
+			cmd.push(this.gbl(bl) + "procedure, public :: resize_" + prop.name );
+		}		
 	}	
 	
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-SetGet.prototype.atomicArrayResize = function(bl) {
+SetGet.prototype.arrayResize = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.arrayResize(bl));
+
+	return cmd.join('\n');
+
+}
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.arrayResize = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -174,22 +188,51 @@ SetGet.prototype.atomicArrayResize = function(bl) {
 		var dimList = 0;
 		var p=0
 	
-		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){
+		if (this.isArray(prop) && this.isAllocatable(prop) && 
+				( (this.isAtomic(prop) && prop.type != 'string') || (!this.isAtomic(prop)) ) ){
+			
 		    dimList = this.getDimensionList(prop);
 			var sizeList=[];
 			for(var k=0; k< dimList.length;k++) {
 				sizeList.push("n" + k)
 			}
 			
+			cmd.push(this.gbl(bl) + this.sep2);
 			cmd.push(this.gbl(bl) + "subroutine resize_" + prop.name + "(this, " + sizeList.join(', ') + ")");
 			cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
 			cmd.push(this.gbl(bl+1) + "integer,intent(in) :: " + sizeList.join(', ') );
+			cmd.push(this.gbl(bl+1) + "!internal variables");
+			cmd.push(this.gbl(bl+1) + "integer :: error, sv");
+			if ( ! this.isAtomic(prop)) {
+				cmd.push(this.gbl(bl+1) + "type(String) :: name");
+				cmd.push(this.indexVariablesForLoopingDec(bl+1, dimList.length ) );
+			}
+			
+			cmd.push(this.gbl(bl+1) + "call this%destroy_" + prop.name + "()");
 
-			cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
-			cmd.push(this.gbl(bl+2) + 	"deallocate(this%" + prop.name + ")");
-			cmd.push(this.gbl(bl+1) + "end if");
-
-			cmd.push(this.gbl(bl+2) + "allocate(this%" + prop.name + "(" + sizeList + "))");
+			if (this.isAtomic(prop)) {
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")",
+						"sv", "error", 
+						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
+			}
+			else {					
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")",
+						"sv", "error", 
+						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
+				
+				var loopBlock = this.getLoopBlockForProp(bl+1,prop);
+				var nbl = loopBlock.bl;
+				cmd.push(loopBlock.cmd);
+					var loopVars = this.indexVariablesForLooping(dimList.length) 
+					var strIndex = [] 
+					for (var stri=0; stri<loopVars.length; stri++) {
+						strIndex.push( 'String("_") + toString(' + loopVars[stri] + ')')
+					}
+					cmd.push(this.gbl(nbl+1) + 	"name = '" + prop.name + "' + " + strIndex.join('+') );
+					cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%set_name(name%toChars())");
+				cmd.push(loopBlock.endCmd);
+				
+			}
 			
 			cmd.push(this.gbl(bl) + "end subroutine resize_" + prop.name);
 
@@ -198,6 +241,7 @@ SetGet.prototype.atomicArrayResize = function(bl) {
 
 	return cmd.join('\n');
 };
+
 /*----------------------------------------------------------------------------*/
 SetGet.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
 	if (bl == undefined) {

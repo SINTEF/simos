@@ -11,7 +11,8 @@ HDF5Load.prototype.loadH5Declaration = function(bl) {
 	}	
 	var cmd = [];
 
-	cmd.push(this.gbl(bl) + "generic, public :: load_HDF5 => load_HDF5_fromFileNameAndEntityName, load_HDF5_fromGroupIndex");
+	cmd.push(this.gbl(bl) + "generic, public :: load_HDF5 => load_HDF5_fromDefaultFile, load_HDF5_fromFileNameAndEntityName, load_HDF5_fromGroupIndex");
+	cmd.push(this.gbl(bl) + "procedure :: load_HDF5_fromDefaultFile");
 	cmd.push(this.gbl(bl) + "procedure :: load_HDF5_fromFileNameAndEntityName");
 	cmd.push(this.gbl(bl) + "procedure :: load_HDF5_fromGroupIndex");
 
@@ -23,7 +24,13 @@ HDF5Load.prototype.loadH5 = function(bl) {
 		bl = 0;
 	}	
 	var cmd = [];
+
+	cmd.push(this.load_HDF5_fromDefaultFile(bl));
 	
+	cmd.push(this.gbl(bl) + "");
+	cmd.push(this.gbl(bl) + this.sep2);
+	cmd.push(this.gbl(bl) + "");	
+
 	cmd.push(this.load_HDF5_fromFileNameAndEntityName(bl));
 	
 	cmd.push(this.gbl(bl) + "");
@@ -34,6 +41,29 @@ HDF5Load.prototype.loadH5 = function(bl) {
 
 	return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+HDF5Load.prototype.load_HDF5_fromDefaultFile = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine load_HDF5_fromDefaultFile(this,error)");
+	cmd.push(this.gbl(bl+1) + "implicit none");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "integer, intent(out) :: error ! =0: ok, =1: error during the saving procedure");	
+	
+	cmd.push(this.gbl(bl+1) + "!Internal variables, for proper cloning ");
+	cmd.push(this.gbl(bl+1) + "type(String) :: fileName");
+	cmd.push(this.gbl(bl+1) + "type(String) :: name");
+	cmd.push(this.gbl(bl+1))
+	cmd.push(this.gbl(bl+1) + "fileName = this%name%toChars()+'.h5'");
+	cmd.push(this.gbl(bl+1) + "name = this%name   !has to be cloned before loading");
+	cmd.push(this.gbl(bl+1) + "call this%load_HDF5_fromFileNameAndEntityName(fileName, name,error)");
+
+	cmd.push(this.gbl(bl) + "end subroutine load_HDF5_fromDefaultFile");
+	return cmd.join('\n');
+};	
 /*----------------------------------------------------------------------------*/
 HDF5Load.prototype.load_HDF5_fromFileNameAndEntityName = function(bl) {
 	if (bl == undefined) {
@@ -271,7 +301,7 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 				cmd.push(this.gbl(bl+1) + "end if");
 
 			}else if (prop.type=='string'){
-				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, 'name' // c_null_char,strSize)");
+				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, '" + prop.name + "' // c_null_char,strSize)");
 				cmd.push(this.gbl(bl+1) + "if (errorj.ge.0) then");
 				cmd.push(this.allocateBlock(bl+2, 	"character(len=strSize) :: cc_a",
 													"sv", "error", 

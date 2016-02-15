@@ -262,15 +262,26 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 			}	
 		}
 		else if (this.isSingle(prop) && (! this.isAtomic(prop))){
-			cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + "%isValid()) then");
-			cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
-			cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
-			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
-			cmd.push(this.gbl(bl+1) + "else");
-			cmd.push(this.gbl(bl+2) + 	"errorj=-1");
-			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
-			cmd.push(this.gbl(bl+2) + 	"write(*,*) 'warning: error during saving to hdf5 file. An object is not valid (i.e. does not have a name):" + prop.name + "'");
-			cmd.push(this.gbl(bl+1) + "end if");
+			if (this.isOptional(prop)) {
+				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + "%isValid()) then");
+				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "end if");				
+			}
+			else {
+				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + "%isValid()) then");
+				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "else");
+				cmd.push(this.gbl(bl+2) + 	"errorj=-1");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'error during saving to hdf5 file. A non-optional object is invalid (i.e. does not have a name):' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop))){
 			dimList = this.getDimensionList(prop);

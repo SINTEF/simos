@@ -73,7 +73,12 @@ Base.prototype.constructor = function(model) {
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
 	                       {'name': 'StringUtil', 'lib': 'fcore'},
-	                       {'name': 'h5accessor_f', 'lib': 'h5accessor_f'}];
+	                       {'name': 'h5accessor_f', 'lib': 'h5accessor_f'},
+	                       {'name': 'Exception_mod', 'lib': 'fcore'}];
+	
+	//an other possible general libs
+    //{'name': 'parameters, only: sp, dp', 'lib': 'parameters'},
+    
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -894,7 +899,20 @@ Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
 
 	return cmd.join('\n'); 
 };
+/*----------------------------------------------------------------------------*/
+Base.prototype.errorBlock = function(bl, errorVar, msg){
+	if ((bl == undefined)||(errorVar == undefined)||(msg == undefined)) {
+		throw('all input parameters must be provided.')
+	}
 
+	var cmd = [];
+	
+	cmd.push(					"if (" + errorVar + ".ne.0) then");
+	cmd.push(this.gbl(bl+1) + 		"call throw('" + msg + "')");
+	cmd.push(this.gbl(bl) + 	"end if");
+	
+	return cmd.join('\n'); 
+}
 /*----------------------------------------------------------------------------*/
 Base.prototype.tempVariablesForSavingAndLoadingLogicals = function(bl) {
 	var properties = this.getProperties();

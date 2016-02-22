@@ -10,9 +10,10 @@ Init.prototype.defaultInitDeclaration = function(bl) {
 	}	
 	var cmd = [];
 
-	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle, default_initFromSingleWiName");
+	cmd.push(this.gbl(bl) + "generic, public :: default_init => default_initFromSingle, default_initFromSingleWiNameFromChar, default_initFromSingleWiNameFromString");
 	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingle");
-	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiName");
+	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiNameFromChar");
+	cmd.push(this.gbl(bl) + "procedure :: default_initFromSingleWiNameFromString");
 	//cmd.push(this.gbl(bl) + "procedure,public :: default_initFromArray");
 	return cmd.join('\n');
 };
@@ -24,16 +25,25 @@ Init.prototype.defaultInit = function(bl) {
 	}	
 	var cmd = [];
 
-	cmd.push(this.gbl(bl) + "subroutine default_initFromSingleWiName(this, insName)");
+	cmd.push(this.gbl(bl) + "subroutine default_initFromSingleWiNameFromChar(this, insName)");
 	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
 	cmd.push(this.gbl(bl+1) + 	"character(*), intent(in) :: insName");
 	cmd.push(this.gbl(bl+1) + 	"");
 	cmd.push(this.gbl(bl+1) + 	"call this%default_initFromSingle()");
 	cmd.push(this.gbl(bl+1) + 	"! Set the default name of the object");
 	cmd.push(this.gbl(bl+1) + 	"call this%set_name(insName)");
-	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingleWiName");
+	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingleWiNameFromChar");
 	cmd.push(this.gbl(bl) + "");
 
+	cmd.push(this.gbl(bl) + "subroutine default_initFromSingleWiNameFromString(this, insName)");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"type(String), intent(in) :: insName");
+	cmd.push(this.gbl(bl+1) + 	"");
+	cmd.push(this.gbl(bl+1) + 	"call this%default_initFromSingle()");
+	cmd.push(this.gbl(bl+1) + 	"! Set the default name of the object");
+	cmd.push(this.gbl(bl+1) + 	"call this%set_name(insName)");
+	cmd.push(this.gbl(bl) + "end subroutine default_initFromSingleWiNameFromString");
+	cmd.push(this.gbl(bl) + "");	
 	
 	cmd.push(this.gbl(bl) + "subroutine default_initFromSingle(this)");
 	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");

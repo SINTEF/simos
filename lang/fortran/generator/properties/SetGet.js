@@ -166,18 +166,6 @@ SetGet.prototype.arrayResize = function(bl) {
 		bl = 0;
 	}	
 	var cmd = [];
-	
-	cmd.push(this.arrayResize(bl));
-
-	return cmd.join('\n');
-
-}
-/*----------------------------------------------------------------------------*/
-SetGet.prototype.arrayResize = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
 
 	/* initializing properties */
 	var properties = this.getProperties();
@@ -229,7 +217,7 @@ SetGet.prototype.arrayResize = function(bl) {
 						strIndex.push( 'String("_") + toString(' + loopVars[stri] + ')')
 					}
 					cmd.push(this.gbl(nbl+1) + 	"name = '" + prop.name + "' + " + strIndex.join('+') );
-					cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%set_name(name%toChars())");
+					cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%default_init(name%toChars())");
 				cmd.push(loopBlock.endCmd);
 				
 			}

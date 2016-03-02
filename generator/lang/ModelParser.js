@@ -26,7 +26,7 @@ ModelParser.prototype.constructor = function(model) {
 	
 	this.modelExt = 'json';
 	
-	this.numericTypeList = ["float", "double", "short", "integer", "tiny", "complex"];
+	this.numericTypeList = ["float", "real", "double", "short", "integer", "tiny", "complex"];
 	this.stringTypeList = ["string", "char"];
 	this.logicalTypeList = ["boolean"];
 };

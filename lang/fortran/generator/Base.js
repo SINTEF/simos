@@ -57,6 +57,7 @@ Base.prototype.constructor = function(model) {
 	this.targetType = {
 	    "float"		:"float",
 	    "double"	:"double precision",
+	    "real"		:"real",
 	    "short"		:"int",
 	    "integer"	:"integer",
 	    "boolean"	:"logical",
@@ -69,6 +70,8 @@ Base.prototype.constructor = function(model) {
 	};
 	if (this.numericTypeList.indexOf('complex') == -1)
 		this.numericTypeList.push('complex');
+	if (this.numericTypeList.indexOf('real') == -1)
+		this.numericTypeList.push('real');	
 	
 	/*a list of modules/libs to be important for all files*/
 	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},

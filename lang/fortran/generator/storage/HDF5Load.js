@@ -319,10 +319,15 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");
 			cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%load_HDF5_fromGroupIndex(subGroupIndex,errorj)");			
 			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");			
-			cmd.push(this.gbl(bl+1) + "else");
-			cmd.push(this.gbl(bl+2) + 	"error=error-1");
-			cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ", group not found: " + prop.name + "'");
-			cmd.push(this.gbl(bl+1) + "end if");
+			if (this.isOptional(prop)) {
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
+			else {
+				cmd.push(this.gbl(bl+1) + "else");
+				cmd.push(this.gbl(bl+2) + 	"error=error-1");
+				cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ", group not found: " + prop.name + "'");
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
 		}
 		else if (this.isArray(prop) && (! this.isAtomic(prop))){
 			dimList = this.getDimensionList(prop);

@@ -911,7 +911,7 @@ Base.prototype.errorBlock = function(bl, errorVar, msg){
 
 	var cmd = [];
 	
-	cmd.push(					"if (" + errorVar + ".ne.0) then");
+	cmd.push(					"if (" + errorVar + ".le.0) then");
 	cmd.push(this.gbl(bl+1) + 		"call throw('" + msg + "')");
 	cmd.push(this.gbl(bl) + 	"end if");
 	

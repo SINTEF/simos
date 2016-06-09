@@ -83,7 +83,9 @@ HDF5Save.prototype.save_HDF5_toNewDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "inquire(file=fileName%toChars(),exist=there)");
 	cmd.push(this.gbl(bl+1) + "if (there) then");
 	cmd.push(this.gbl(bl+2) + 	"errorj = H5A_RemoveDatabase( fileName%toChars() // c_null_char)");
-	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"end if");
 	cmd.push(this.gbl(bl+1) + "end if");
 
 	cmd.push(this.gbl(bl+1) + "");
@@ -95,14 +97,18 @@ HDF5Save.prototype.save_HDF5_toNewDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "if (this%isValid()) then");
 	cmd.push(this.gbl(bl+2) + 	"groupID = H5A_OpenOrCreateEntity(dataBaseID,this%name%toChars() // c_null_char)");
 	cmd.push(this.gbl(bl+2) + 	"call this%save_HDF5_toExistingDataBase(groupID,errorj)");
-	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"end if");
 	cmd.push(this.gbl(bl+1) + "end if");
 
 	cmd.push(this.gbl(bl+1) + "");
 	cmd.push(this.gbl(bl+1) + "! Close the data base");
 	cmd.push(this.gbl(bl+1) + "errorj = H5A_CloseDatabase(dataBaseID)");
-	cmd.push(this.gbl(bl+1) + "error = error + errorj");
-
+	cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+1) + "end if");
+	
 	cmd.push(this.gbl(bl+1) + "");
 	cmd.push(this.gbl(bl+1) + "! Error check");
 	cmd.push(this.gbl(bl+1) + "if (H5A_IS_ERROR(error)) then");
@@ -146,7 +152,13 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
 		cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 	}
-	
+
+	/* Only if complex properties exist in the class*/
+    if (this.hasComplex()) {
+    	cmd.push(this.gbl(bl+1) + "complex :: complexI=(0.0,1.0)");
+    	cmd.push(this.tempVariablesForLoadingComplexVariables(bl+1))
+    }
+    
 	/* initializing properties */
 	var properties = this.getProperties();
 	var propNum = properties.length;
@@ -159,8 +171,9 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 	cmd.push(this.gbl(bl+1) + "");
 	cmd.push(this.gbl(bl+1) + "! Save the class of the object");
 	cmd.push(this.gbl(bl+1) + "errorj=h5a_setType(groupIndex,'" + this.getType() + "' // c_null_char)");
-	cmd.push(this.gbl(bl+1) + "error=error+errorj");
-
+	cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+1) + "end if");
 
 	/* Loop over each property */
 	for(var i = 0; i < propNum; i++) {
@@ -188,18 +201,41 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 			cmd.push(this.gbl(bl+addBL+1) + 	"diml=shape(this%" + prop.name + ")");
 			if (prop.type=='double'){
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
-			}
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				}
 			else if (prop.type=='complex'){
-				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_RE" + "' // c_null_char," + dimList.length + ", diml, real(this%" + prop.name + ") )");
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
-				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_IM" + "' // c_null_char," + dimList.length + ", diml, aimag(this%" + prop.name + ") )");
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");				
+			    var realVarName = "realOfComplexArr"  + dimList.length;
+			    var imagVarName = "imagOfComplexArr"  + dimList.length;
+				cmd.push(this.allocateBlock(bl+addBL+1, 	realVarName + "(" + sizeList.join(',') + ")",
+													"sv", "error", 
+													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate real array for " + prop.name));
+				cmd.push(this.allocateBlock(bl+addBL+1, 	imagVarName + "(" + sizeList.join(',') + ")",
+													"sv", "error", 
+													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate imaginary array for " + prop.name));
+			    
+				cmd.push(this.gbl(bl+addBL+1) + realVarName + " = real(this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+addBL+1) + imagVarName + " = aimag(this%" + prop.name + ")");
+				
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_RE" + "' // c_null_char," + dimList.length + ", diml, " + realVarName + " )");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_IM" + "' // c_null_char," + dimList.length + ", diml, " + imagVarName + " )");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				
+				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" + realVarName + ")");
+				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" + imagVarName + ")");
 			}
 			else if (prop.type=='integer'){
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");	
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
-			}
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				}
 			else if (prop.type=='boolean'){
 			    var ltoiVarName = "logicalToIntArray"  + dimList.length;
 				cmd.push(this.allocateBlock(bl+addBL+1, ltoiVarName + "(" + sizeList.join(',') + ")",
@@ -216,7 +252,9 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 					cmd.push(this.gbl(nbl+1) + 	"end if");
 				cmd.push(loopBlock.endCmd);
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml," + ltoiVarName + ")");						
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
 				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" +ltoiVarName+")");
 			    
 			}
@@ -233,18 +271,26 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 		else if (this.isSingle(prop) && (this.isAtomic(prop))){
 			if (prop.type=='double'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
-			}
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
 			if (prop.type=='complex'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name+"_RE" + "' // c_null_char,real(this%" + prop.name + "))");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name+"_IM" + "' // c_null_char,aimag(this%" + prop.name + "))");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");				
-			}
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
 			else if (prop.type=='integer'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteInt(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");	
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
-			}
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
 			else if (prop.type=='boolean'){
 				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + ") then ");
 				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=1");
@@ -252,12 +298,16 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=0");
 				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteInt(groupIndex, '" + prop.name + "' // c_null_char,logicalToIntSingle)");	
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
-			}
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
 			else if (prop.type=='string'){
 				cmd.push(this.gbl(bl+1) + "if (.not.(this%" + prop.name + "%isEmpty())) then");
 				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_writeStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + "%toChars() // c_null_char)");		
-				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"end if");
 				cmd.push(this.gbl(bl+1) + "end if");
 			}	
 		}
@@ -267,7 +317,9 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
 				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
 				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
-				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"end if");
 				cmd.push(this.gbl(bl+1) + "end if");				
 			}
 			else {
@@ -275,11 +327,15 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
 				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
 				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
-				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"end if");
 				cmd.push(this.gbl(bl+1) + "else");
 				cmd.push(this.gbl(bl+2) + 	"errorj=-1");
 				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'error during saving to hdf5 file. A non-optional object is invalid (i.e. does not have a name):' + prop.name ) );
-				cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"end if");
 				cmd.push(this.gbl(bl+1) + "end if");
 			}
 		}
@@ -308,7 +364,9 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(nbl+1) +	"if (this%"+ prop.name + loopBlock.indArray + "%isValid()) then");   
 				cmd.push(this.gbl(nbl+2) + 		"subGroupIndex2 = H5A_OpenOrCreateEntity(subGroupIndex, this%"  + prop.name +  loopBlock.indArray + "%name%toChars() // c_null_char)");				
 				cmd.push(this.gbl(nbl+2) + 		"call this%"+ prop.name + loopBlock.indArray + "%save_hdf5(subGroupIndex2,errorj)");
-				cmd.push(this.gbl(nbl+2) + 		"error=error+errorj");
+				cmd.push(this.gbl(nbl+2) + 	    "if (errorj.lt.0) then");
+				cmd.push(this.gbl(nbl+3) + 			"error = error + errorj");
+				cmd.push(this.gbl(nbl+2) + 		"end if");
 				cmd.push(this.gbl(nbl+2) + 		"if (.not.(orderList%isEmpty())) then");
 				cmd.push(this.gbl(nbl+3) + 			"orderList=orderList+','");
 				cmd.push(this.gbl(nbl+2) + 		"end if");
@@ -325,7 +383,9 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 			
 			cmd.push(this.gbl(bl+1) + "if (.not.(orderList%isEmpty())) then");
 			cmd.push(this.gbl(bl+2) + 	"errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
-			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");
 			cmd.push(this.gbl(bl+1) + "end if");
 			
 			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");

@@ -103,7 +103,9 @@ HDF5Load.prototype.load_HDF5_fromFileNameAndEntityName = function(bl) {
 	cmd.push(this.gbl(bl+1) + "groupID = H5A_OpenEntity(dataBaseID,entityName%toChars() // c_null_char)");
 	cmd.push(this.gbl(bl+1) + "if (groupID.gt.0) then");
 	cmd.push(this.gbl(bl+2) + 	"call this%load_HDF5_fromGroupIndex(groupID,errorj)");
-	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"end if");
 	cmd.push(this.gbl(bl+1) + "else");
 	cmd.push(this.gbl(bl+2) + 	"error = error - 1");
 	cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ", group not found:'," + " entityName%toChars()");
@@ -112,8 +114,10 @@ HDF5Load.prototype.load_HDF5_fromFileNameAndEntityName = function(bl) {
 	cmd.push(this.gbl(bl+1) + "");
 	cmd.push(this.gbl(bl+1) + "! Close the data base");
 	cmd.push(this.gbl(bl+1) + "errorj = H5A_CloseDatabase(dataBaseID)");
-	cmd.push(this.gbl(bl+1) + "error = error + errorj");
-
+	cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+1) + "end if");
+	
 	cmd.push(this.gbl(bl+1) + "");
 	cmd.push(this.gbl(bl+1) + "! Error check");
 	cmd.push(this.gbl(bl+1) + "if (H5A_IS_ERROR(error)) then");
@@ -220,11 +224,14 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			}	
 			if (prop.type=='double'){
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_ReadDoubleArray(groupIndex,'" + prop.name + "' // c_null_char, this%" +  prop.name  + ")");
-				cmd.push(this.gbl(bl+addBL+1) + "error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				
 			}
 			else if (prop.type=='complex'){
 			    var realVarName = "realOfComplexArr"  + dimList.length
-			    var imagVarName = "realOfComplexArr"  + dimList.length
+			    var imagVarName = "imagOfComplexArr"  + dimList.length
 				cmd.push(this.allocateBlock(bl+addBL+1, 	realVarName + "(" + sizeList.join(',') + ")",
 													"sv", "error", 
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate real array for " + prop.name));
@@ -233,10 +240,14 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate imaginary array for " + prop.name));
 			    
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_ReadDoubleArray(groupIndex,'" + prop.name+"_RE" + "' // c_null_char, " + realVarName + ")");
-				cmd.push(this.gbl(bl+addBL+1) + "error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
 				
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_ReadDoubleArray(groupIndex,'" + prop.name+"_IM" + "' // c_null_char, " + imagVarName + ")");
-				cmd.push(this.gbl(bl+addBL+1) + "error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
 				
 				cmd.push(this.gbl(bl+addBL+1) + "this%" +  prop.name  + " = " + realVarName + " + complexI*" + imagVarName );
 				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" + realVarName + ")");
@@ -245,7 +256,9 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			}
 			else if (prop.type=='integer'){
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, this%" +  prop.name  + ")");	
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
 			}
 			else if (prop.type=='boolean'){
 			    var ltoiVarName = "logicalToIntArray"  + dimList.length;
@@ -254,7 +267,10 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 														"Error during loading of "+ this.getTypeName() + ", error when trying to allocate " +ltoiVarName+ " array for " + prop.name));
 			    
 				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_ReadIntArray(groupIndex,'" + prop.name + "' // c_null_char, " +ltoiVarName+ ")");
-				cmd.push(this.gbl(bl+addBL+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				
 				var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
 				var nbl = loopBlock.bl;
 				cmd.push(loopBlock.cmd);
@@ -278,22 +294,32 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 		else if (this.isSingle(prop) && (this.isAtomic(prop))){
 			if (prop.type=='double'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadDouble(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 			}
 			else if (prop.type=='complex'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadDouble(groupIndex, '" + prop.name+"_RE" + "' // c_null_char, realOfComplexSingle)");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadDouble(groupIndex, '" + prop.name+"_IM" + "' // c_null_char, imagOfComplexSingle)");
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");		
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "this%" +  prop.name  + " = realOfComplexSingle + complexI*imagOfComplexSingle");
 			}
 			else if (prop.type=='integer'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadInt(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");	
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 			}
 			else if (prop.type=='boolean'){
 				cmd.push(this.gbl(bl+1) + "errorj = H5A_ReadInt(groupIndex, '" + prop.name + "' // c_null_char,logicalToIntSingle)");	
-				cmd.push(this.gbl(bl+1) + "error=error+errorj");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+1) + "end if");
 				cmd.push(this.gbl(bl+1) + "if (logicalToIntSingle.eq.1) then ");
 				cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=.true.");
 				cmd.push(this.gbl(bl+1) + "else");
@@ -308,8 +334,11 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate name for " + prop.name));
 				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_ReadStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,cc_a)");		
 				cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=String(cc_a)");
-				cmd.push(this.gbl(bl+2) + 	"this%name=this%name%trim()");
+				cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=this%" + prop.name +"%trim()");
 				cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"end if");				
 				cmd.push(this.gbl(bl+1) + "end if");
 				
 			}	
@@ -318,7 +347,9 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
 			cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");
 			cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%load_HDF5_fromGroupIndex(subGroupIndex,errorj)");			
-			cmd.push(this.gbl(bl+2) + 	"error=error+errorj");			
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");			
 			if (this.isOptional(prop)) {
 				cmd.push(this.gbl(bl+1) + "end if");
 			}
@@ -349,7 +380,9 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
 			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
-			cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");			
 			cmd.push(this.gbl(bl+2) + 	"orderList=String(cc_a)");
 			cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
 			cmd.push(this.gbl(bl+2) + 	"call orderList%split(',', listOfNames)");
@@ -357,19 +390,31 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+2) + 	"! Read the arrDim attribute");
 			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetDimSize(subGroupIndex,arrDimSize)");
 			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
-			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", arrDim not found for array: " + prop.name + "'");
-			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
-			cmd.push(this.gbl(bl+2) + 	"end if");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'warning during loading of "+ this.getTypeName() + ", arrDim (rank) has not been found and is set to one for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"arrDimSize = 1");
+			cmd.push(this.gbl(bl+3) + 		"errorj = 0");
+			cmd.push(this.gbl(bl+2) + 	"end if");			
 			cmd.push(this.gbl(bl+2) + 	"if (arrDimSize.ne." + dimList.length + ") then");
 			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", arrDim length is not consistent with the data model for array: " + prop.name + "'");
 			cmd.push(this.gbl(bl+3) + 		"error = -1");
 			cmd.push(this.gbl(bl+2) + 	"end if");			
-			cmd.push(this.allocateBlock(bl+2, 	"arrDim(" + dimList.length + ")",
+			cmd.push(this.allocateBlock(bl+2, 	"arrDim(arrDimSize)",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate arrDim array for " + prop.name));
 			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetDim(subGroupIndex, arrDim)");
-			cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
-
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"if (arrDimSize.eq.1) then ");
+			cmd.push(this.gbl(bl+4) + 			"arrDim(1) = size(listOfNames)");
+			cmd.push(this.gbl(bl+4) + 			"errorj = 0");
+			cmd.push(this.gbl(bl+3) + 		"else");
+			cmd.push(this.gbl(bl+4) + 			"write(*,*) 'Error during loading of "+ this.getTypeName() + ", arrDim has not been found for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"end if");			
+			cmd.push(this.gbl(bl+2) + 	"end if");
+			
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");
+			
 			var allocateSizeList = []
 			for (var dimi=1; dimi<=dimList.length; dimi++) {
 			    allocateSizeList.push("arrDim(" + dimi + ")");
@@ -402,9 +447,11 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 
 			cmd.push(this.gbl(bl+3) + 		"if (subGroupIndex2.gt.0) then");
 			cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "("+ dimListVarNames.join(',') +")%load_HDF5_fromGroupIndex(subGroupIndex2,errorj)");			
-			cmd.push(this.gbl(bl+4) + 			"error=error+errorj");			
+			cmd.push(this.gbl(bl+4) + 			"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+5) + 				"error = error + errorj");
+			cmd.push(this.gbl(bl+4) + 			"end if");
 			cmd.push(this.gbl(bl+3) + 		"else");
-			cmd.push(this.gbl(bl+4) + 			"error=error-1");
+			cmd.push(this.gbl(bl+4) + 			"error=-1");
 			cmd.push(this.gbl(bl+4) + 			"write(*,*) 'Error during loading of "+ this.getTypeName() + ", group not found: ',listOfNames(idx)%toChars()");
 			cmd.push(this.gbl(bl+3) + 		"end if");
 			cmd.push(this.gbl(bl+2) + 	"end do");

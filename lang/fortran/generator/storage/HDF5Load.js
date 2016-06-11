@@ -159,8 +159,10 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 	if (this.hasNonAtomicArray()) {
 		cmd.push(this.gbl(bl+1) + "integer :: idx, idxMod");	
 		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
-		cmd.push(this.gbl(bl+1) + "integer :: orderSize,arrDimSize");
-		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: arrDim");		
+		cmd.push(this.gbl(bl+1) + "integer :: orderSize,orderRank, ordInd, arrDimSize");
+		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: arrDim");	
+		cmd.push(this.gbl(bl+1) + "integer, dimension(1) :: orderDim");			
+		cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: order_arr(:)");		
 		cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 		cmd.push(this.gbl(bl+1) + "type(String), allocatable ::listOfNames(:)");
 	}
@@ -198,8 +200,9 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 		var sizeList=[];
 		var k=0
 
-		cmd.push(this.gbl(bl+1) + "");
+		cmd.push(this.gbl(bl+1) + "!-------------------------------------------------------------------------");
 		cmd.push(this.gbl(bl+1) + "! Load property " + prop.name);
+		cmd.push(this.gbl(bl+1) + "!-------------------------------------------------------------------------");
 
 		if (this.isAtomic(prop) && this.isArray(prop)){
 			dimList = this.getDimensionList(prop);
@@ -346,6 +349,7 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 		else if (this.isSingle(prop) && (! this.isAtomic(prop))){
 			cmd.push(this.gbl(bl+1) + "subGroupIndex = H5A_OpenEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
 			cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");
+			cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%default_init('" + prop.name + "')");						
 			cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%load_HDF5_fromGroupIndex(subGroupIndex,errorj)");			
 			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
 			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
@@ -371,26 +375,59 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+1) + "if (subGroupIndex.gt.0) then");
 			
 			cmd.push(this.gbl(bl+2) + 	"! Read the order attribute");
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderRank(subGroupIndex,orderRank)");
+			cmd.push(this.gbl(bl+2) + 	"if (orderRank.ne.1) then");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order rank must be 1, for array: " + prop.name + "', orderRank, ' has been found' ");
+			cmd.push(this.gbl(bl+3) + 		"error = error - 1");
+			cmd.push(this.gbl(bl+2) + 	"end if");
+
+			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderDim(subGroupIndex,orderDim)");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order att. dimension could not be read for array: " + prop.name + "'");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+2) + 	"end if");
+
 			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrderSize(subGroupIndex,orderSize)");
 			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
 			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'Error during loading of "+ this.getTypeName() + ", order not found for array: " + prop.name + "'");
 			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
 			cmd.push(this.gbl(bl+2) + 	"end if");
-			cmd.push(this.allocateBlock(bl+2, 	"character(len=orderSize) :: cc_a",
+			
+			cmd.push(this.gbl(bl+2) +   "if (orderDim(1).gt.1) then");
+			cmd.push(this.allocateBlock(bl+3, 	"character(len=orderSize) :: order_arr(orderDim(1))",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
-			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
-			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
-			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
-			cmd.push(this.gbl(bl+2) + 	"end if");			
-			cmd.push(this.gbl(bl+2) + 	"orderList=String(cc_a)");
-			cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
-			cmd.push(this.gbl(bl+2) + 	"call orderList%split(',', listOfNames)");
-
+			cmd.push(this.gbl(bl+3) + 		"errorj = H5A_GetOrderArray(subGroupIndex, order_arr)");
+			cmd.push(this.gbl(bl+3) + 		"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+4) + 			"error = error + errorj");
+			cmd.push(this.gbl(bl+3) + 		"end if");	
+			cmd.push(this.allocateBlock(bl+3, 	"listOfNames(orderDim(1))",
+												"sv", "error", 
+												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate listOfNames for " + prop.name));
+			cmd.push(this.gbl(bl+3) + 		"do ordInd=1,orderDim(1)");
+			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd)=String(order_arr(ordInd))");
+			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd) = listOfNames(ordInd)%trim()");
+			cmd.push(this.gbl(bl+3) + 		"end do");			
+			cmd.push(this.gbl(bl+3) + 		"deallocate(order_arr)");
+			
+			cmd.push(this.gbl(bl+2) +   "else");
+			cmd.push(this.allocateBlock(bl+3, 	"character(len=orderSize) :: cc_a",
+												"sv", "error", 
+												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
+			cmd.push(this.gbl(bl+3) + 		"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
+			cmd.push(this.gbl(bl+3) + 		"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+4) + 			"error = error + errorj");
+			cmd.push(this.gbl(bl+3) + 		"end if");			
+			cmd.push(this.gbl(bl+3) + 		"orderList=String(cc_a)");
+			cmd.push(this.gbl(bl+3) + 		"deallocate(cc_a)");
+			cmd.push(this.gbl(bl+3) + 		"call orderList%split(',', listOfNames)");
+			cmd.push(this.gbl(bl+2) +   "end if");
+			
 			cmd.push(this.gbl(bl+2) + 	"! Read the arrDim attribute");
 			cmd.push(this.gbl(bl+2) + 	"errorj = H5A_GetDimSize(subGroupIndex,arrDimSize)");
+			
 			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
-			cmd.push(this.gbl(bl+3) + 		"write(*,*) 'warning during loading of "+ this.getTypeName() + ", arrDim (rank) has not been found and is set to one for array: " + prop.name + "'");
+			//cmd.push(this.gbl(bl+3) + 		"write(*,*) 'warning during loading of "+ this.getTypeName() + ", arrDim (rank) has not been found and is set to one for array: " + prop.name + "'");
 			cmd.push(this.gbl(bl+3) + 		"arrDimSize = 1");
 			cmd.push(this.gbl(bl+3) + 		"errorj = 0");
 			cmd.push(this.gbl(bl+2) + 	"end if");			
@@ -446,6 +483,7 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+3) + 		"idx" + dimList.length + " = idxMod");
 
 			cmd.push(this.gbl(bl+3) + 		"if (subGroupIndex2.gt.0) then");
+			cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "("+ dimListVarNames.join(',') +")%default_init(listOfNames(idx)%toChars())");								
 			cmd.push(this.gbl(bl+4) + 			"call this%" + prop.name + "("+ dimListVarNames.join(',') +")%load_HDF5_fromGroupIndex(subGroupIndex2,errorj)");			
 			cmd.push(this.gbl(bl+4) + 			"if (errorj.lt.0) then");
 			cmd.push(this.gbl(bl+5) + 				"error = error + errorj");

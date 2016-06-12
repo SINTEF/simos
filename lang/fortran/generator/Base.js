@@ -874,13 +874,16 @@ Base.prototype.hasStringSingle = function() {
 	return false;
 };
 /*----------------------------------------------------------------------------*/
-Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
+Base.prototype.allocateBlock = function(bl, allocateSize, varName, statVar, errorVar, msg){
 	
 	if (bl == undefined) {
 		bl = 0;
 	}
-	if (varName == undefined) {
+	if (allocateSize == undefined) {
 		throw "allocation command must be specified.";
+	}	
+	if (varName == undefined) {
+		throw "variable name must be specified.";
 	}
 	if (statVar == undefined) {
 		statVar = "sv";
@@ -893,8 +896,9 @@ Base.prototype.allocateBlock = function(bl, varName, statVar, errorVar, msg){
 	}	
 	
 	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 	"allocate("+ varName + ",stat=" + statVar +")");
+
+	cmd.push(this.gbl(bl) + 	"if (allocated("+ varName + ")) deallocate(" + varName +")");	
+	cmd.push(this.gbl(bl) + 	"allocate("+ allocateSize + ",stat=" + statVar +")");
 	cmd.push(this.gbl(bl) + 	"if (" + statVar + ".ne.0) then");
 	cmd.push(this.gbl(bl+1) + 		errorVar + "=-1");
 	//cmd.push(this.gbl(bl+1) + 		"write(*,*) '" + msg + "'");

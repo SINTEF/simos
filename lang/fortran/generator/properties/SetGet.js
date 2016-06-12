@@ -65,7 +65,7 @@ SetGet.prototype.setEqualTo = function(bl) {
 			cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
 			dimList = this.getDimensionList(prop);
 
-			cmd.push(this.allocateBlock(bl+2, "diml(" + dimList.length + ")",
+			cmd.push(this.allocateBlock(bl+2, "diml(" + dimList.length + ")", "diml",
 													"sv", "error", 
 													"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
 			
@@ -74,7 +74,7 @@ SetGet.prototype.setEqualTo = function(bl) {
 			for(var k=0; k< dimList.length;k++) {
 				sizeList.push("diml(" + k+1 + ")")
 			}
-			cmd.push(this.allocateBlock(bl+2, 	"this%" + prop.name + "(" + sizeList.join(',') + ")",
+			cmd.push(this.allocateBlock(bl+2, 	"this%" + prop.name + "(" + sizeList.join(',') + ")", "this%" + prop.name,
 												"sv", "error", 
 												"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate array for " + prop.name));
 			cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=obj%" + prop.name);
@@ -199,12 +199,12 @@ SetGet.prototype.arrayResize = function(bl) {
 			cmd.push(this.gbl(bl+1) + "call this%destroy_" + prop.name + "()");
 
 			if (this.isAtomic(prop)) {
-				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")",
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")", "this%" + prop.name,
 						"sv", "error", 
 						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
 			}
 			else {					
-				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")",
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")", "this%" + prop.name,
 						"sv", "error", 
 						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
 				

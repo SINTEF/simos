@@ -196,7 +196,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
 				addBL = 1;
 			}
-			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")",
+			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")", "diml",
 													"sv", "error", 
 													"Error during saving of "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
 			
@@ -211,10 +211,10 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 			else if (prop.type=='complex'){
 			    var realVarName = "realOfComplexArr"  + dimList.length;
 			    var imagVarName = "imagOfComplexArr"  + dimList.length;
-				cmd.push(this.allocateBlock(bl+addBL+1, 	realVarName + "(" + sizeList.join(',') + ")",
+				cmd.push(this.allocateBlock(bl+addBL+1, 	realVarName + "(" + sizeList.join(',') + ")", realVarName,
 													"sv", "error", 
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate real array for " + prop.name));
-				cmd.push(this.allocateBlock(bl+addBL+1, 	imagVarName + "(" + sizeList.join(',') + ")",
+				cmd.push(this.allocateBlock(bl+addBL+1, 	imagVarName + "(" + sizeList.join(',') + ")", imagVarName,
 													"sv", "error", 
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate imaginary array for " + prop.name));
 			    
@@ -244,7 +244,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				}
 			else if (prop.type=='boolean'){
 			    var ltoiVarName = "logicalToIntArray"  + dimList.length;
-				cmd.push(this.allocateBlock(bl+addBL+1, ltoiVarName + "(" + sizeList.join(',') + ")",
+				cmd.push(this.allocateBlock(bl+addBL+1, ltoiVarName + "(" + sizeList.join(',') + ")", ltoiVarName,
 														"sv", "error", 
 														"Error during saving of "+ this.getTypeName() + ", error when trying to allocate " +ltoiVarName+ " array for " + prop.name));
 			    
@@ -367,7 +367,7 @@ HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
 				addBL = 1;
 			}
 			
-			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")",
+			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")", "diml",
 													"sv", "error", 
 													"Error during saving of "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
 			

@@ -334,10 +334,11 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			}else if (prop.type=='string'){
 				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, '" + prop.name + "' // c_null_char,strSize)");
 				cmd.push(this.gbl(bl+1) + "if (errorj.ge.0) then");
-				cmd.push(this.allocateBlock(bl+2, 	"character :: cc_a(strSize)", "cc_a",
+				cmd.push(this.allocateBlock(bl+2, 	"character :: cc_a(strSize+1)", "cc_a",
 													"sv", "error", 
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate name for " + prop.name));
-				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_ReadStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,cc_a)");		
+				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_ReadStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,cc_a)");	
+				cmd.push(this.gbl(bl+2) + 	"cc_a(strSize+1) = c_null_char");
 				cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=String(cc_a)");
 				cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=this%" + prop.name +"%trim()");
 				cmd.push(this.gbl(bl+2) + 	"deallocate(cc_a)");
@@ -406,20 +407,26 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.allocateBlock(bl+3, 	"listOfNames(orderDim(1))", "listOfNames",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate listOfNames for " + prop.name));
+			cmd.push(this.allocateBlock(bl+3, 	"character :: cc_a(orderSize+1)", "cc_a",
+												"sv", "error", 
+												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));						
 			cmd.push(this.gbl(bl+3) + 		"do ordInd=1,orderDim(1)");
-			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd)=String(order_arr(:,ordInd))");
+			cmd.push(this.gbl(bl+4) + 			"cc_a(1:orderSize)=order_arr(:,ordInd)");	
+			cmd.push(this.gbl(bl+4) + 			"cc_a(orderSize+1)=c_null_char");						
+			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd)=String(cc_a)");
 			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd) = listOfNames(ordInd)%trim()");
 			cmd.push(this.gbl(bl+3) + 		"end do");			
 			cmd.push(this.gbl(bl+3) + 		"deallocate(order_arr)");
 			
 			cmd.push(this.gbl(bl+2) +   "else");
-			cmd.push(this.allocateBlock(bl+3, 	"character :: cc_a(orderSize)", "cc_a",
+			cmd.push(this.allocateBlock(bl+3, 	"character :: cc_a(orderSize+1)", "cc_a",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
 			cmd.push(this.gbl(bl+3) + 		"errorj = H5A_GetOrder(subGroupIndex, cc_a)");
 			cmd.push(this.gbl(bl+3) + 		"if (errorj.lt.0) then");
 			cmd.push(this.gbl(bl+4) + 			"error = error + errorj");
-			cmd.push(this.gbl(bl+3) + 		"end if");			
+			cmd.push(this.gbl(bl+3) + 		"end if");	
+			cmd.push(this.gbl(bl+3) + 		"cc_a(orderSize+1) = c_null_char");			
 			cmd.push(this.gbl(bl+3) + 		"orderList=String(cc_a)");
 			cmd.push(this.gbl(bl+3) + 		"deallocate(cc_a)");
 			cmd.push(this.gbl(bl+3) + 		"call orderList%split(',', listOfNames)");

@@ -162,12 +162,14 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 		cmd.push(this.gbl(bl+1) + "integer :: orderSize,orderRank, ordInd, arrDimSize");
 		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: arrDim");	
 		cmd.push(this.gbl(bl+1) + "integer, dimension(1) :: orderDim");			
-		cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: order_arr(:)");		
+		//cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: order_arr(:)");
+		cmd.push(this.gbl(bl+1) + "character(kind=c_char), allocatable :: order_arr(:,:)");		
 		cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
 		cmd.push(this.gbl(bl+1) + "type(String), allocatable ::listOfNames(:)");
 	}
 	if (this.hasNonAtomicArray() || this.hasStringSingle()) {
-		cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: cc_a");
+		//cmd.push(this.gbl(bl+1) + "character(kind=c_char, len=:), allocatable :: cc_a");
+		cmd.push(this.gbl(bl+1) + "character(kind=c_char), allocatable :: cc_a(:)");
 	}
 	
 	/* for objects */
@@ -332,7 +334,7 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			}else if (prop.type=='string'){
 				cmd.push(this.gbl(bl+1) + "errorj= H5A_getStringLength(groupIndex, '" + prop.name + "' // c_null_char,strSize)");
 				cmd.push(this.gbl(bl+1) + "if (errorj.ge.0) then");
-				cmd.push(this.allocateBlock(bl+2, 	"character(len=strSize) :: cc_a", "cc_a",
+				cmd.push(this.allocateBlock(bl+2, 	"character :: cc_a(strSize)", "cc_a",
 													"sv", "error", 
 													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate name for " + prop.name));
 				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_ReadStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,cc_a)");		
@@ -394,7 +396,7 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 			cmd.push(this.gbl(bl+2) + 	"end if");
 			
 			cmd.push(this.gbl(bl+2) +   "if (orderDim(1).gt.1) then");
-			cmd.push(this.allocateBlock(bl+3, 	"character(len=orderSize) :: order_arr(orderDim(1))", "order_arr",
+			cmd.push(this.allocateBlock(bl+3, 	"character :: order_arr(orderSize, orderDim(1))", "order_arr",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
 			cmd.push(this.gbl(bl+3) + 		"errorj = H5A_GetOrderArray(subGroupIndex, order_arr)");
@@ -405,13 +407,13 @@ HDF5Load.prototype.load_HDF5_fromGroupIndex = function(bl) {
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate listOfNames for " + prop.name));
 			cmd.push(this.gbl(bl+3) + 		"do ordInd=1,orderDim(1)");
-			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd)=String(order_arr(ordInd))");
+			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd)=String(order_arr(:,ordInd))");
 			cmd.push(this.gbl(bl+4) + 			"listOfNames(ordInd) = listOfNames(ordInd)%trim()");
 			cmd.push(this.gbl(bl+3) + 		"end do");			
 			cmd.push(this.gbl(bl+3) + 		"deallocate(order_arr)");
 			
 			cmd.push(this.gbl(bl+2) +   "else");
-			cmd.push(this.allocateBlock(bl+3, 	"character(len=orderSize) :: cc_a", "cc_a",
+			cmd.push(this.allocateBlock(bl+3, 	"character :: cc_a(orderSize)", "cc_a",
 												"sv", "error", 
 												"Error during loading of "+ this.getTypeName() + ", error when trying to allocate orderList for " + prop.name));			
 			cmd.push(this.gbl(bl+3) + 		"errorj = H5A_GetOrder(subGroupIndex, cc_a)");

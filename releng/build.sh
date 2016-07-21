@@ -19,7 +19,7 @@ fi
 mkdir -p build
 cd build || exit $?
 
-zip -r simos-$BUILD_ID-BUILD_TYPE-win64.zip ../src || exit $?
+zip -r simos-$BUILD_ID-BUILD_TYPE-win64.zip ../ || exit $?
 
 exit $?
 

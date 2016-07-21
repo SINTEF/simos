@@ -3,414 +3,424 @@ function HDF5Save(){
 };
 exports.HDF5Save = HDF5Save;
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveHDF5Func = function(bl) {
+HDF5Save.prototype.saveH5Declaration = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
-	cmd.push(this.gbl(bl) + 	'def saveHDF5(self,filePath=None, dsType = \'hdf5\'):');
-	cmd.push(this.gbl(bl+1) + 		'if (filePath == None):');
-	cmd.push(this.gbl(bl+2) + 			'if hasattr(self, \'name\'):');
-	cmd.push(this.gbl(bl+3) + 				'filePath = self.name + \'.h5\'');
-	cmd.push(this.gbl(bl+2) + 			'else:');
-	cmd.push(this.gbl(bl+3) + 				'raise Exception("object needs name for saving.")');
-	cmd.push(this.gbl(bl));
-	cmd.push(this.gbl(bl+1) + 		'print "\tSaving %s to %s ..."%(self.name, filePath)');
-	cmd.push(this.gbl(bl));
-	//cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE.backEnd == \'hdf5\'):');
-	//cmd.push(this.gbl(bl+2) + 			'if (filePath == self.STORAGE.filePath):');
-	cmd.push(this.gbl(bl+1) + 		'if (self.STORAGE):');
-	cmd.push(this.gbl(bl+2) + 			'if (self.STORAGE.backEnd == \'hdf5\'):');
-	cmd.push(this.gbl(bl+3) + 				'self.loadFromHDF5Handle(action="detach")');
-	cmd.push(this.gbl(bl+1) +		'storage = pyds.getDataStorageBackEndServer(dsType)');
-	cmd.push(this.gbl(bl+1) +		'storage.filePath = filePath');
-	cmd.push(this.gbl(bl+1) +		'storage.openWrite()');
-	cmd.push(this.gbl(bl));    
-	cmd.push(this.gbl(bl+1) +		'grpHandle = storage.handle');
-	cmd.push(this.gbl(bl+1) +		'self._saveVertionsToHDF5Handle(grpHandle)');
-	cmd.push(this.gbl(bl+1) +		'dgrp = grpHandle.create_group(self.name)' );
-	cmd.push(this.gbl(bl));     
-	cmd.push(this.gbl(bl+1) + 		'storage.appendPath(self.name)');
-	cmd.push(this.gbl(bl));
-	cmd.push(this.gbl(bl+1) +		'self._saved = {}');
-	cmd.push(this.gbl(bl+1) +		'if storage.backEnd == \'hdf5\':');
-	cmd.push(this.gbl(bl+2) +			'self.saveToHDF5Handle(dgrp)');
-	cmd.push(this.gbl(bl+1) +		'else:');
-	cmd.push(this.gbl(bl+2) +			'raise Exception("storage back-end " + self._storageBackEndType + " is not defined.")');
-	cmd.push(this.gbl(bl));       
-	cmd.push(this.gbl(bl+1) + 		'if storage.isOpen():');
-	cmd.push(this.gbl(bl+2) +			'storage.close()');
-	cmd.push(this.gbl(bl+1) +		'return storage');
-	
+
+	cmd.push(this.gbl(bl) + "generic, public :: save_HDF5 => save_HDF5_toNewDataBaseWiDefaultName, save_HDF5_toNewDataBase, save_HDF5_toExistingDataBase");
+	cmd.push(this.gbl(bl) + "procedure :: save_HDF5_toNewDataBaseWiDefaultName");
+	cmd.push(this.gbl(bl) + "procedure :: save_HDF5_toNewDataBase");
+	cmd.push(this.gbl(bl) + "procedure :: save_HDF5_toExistingDataBase");
+
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveVertionsToHDF5Handle = function(bl) {
+HDF5Save.prototype.saveH5 = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 
-	'def _saveVertionsToHDF5Handle(self, handle):');
+	cmd.push(this.save_HDF5_toNewDataBaseWiDefaultName(bl));
+	
+	cmd.push(this.gbl(bl) + "");
+	cmd.push(this.gbl(bl) + this.sep2);
+	cmd.push(this.gbl(bl) + "");	
 
-	/* putting accessed package names into the main root attributes */
-	var packages = this.getPackages();
-	for(var i = 0, len = packages.length; i< len; i++) {
-		var key = packages[i];
-		cmd.push(this.gbl(bl+1) + 
-		'handle.attrs[' + this.stringify(key) + '] = ' + this.stringify(this.getVersion(key)) );
+	cmd.push(this.save_HDF5_toNewDataBase(bl));
+
+	cmd.push(this.gbl(bl) + "");
+	cmd.push(this.gbl(bl) + this.sep2);
+	cmd.push(this.gbl(bl) + "");
+	
+	cmd.push(this.save_HDF5_toExistingDataBase(bl));
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+HDF5Save.prototype.save_HDF5_toNewDataBaseWiDefaultName = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine save_HDF5_toNewDataBaseWiDefaultName(this,error)");
+	cmd.push(this.gbl(bl+1) + 	"implicit none");
+	cmd.push(this.gbl(bl+1) + 	"class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + 	"integer, intent(out) :: error ! =0: ok, =1: error during the saving procedure");
+	cmd.push(this.gbl(bl+1) + 	"call this%save_HDF5_toNewDataBase(this%name+'.h5', error)");
+	cmd.push(this.gbl(bl) + "end subroutine save_HDF5_toNewDataBaseWiDefaultName");
+	
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
+HDF5Save.prototype.save_HDF5_toNewDataBase = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine save_HDF5_toNewDataBase(this,fileName,error)");
+	cmd.push(this.gbl(bl+1) + "implicit none");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "type(String), intent(in) :: fileName");
+	cmd.push(this.gbl(bl+1) + "integer, intent(out) :: error ! =0: ok, =1: error during the saving procedure");
+	cmd.push(this.gbl(bl+1) + "! Internal variables");
+	cmd.push(this.gbl(bl+1) + "logical :: there");
+	cmd.push(this.gbl(bl+1) + "integer :: dataBaseID, groupID,errorj");
+
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Initialization");
+	cmd.push(this.gbl(bl+1) + "error=0");
+	cmd.push(this.gbl(bl+1) + "errorj=0");
+	cmd.push(this.gbl(bl+1) + "call h5a_initialize('no config required')");
+
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Destroy database if already present");
+	cmd.push(this.gbl(bl+1) + "inquire(file=fileName%toChars(),exist=there)");
+	cmd.push(this.gbl(bl+1) + "if (there) then");
+	cmd.push(this.gbl(bl+2) + 	"errorj = H5A_RemoveDatabase( fileName%toChars() // c_null_char)");
+	cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"end if");
+	cmd.push(this.gbl(bl+1) + "end if");
+
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Create new database");
+	cmd.push(this.gbl(bl+1) + "dataBaseID = H5A_OpenOrCreateDatabase(fileName%toChars() // c_null_char)");
+
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Save the current object if it is valid");
+	cmd.push(this.gbl(bl+1) + "if (this%isValid()) then");
+	cmd.push(this.gbl(bl+2) + 	"groupID = H5A_OpenOrCreateEntity(dataBaseID,this%name%toChars() // c_null_char)");
+	cmd.push(this.gbl(bl+2) + 	"call this%save_HDF5_toExistingDataBase(groupID,errorj)");
+	cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+	cmd.push(this.gbl(bl+2) + 	"end if");
+	cmd.push(this.gbl(bl+1) + "end if");
+
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Close the data base");
+	cmd.push(this.gbl(bl+1) + "errorj = H5A_CloseDatabase(dataBaseID)");
+	cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+1) + "end if");
+	
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Error check");
+	cmd.push(this.gbl(bl+1) + "if (H5A_IS_ERROR(error)) then");
+	cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ":'" + ",error");
+	cmd.push(this.gbl(bl+1) + "end if");
+
+	cmd.push(this.gbl(bl) + "end subroutine save_HDF5_toNewDataBase");
+	
+	return cmd.join('\n');
+};
+    	
+/*----------------------------------------------------------------------------*/
+HDF5Save.prototype.save_HDF5_toExistingDataBase = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine save_HDF5_toExistingDataBase(this,groupIndex,error)");
+	cmd.push(this.gbl(bl+1) + "implicit none");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "integer, intent(in) :: groupIndex");
+	cmd.push(this.gbl(bl+1) + "integer, intent(out) :: error");
+	cmd.push(this.gbl(bl+1) + "! Internal variables");
+	cmd.push(this.gbl(bl+1) + "integer :: errorj");
+	
+	if (this.hasArray()){
+		cmd.push(this.gbl(bl+1) + "integer :: sv");
+		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml");
 	}
+	if (this.hasBoolean())
+		cmd.push(this.tempVariablesForSavingAndLoadingLogicals(bl+1));
 	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
+	if (this.hasBooleanArray() || this.hasNonAtomicArray())
+		cmd.push(this.tempIndexVariablesForSavingAndLoading(bl+1));
 	
-	return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5Handle = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
+	if (this.hasNonAtomic())
+		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex");	    
 	
-	cmd.push(this.gbl(bl) + 
-	'def saveToHDF5Handle(self, handle):');
+	if (this.hasNonAtomicArray()){
+		cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
+		cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
+	}
 
-	
-	cmd.push(this.gbl(bl+1) + 
-		'#first pass to save all contained items' );	
-	cmd.push(this.gbl(bl+1) + 
-		'self._saveDataToHDF5Handle(handle)' );
-	
+	/* Only if complex properties exist in the class*/
+    if (this.hasComplex()) {
+    	cmd.push(this.gbl(bl+1) + "complex :: complexI=(0.0,1.0)");
+    	cmd.push(this.tempVariablesForLoadingComplexVariables(bl+1))
+    }
+    
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Some initializations");
+	cmd.push(this.gbl(bl+1) + "error=0");
+	cmd.push(this.gbl(bl+1) + "errorj=0");
 
-	/*
-	cmd.push(this.gbl(bl+1) + 
-		'#second pass to link referenced  items' );	
-	cmd.push(this.gbl(bl+1) + 
-		'self._saveDataToHDF5Handle(handle)' );
-	*/
-	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	cmd.push(this.gbl(bl+1));
-	
-	return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
-	
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	/* ================================================== */
-	cmd.push(this.gbl(bl) + 
-	'def _saveDataToHDF5Handle(self, handle):');
-	
-	if (this.isDerived()) {
-		var superTypes = this.superTypes();
-		for (var i = 0; i<superTypes.length; i++){
-			var supType = superTypes[i];
-			cmd.push(this.gbl(bl+1) +
-					supType.name + '._saveDataToHDF5Handle(self,handle)');
+	/* write type */
+	cmd.push(this.gbl(bl+1) + "");
+	cmd.push(this.gbl(bl+1) + "! Save the class of the object");
+	cmd.push(this.gbl(bl+1) + "errorj=h5a_setType(groupIndex,'" + this.getType() + "' // c_null_char)");
+	cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+	cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+	cmd.push(this.gbl(bl+1) + "end if");
+
+	/* Loop over each property */
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+
+		cmd.push(this.gbl(bl+1) + "");
+		cmd.push(this.gbl(bl+1) + "!-------------------------------------------------------------------------");
+		cmd.push(this.gbl(bl+1) + "! Save property " + prop.name);
+		cmd.push(this.gbl(bl+1) + "!-------------------------------------------------------------------------");
+
+		if (this.isAtomic(prop) && this.isArray(prop)){
+			dimList = this.getDimensionList(prop);
+			var sizeList=[];
+			for(var k=1; k<= dimList.length;k++) {
+				sizeList.push("diml(" + k + ")")
+			}
+			var addBL = 0;
+			if (this.isAllocatable(prop)){ 
+				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
+				addBL = 1;
+			}
+			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")", "diml",
+													"sv", "error", 
+													"Error during saving of "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
+			
+			cmd.push(this.gbl(bl+addBL+1) + 	"diml=shape(this%" + prop.name + ")");
+			if (prop.type=='double'){
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call throw('Error during saving of " + prop.name + "')");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				}
+			else if (prop.type=='complex'){
+			    var realVarName = "realOfComplexArr"  + dimList.length;
+			    var imagVarName = "imagOfComplexArr"  + dimList.length;
+				cmd.push(this.allocateBlock(bl+addBL+1, 	realVarName + "(" + sizeList.join(',') + ")", realVarName,
+													"sv", "error", 
+													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate real array for " + prop.name));
+				cmd.push(this.allocateBlock(bl+addBL+1, 	imagVarName + "(" + sizeList.join(',') + ")", imagVarName,
+													"sv", "error", 
+													"Error during loading of "+ this.getTypeName() + ", error when trying to allocate imaginary array for " + prop.name));
+			    
+				cmd.push(this.gbl(bl+addBL+1) + realVarName + " = real(this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+addBL+1) + imagVarName + " = aimag(this%" + prop.name + ")");
 				
-		}
-
-		cmd.push(this.gbl(bl+1) + '');
-	}
-	
-	cmd.push(this.gbl(bl+1) + 
-		'self.REF = handle.ref');
-	
-	cmd.push(this.gbl(bl+1) + 
-		'handle.attrs["type"] = ' + this.stringify(this.typeID(this.getModel())) );
-
-	cmd.push(this.gbl(bl+1) + 
-		'handle.attrs["ID"] = self.ID' );
-
-	/* writing properties */
-	var properties = this.getProperties();
-	var propNum = properties.length;
-	
-	for(var i = 0; i < propNum; i++) {
-		var prop = properties[i];  
-
-		
-		/* writing the value */
-		if (this.isAtomicType(prop.type)) {
-			if(this.isArray(prop)){
-				/* array of atomic type */
-				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "AtomicArray")' );
-			 }
-			 else{
-				 /* single atomic type value */
-				cmd.push(this.gbl(bl+1) + 
-						'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "AtomicSingle")' );
-			 }
-		}
-		else {
-			/*
-			 * creating references and saving other complex types 'value' will
-			 * be a or an array of references
-			 */
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_RE" + "' // c_null_char," + dimList.length + ", diml, " + realVarName + " )");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteDoubleArray(groupIndex, '" + prop.name+"_IM" + "' // c_null_char," + dimList.length + ", diml, " + imagVarName + " )");
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				
+				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" + realVarName + ")");
+				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" + imagVarName + ")");
+			}
+			else if (prop.type=='integer'){
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml,this%" + prop.name + ")");	
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				}
+			else if (prop.type=='boolean'){
+			    var ltoiVarName = "logicalToIntArray"  + dimList.length;
+				cmd.push(this.allocateBlock(bl+addBL+1, ltoiVarName + "(" + sizeList.join(',') + ")", ltoiVarName,
+														"sv", "error", 
+														"Error during saving of "+ this.getTypeName() + ", error when trying to allocate " +ltoiVarName+ " array for " + prop.name));
+			    
+				var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
+				var nbl = loopBlock.bl;
+				cmd.push(loopBlock.cmd);
+					cmd.push(this.gbl(nbl+1) + 	"if (this%" + prop.name + loopBlock.indArray + ") then ");
+					cmd.push(this.gbl(nbl+2) + 		ltoiVarName + loopBlock.indArray + "=1");
+					cmd.push(this.gbl(nbl+1) + 	"else");
+					cmd.push(this.gbl(nbl+2) + 		ltoiVarName + loopBlock.indArray + "=0");
+					cmd.push(this.gbl(nbl+1) + 	"end if");
+				cmd.push(loopBlock.endCmd);
+				cmd.push(this.gbl(bl+addBL+1) + "errorj = H5A_WriteIntArray(groupIndex, '" + prop.name + "' // c_null_char," + dimList.length + ",diml," + ltoiVarName + ")");						
+				cmd.push(this.gbl(bl+addBL+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+addBL+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+addBL+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+addBL+1) + "end if");
+				cmd.push(this.gbl(bl+addBL+1) + "deallocate(" +ltoiVarName+")");
+			    
+			}
+			else if (prop.type=='string'){
+				throw "saveH5 does not support arrays of string yet.";	
+			}
 			
-			/* create a subgroup for the contained values */
-
-			if(this.isArray(prop)){
-				/* array non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "NonAtomicArray")' );
-				 
-			 }
-			 else{
-				 /* single non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
-					'self._saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', "NonAtomicSingle")' );
-			 }
-
-		}
-		 
-		cmd.push(this.gbl(bl+1));
-
-	}
-	cmd.push(this.gbl(bl+1) + 
-	'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItem = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItem(self, handle, varName, myType):');
-	
-	cmd.push(this.gbl(bl+1) + 
-		'saveFlag = True');
-
-	cmd.push(this.gbl(bl+1) + 
-		'if (saveFlag):');
-	cmd.push(this.gbl(bl+2) + 
-			'if (myType == "AtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemAtomicSingle(handle, varName)' );
-	cmd.push(this.gbl(bl+2) + 
-			'if (myType == "AtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemAtomicArray(handle, varName)' );
-	cmd.push(this.gbl(bl+2) + 
-			'if (myType == "NonAtomicArray"):');
-	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemNonAtomicArray(handle, varName)' );
-	cmd.push(this.gbl(bl+2) + 
-			'if (myType == "NonAtomicSingle"):');
-	cmd.push(this.gbl(bl+3) + 
-				'self._saveToHDF5HandleItemNonAtomicSingle(handle, varName)' );
-	
-	cmd.push(this.gbl(bl+2) + 
-			'self._sync[varName] = -1' );
-		
-		 
-	cmd.push(this.gbl(bl+1));
-
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemAtomicSingle = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemAtomicSingle(self, handle, varName):');
-
-	 /* single atomic type value */
-	cmd.push(this.gbl(bl+1) + 
-	 	'if (self.isSet(varName)):');
-	cmd.push(this.gbl(bl+2) + 
- 			'if (self.isContained(varName) ):');
-	cmd.push(this.gbl(bl+3) + 
-			 	'handle[varName] = getattr(self,varName)');
-	cmd.push(this.gbl(bl+3) + 
-	 		 	'self._saved[varName] = handle[varName].ref');
-
-	cmd.push(this.gbl(bl+1) + 
-	'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemAtomicArray = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemAtomicArray(self, handle, varName):');
-
-	/* array of atomic type */
-	cmd.push(this.gbl(bl+1) + 
- 		'if (self.isSet(varName)):');
-	cmd.push(this.gbl(bl+2) + 
-			'if (self.isContained(varName) ):');
-	cmd.push(this.gbl(bl+3) + 
-				'handle[varName] = np.asarray(getattr(self,varName))' );
-	cmd.push(this.gbl(bl+3) + 
-	 			'self._saved[varName] = handle[varName].ref');	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemNonAtomicSingle(self, handle, varName):');
-
-	/* reference */
-	cmd.push(this.gbl(bl+1) + 
-		'ref_dtype = h5py.special_dtype(ref=h5py.Reference)' );
-
-	 /* single non-atomic type value */
-	cmd.push(this.gbl(bl+1) + 
-	 	'if (self.isSet(varName)):');
-	cmd.push(this.gbl(bl+2) + 
- 			'if (self.isContained(varName)):');
-	cmd.push(this.gbl(bl+3) + 
-				'dgrp = None' );
-	cmd.push(this.gbl(bl+3) + 
-				'if not(varName in handle.keys()):' );
-	cmd.push(this.gbl(bl+4) + 
-					'dgrp = handle.create_group(varName)' );
-	cmd.push(this.gbl(bl+3) + 
-				'else:' );
-	cmd.push(this.gbl(bl+4) + 
-					'dgrp = handle[varName]' );
-	cmd.push(this.gbl(bl+3) + 
-				'getattr(self, varName)._saveDataToHDF5Handle(dgrp)');
-	cmd.push(this.gbl(bl+2) + 
-			'elif not(getattr(self, varName).REF == None ):');
-	cmd.push(this.gbl(bl+3) +
-				'handle.create_dataset(varName,data=getattr(self, varName).REF, dtype=ref_dtype )' );
-	/*
-	 * cmd.push(this.gbl(bl+2) + 'dset =
-	 * maindgrp.create_dataset("values"' + ',(len(getattr(self,varName)),),
-	 * dtype=ref_dtype )' ); cmd.push(this.gbl(loopBlock.bl+1) +
-	 * 'dset' + loopBlock.indArray + ' = dgrp.ref');
-	 */
-	cmd.push(this.gbl(bl+3) +
-				'raise Exception("referenced single value is not implemented.")' );
-
-	/* put the reference in place */ 
-	/*
-	 * cmd.push(this.gbl(bl+1) + 'handle[' + JSON.stringify(prop.name) + '] =
-	 * dgrp.ref');
-	 */
-
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	
-    return cmd.join('\n');
-};
-/*----------------------------------------------------------------------------*/
-HDF5Save.prototype.saveToHDF5HandleItemNonAtomicArray = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-	
-	cmd.push(this.gbl(bl) + 
-	'def _saveToHDF5HandleItemNonAtomicArray(self, handle, varName):');
-
-	/* array of non-atomic type */
-	cmd.push(this.gbl(bl+1) + 
-		'ref_dtype = h5py.special_dtype(ref=h5py.Reference)' );
-					
-
-	var properties = this.getProperties();
-	var propNum = properties.length;
-	
-	for(var i = 0; i < propNum; i++) {
-		var prop = properties[i]; 
-		
-		if ( (!(this.isAtomicType(prop.type))) && (this.isArray(prop)) ) {
-		cmd.push(this.gbl(bl+1) + 
-		'if ((varName == ' + this.stringify(prop.name) + ') and self.isSet(varName)):' );
-		cmd.push(this.gbl(bl+2) + 
-			'itemNames = []' );
-		cmd.push(this.gbl(bl+2) + 
-			'maindgrp = None' );
-		cmd.push(this.gbl(bl+2) + 
-			'if not(varName in handle.keys()):' );
-		cmd.push(this.gbl(bl+3) + 
-				'maindgrp = handle.create_group(varName)' );
-		cmd.push(this.gbl(bl+2) + 
-			'else:' );
-		cmd.push(this.gbl(bl+3) + 
-				'maindgrp = handle[varName]' );
-
-		cmd.push(this.gbl(bl+2) + 
-			'if (self.isContained(varName)):');
-
-		var loopBlock = this.getLoopBlockForArray(bl+3,prop);
-		cmd.push(loopBlock.cmd);
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'item = self.' + prop.name + loopBlock.indList );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'itemNames.append(item.name)' );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'dgrp = None' );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'if not(item.name in maindgrp.keys()):' );
-		cmd.push(this.gbl(loopBlock.bl+2) + 
-					'dgrp = maindgrp.create_group(item.name)' );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'else:' );
-		cmd.push(this.gbl(loopBlock.bl+2) + 
-					'dgrp = maindgrp[item.name]' );
+			cmd.push(this.gbl(bl+addBL+1) + "deallocate(diml)");
 			
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				 'self.' + prop.name + loopBlock.indList + '._saveDataToHDF5Handle(dgrp)');
+			if (this.isAllocatable(prop)){ 
+				cmd.push(this.gbl(bl+1) + "end if");
+			}			
+		}
+		else if (this.isSingle(prop) && (this.isAtomic(prop))){
+			if (prop.type=='double'){
+				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
+			if (prop.type=='complex'){
+				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name+"_RE" + "' // c_null_char,real(this%" + prop.name + "))");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+1) + "end if");
+				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteDouble(groupIndex, '" + prop.name+"_IM" + "' // c_null_char,aimag(this%" + prop.name + "))");
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
+			else if (prop.type=='integer'){
+				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteInt(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + ")");	
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
+			else if (prop.type=='boolean'){
+				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + ") then ");
+				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=1");
+				cmd.push(this.gbl(bl+1) + "else");
+				cmd.push(this.gbl(bl+2) + 	"logicalToIntSingle=0");
+				cmd.push(this.gbl(bl+1) + "end if");
+				cmd.push(this.gbl(bl+1) + "errorj = H5A_WriteInt(groupIndex, '" + prop.name + "' // c_null_char,logicalToIntSingle)");	
+				cmd.push(this.gbl(bl+1) + "if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+2) + 	"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+1) + "end if");
+				}
+			else if (prop.type=='string'){
+				cmd.push(this.gbl(bl+1) + "if (.not.(this%" + prop.name + "%isEmpty())) then");
+				cmd.push(this.gbl(bl+2) + 	"errorj = H5A_writeStringWithLength(groupIndex, '" + prop.name + "' // c_null_char,this%" + prop.name + "%toChars() // c_null_char)");		
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+2) + 	"end if");
+				cmd.push(this.gbl(bl+1) + "end if");
+			}	
+		}
+		else if (this.isSingle(prop) && (! this.isAtomic(prop))){
+			if (this.isOptional(prop)) {
+				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + "%isValid()) then");
+				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+2) + 	"end if");
+				cmd.push(this.gbl(bl+1) + "end if");				
+			}
+			else {
+				cmd.push(this.gbl(bl+1) + "if (this%" + prop.name + "%isValid()) then");
+				cmd.push(this.gbl(bl+2) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex,'"  + prop.name +  "' // c_null_char)");
+				cmd.push(this.gbl(bl+2) + 	"call this%" + prop.name + "%save_HDF5_toExistingDataBase(subGroupIndex,errorj)");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'Error while saving ' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+2) + 	"call throw('Error during saving of " + prop.name + "')");
+				cmd.push(this.gbl(bl+2) + 	"end if");
+				cmd.push(this.gbl(bl+1) + "else");
+				cmd.push(this.gbl(bl+2) + 	"errorj=-1");
+				cmd.push(this.gbl(bl+2) + 	this.errorBlock(bl+2, 'errorj', 'error during saving to hdf5 file. A non-optional object is invalid (i.e. does not have a name):' + prop.name ) );
+				cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+				cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+				cmd.push(this.gbl(bl+3) + 		"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(bl+2) + 	"end if");
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
+		}
+		else if (this.isArray(prop) && (! this.isAtomic(prop))){
+			dimList = this.getDimensionList(prop);
+			
+			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
 
-		cmd.push(this.gbl(bl+3) + 
-			'maindgrp.attrs["order"] =  itemNames');
+			var addBL = 0;
+			
+			if (this.isAllocatable(prop)){
+				cmd.push(this.gbl(bl+1) + "if (allocated(this%" + prop.name + ")) then");
+				addBL = 1;
+			}
+			
+			cmd.push(this.allocateBlock(bl+addBL+1, "diml(" + dimList.length + ")", "diml",
+													"sv", "error", 
+													"Error during saving of "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
+			
+			cmd.push(this.gbl(bl+addBL+1) + 	"diml=shape(this%" + prop.name + ")");
+			cmd.push(this.gbl(bl+addBL+1) + 	"subGroupIndex = H5A_OpenOrCreateEntity(groupIndex, '"  + prop.name +  "' // c_null_char)");
+			
+			var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
+			var nbl = loopBlock.bl;
+			cmd.push(loopBlock.cmd);
+				cmd.push(this.gbl(nbl+1) +	"if (this%"+ prop.name + loopBlock.indArray + "%isValid()) then");   
+				cmd.push(this.gbl(nbl+2) + 		"subGroupIndex2 = H5A_OpenOrCreateEntity(subGroupIndex, this%"  + prop.name +  loopBlock.indArray + "%name%toChars() // c_null_char)");				
+				cmd.push(this.gbl(nbl+2) + 		"call this%"+ prop.name + loopBlock.indArray + "%save_hdf5(subGroupIndex2,errorj)");
+				cmd.push(this.gbl(nbl+2) + 	    "if (errorj.lt.0) then");
+				cmd.push(this.gbl(nbl+3) + 			"error = error + errorj");
+				cmd.push(this.gbl(nbl+3) + 			"call throw('Error during saving of " + prop.name + "')");				
+				cmd.push(this.gbl(nbl+2) + 		"end if");
+				cmd.push(this.gbl(nbl+2) + 		"if (.not.(orderList%isEmpty())) then");
+				cmd.push(this.gbl(nbl+3) + 			"orderList=orderList+','");
+				cmd.push(this.gbl(nbl+2) + 		"end if");
+				cmd.push(this.gbl(nbl+2) + 		"orderList=orderList+this%" + prop.name + loopBlock.indArray + "%name%toChars()");
+				cmd.push(this.gbl(nbl+1) + 	"end if");	
+			cmd.push(loopBlock.endCmd);
+				
+			cmd.push(this.gbl(bl+addBL+1) + "error = error + H5A_SetDim(subGroupIndex,size(diml,1), diml)");
+			cmd.push(this.gbl(bl+addBL+1) + "deallocate(diml)");
 
-		cmd.push(this.gbl(bl+2) + 
-			'else:');
-		var loopBlock = this.getLoopBlockForArray(bl+3,prop);
-		cmd.push(loopBlock.cmd);
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'item = self.' + prop.name + loopBlock.indList );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'itemNames.append(item.name)' );
-		cmd.push(this.gbl(loopBlock.bl+1) + 
-				'if not(item.REF == None ):' );
-		cmd.push(this.gbl(loopBlock.bl+2) +
-					'handle.create_dataset(item.name,data=item.REF, dtype=ref_dtype )' );
-		
-		cmd.push(this.gbl(bl+3) + 
-				'maindgrp.attrs["order"] =  itemNames');
+			if (this.isAllocatable(prop)){
+			    cmd.push(this.gbl(bl+1) + "end if");
+			}
+			
+			cmd.push(this.gbl(bl+1) + "if (.not.(orderList%isEmpty())) then");
+			cmd.push(this.gbl(bl+2) + 	"errorj=h5a_setOrder(subGroupIndex,orderList%toChars() // c_null_char)");
+			cmd.push(this.gbl(bl+2) + 	"if (errorj.lt.0) then");
+			cmd.push(this.gbl(bl+3) + 		"error = error + errorj");
+			cmd.push(this.gbl(bl+3) + 		"call throw('Error during saving of " + prop.name + "')");			
+			cmd.push(this.gbl(bl+2) + 	"end if");
+			cmd.push(this.gbl(bl+1) + "end if");
+			
+			cmd.push(this.gbl(bl+1) + "call orderList%destroy()");
 
 		}
-	}
+
+
+
+
+	} /* end of property loop*/
 	
-	cmd.push(this.gbl(bl+1) + 
-		'pass');
-	
-    return cmd.join('\n');
-};
+	cmd.push(this.gbl(bl+1) + "! Error check");
+	cmd.push(this.gbl(bl+1) + "if (error.ne.0) then");
+	cmd.push(this.gbl(bl+2) + 	"write(*,*) 'Error during saving of "+ this.getTypeName() + ":'" + ",error");
+	cmd.push(this.gbl(bl+1) + "end if");
+	cmd.push(this.gbl(bl) + "end subroutine save_HDF5_toExistingDataBase");
+
+
+	return cmd.join('\n');
+}

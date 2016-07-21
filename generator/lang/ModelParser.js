@@ -26,20 +26,23 @@ ModelParser.prototype.constructor = function(model) {
 	
 	this.modelExt = 'json';
 	
+	this.numericTypeList = ["float", "real", "double", "short", "integer", "tiny", "complex"];
+	this.stringTypeList = ["string", "char"];
+	this.logicalTypeList = ["boolean"];
 };
 /******************************************************************************/
 /* Type Functions */
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.numericTypes = function(){
-	return ["float", "double", "short", "integer", "tiny"];
+	return this.numericTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.stringTypes = function(){
-	return ["string", "char"];
+	return this.stringTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.logicalTypes = function(){
-	return ["boolean"];
+	return this.logicalTypeList;
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.allAtomicTypes = function(){
@@ -86,8 +89,11 @@ ModelParser.prototype.setModel = function(model){
 /*----------------------------------------------------------------------------*/
 /* name */
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.getName = function() {
-    return this.getModel().name;
+ModelParser.prototype.getName = function(model) {
+	if (model == undefined) 
+		return this.getModel().name;
+	else
+		return this.model.name;
 };
 
 ModelParser.prototype.setName = function(name) {
@@ -129,13 +135,19 @@ ModelParser.prototype.setDescription = function(desc) {
 /* type */
 /*----------------------------------------------------------------------------*/
 
-ModelParser.prototype.getType = function() {
+ModelParser.prototype.getType = function(model) {
     
-	if (this.getModel().type==undefined){
-		return(this.getName() );
+	if (model == undefined) {
+		if (this.getModel().type==undefined)
+			return(this.getName() );
+		else 
+			return this.getModel().type;
 	}
-	else {
-		return this.getModel().type;
+	else{
+		if (model.type==undefined)
+			return model.name;
+		else
+			return model.type;		
 	}
 };
 
@@ -247,17 +259,17 @@ ModelParser.prototype.setPackages = function(packages) {
 		}
 	}
 	
-	var packages = this.splitPackageStr(model.type);
+	var packages = this.splitPackageStr(this.getType(model));
 	if (packages.length == 1) {
-		model.type = model["package"] + this.packageSep + model.type;
+		model.type = model["package"] + this.packageSep + this.getType(model);
 	}
 
 
 };
 
 ModelParser.prototype.updateFromVersionedPackagedTypeStr = function(str, localVersion) {
-	var type = this.parseVersionedPackagedTypeStr(str);
 	
+	var type = this.parseVersionedPackagedTypeStr(str);
 	this.setPackages(type.packages);
 
 	model[this.versionFlag] =  localVersion;
@@ -858,7 +870,7 @@ ModelParser.prototype.getModelDepPackages = function() {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getModelDepVersionedPackages = function() {
 	/* Get all packages which are referenced in the model and not the
-	 * model package itself.*/
+	 * model package itself, add version to the packages.*/
 	
 	var packstr = this.getVersionedPackagesStr();
 	var packs = this.getCustomTypesVersionedPackages();
@@ -877,8 +889,7 @@ ModelParser.prototype.getModelDepVersionedPackages = function() {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getModelDepRootVersionedPackages = function() {
-	/* Get all packages which are referenced in the model and not the
-	 * model package itself.*/
+	/* Get all external packages and list the root package with version.*/
 	
 	var packstr = this.getVersionedRootPackageStr();
 	
@@ -898,6 +909,44 @@ ModelParser.prototype.getModelDepRootVersionedPackages = function() {
 				(packstr != versionedRootPack)){
 			depRootPackages.push(versionedRootPack);
 		}
+	} 
+	
+	return depRootPackages;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getModelExternalDepRootVersionedPackagesAndInternalDepPackages = function() {
+	/* Return a list of
+	 * 		External versioned root packages
+	 * 		Internal dep. packages complete path.*/
+	
+	var curVersionedRootPack = this.getVersionedRootPackageStr();
+	
+	/*this package str*/
+	var packstr = this.getPackageStr();
+	
+	var depPacks = this.getModelDepPackages();
+
+	//console.log("packstr : \n" + packstr);
+	//console.log("depPacks : \n" + depPacks.join('\n'));
+	
+	var depRootPackages = [];
+	
+	for (var i = 0; i<depPacks.length; i++){
+		/* Add external root packages */
+		var rootPack = this.splitPackageStr(depPacks[i])[0];
+		var version = this.getPackageVersion(rootPack);
+		var versionedRootPack = this.addVersion(rootPack, version);
+		//console.log("versionedRootPack : \n" + versionedRootPack);
+		if ((depRootPackages.indexOf(versionedRootPack) == -1) &&
+				(curVersionedRootPack != versionedRootPack)){
+			depRootPackages.push(versionedRootPack);
+		}
+		
+		/* Add internal dependency packages*/
+		if ((depRootPackages.indexOf(depPacks[i]) == -1) &&
+				(curVersionedRootPack == versionedRootPack)){
+			depRootPackages.push(depPacks[i]);
+		}		
 	} 
 	
 	return depRootPackages;

@@ -302,7 +302,7 @@ Generator.prototype.getModel = function(modelID) {
 	var model = require(modelPath);
 	
 	return new ModelParser(model);
-	
+	//return this.lang.getModelParser(model);
 };
 
 /*----------------------------------------------------------------------------*/
@@ -421,7 +421,7 @@ Generator.prototype.initModel = function(modelID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generate = function(model, outFileContent) {
 	
-    if (('extractUserDefinedCode' in this.lang) && (outFileContent != ''))
+    if ('extractUserDefinedCode' in this.lang)
         this.lang.extractUserDefinedCode(outFileContent);
     
 	return this.lang.generate(model);
@@ -430,6 +430,13 @@ Generator.prototype.generate = function(model, outFileContent) {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generateModel = function(modelID, outppath) {
+	if (modelID==undefined){
+		throw ("please enter (modelID,outppath) !");
+	}
+	if (outppath==undefined){
+		throw ("please enter (modelID,outppath) !");
+	}
+	
 	console.log("\t generating Model " + modelID + ' !');
 	var modelParser = this.initModel(modelID);
 			
@@ -485,7 +492,8 @@ Generator.prototype.generateOnePackage = function(packageID) {
 	    var mParser = this.generateModel(modelID, outppath);
 	    
 	    //var mDepPacks = mParser.getModelDepVersionedPackages();
-	    var mDepPacks = mParser.getModelDepRootVersionedPackages();
+	    //var mDepPacks = mParser.getModelDepRootVersionedPackagesAndDepInternalPackages();
+	    var mDepPacks = mParser.getModelExternalDepRootVersionedPackagesAndInternalDepPackages();
 	    //console.log("mDepPacks: \n" + mDepPacks.join('\n'));
 	    
 	    for (var dpi = 0; dpi < mDepPacks.length; dpi++) {
@@ -567,7 +575,11 @@ Generator.prototype.generatePackage = function(packageID) {
 	this.externalPackageDependencies = extPackages.concat(this.lang.getGeneralModulesTypes());
 	
 	this.lang.packaging.writeExternalDependenciesList(this.externalPackageDependencies, this.getOutPath(), packageID);
-	this.lang.packaging.writeGeneratedPackagesList(this.generatedPackages, this.getOutPath(), packageID);
+	
+	// for now it is assumed that all libraries are compiled under the root package name
+	// Therefore, in case a subpackages only is generated we need to estract the root name
+	rootPackageID = packageID.split(this.lang.packageSep)[0]
+	this.lang.packaging.writeGeneratedPackagesList(this.generatedPackages, this.getOutPath(), rootPackageID);
 	
 	this.externalPackageDependencies
 	return 'Package generator finished!';
@@ -582,7 +594,12 @@ Generator.prototype.parseModel = function(modelID) {
 	if (modelID==undefined) {
 		throw("please provide modelID, example marmo_r1:basic:NamedEntity.")
 	} 
-	return new ModelParser(modelID);
+	
+	var modelPath = this.sourceModelIDtoPath(modelID);	
+	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
+	var model = require(modelPath);
+	
+	return this.lang.getModelParser(model);
 	
 };
 /*----------------------------------------------------------------------------*/

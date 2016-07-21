@@ -3,6 +3,234 @@ function SetGet(){
 };
 exports.SetGet = SetGet;
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.setEqualToDeclaration = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "procedure, public :: setEqualTo");
+
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.setEqualTo = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + "subroutine setEqualTo(this, obj)");
+	cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+	cmd.push(this.gbl(bl+1) + "type(" + this.getTypeName() + "),intent(in)"+ " :: obj");
+	
+	/* internal variables */
+	
+	if (this.hasNonAtomicArray()) {
+		cmd.push(this.indexVariablesForLoopingDec(bl+1, this.maxRankOfNonAtomicArrays()) );
+	}
+		
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	if (this.hasArray()){
+		cmd.push(this.gbl(bl+1) + "integer :: sv,error");
+		cmd.push(this.gbl(bl+1) + "integer, dimension(:), allocatable :: diml");
+		}
+	//if (this.hasBoolean())
+	//	cmd.push(this.tempVariablesForSavingAndLoadingLogicals(bl+1));
+	//if (this.hasBooleanArray() || this.hasNonAtomicArray())
+	//	cmd.push(this.tempIndexVariablesForSavingAndLoading(bl+1));
+	//if (this.hasNonAtomic())
+	//	cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex");	    
+	//if (this.hasNonAtomicArray())
+	//	cmd.push(this.gbl(bl+1) + "integer :: subGroupIndex2"); 
+	//	cmd.push(this.gbl(bl+1) + "type(String) :: orderList");
+	
+	    
+	
+    /* end of internal variables */
+	
+	cmd.push(this.gbl(bl+1) + "call this%destroy()");
+
+
+	/* Loop over each property */
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string')){			
+
+			cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+			dimList = this.getDimensionList(prop);
+
+			cmd.push(this.allocateBlock(bl+2, "diml(" + dimList.length + ")", "diml",
+													"sv", "error", 
+													"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate diml array for " + prop.name));
+			
+			cmd.push(this.gbl(bl+2) + 	"diml=shape(obj%" + prop.name + ")");
+			var sizeList=[];
+			for(var k=0; k< dimList.length;k++) {
+				sizeList.push("diml(" + k+1 + ")")
+			}
+			cmd.push(this.allocateBlock(bl+2, 	"this%" + prop.name + "(" + sizeList.join(',') + ")", "this%" + prop.name,
+												"sv", "error", 
+												"Error during setting equal "+ this.getTypeName() + ", error when trying to allocate array for " + prop.name));
+			cmd.push(this.gbl(bl+2) + 	"this%" + prop.name + "=obj%" + prop.name);
+			cmd.push(this.gbl(bl+2) + 	"deallocate(diml)");
+			cmd.push(this.gbl(bl+1) + "end if");
+
+
+		}
+		else if (this.isArray(prop) && this.isAtomic(prop) && prop.type != 'string' && (! this.isAllocatable(prop))){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if (this.isSingle(prop) && (this.isAtomic(prop))){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if (this.isSingle(prop) && (! this.isAtomic(prop))){
+			cmd.push(this.gbl(bl+1) + "call this%"+ prop.name + "%setEqualTo(obj%" + prop.name + ")"); 
+		}
+		else if ((this.isSingle(prop)) && (prop.type == 'string')){
+			cmd.push(this.gbl(bl+1) + "this%"+ prop.name + "=obj%" + prop.name); 
+		}
+		else if ((this.isArray(prop)) && (prop.type == 'string')){
+			throw "setEqualTo is not implemented for array of String instances.";
+		}
+		else if (this.isArray(prop) && (! this.isAtomic(prop)) ){
+			dimList = this.getDimensionList(prop);
+			var addBL = 0;
+
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+1) + "if (allocated(obj%" + prop.name + ")) then");
+				if (dimList.length==1){
+				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1)))");
+				addBL = 1;}
+				if (dimList.length==2){
+				cmd.push(this.gbl(bl+2) + 	"allocate(this%" + prop.name + "(size(obj%" + prop.name + ",1),size(obj%" + prop.name + ",2)))");
+				addBL = 1;}
+			}
+
+			var loopBlock = this.getLoopBlockForProp(bl+addBL+1,prop);
+			var nbl = loopBlock.bl;
+			cmd.push(loopBlock.cmd);
+				cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%setEqualTo(obj%" + prop.name + loopBlock.indArray +")");								
+			cmd.push(loopBlock.endCmd);
+			
+			if ( this.isAllocatable(prop) ) {
+				cmd.push(this.gbl(bl+1) + "end if");
+			}
+			
+		}
+
+	} /* end of property loop*/
+
+	cmd.push(this.gbl(bl) + "end subroutine setEqualTo");
+
+
+	return cmd.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.arrayResizeDeclaration = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	cmd.push(this.gbl(bl) + "!--- resize functions for single atomic arrays ----"	);
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+	
+		if (this.isArray(prop) && this.isAllocatable(prop) && (this.isAtomic(prop) && prop.type != 'string') ){
+			cmd.push(this.gbl(bl) + "procedure, public :: resize_" + prop.name );
+		}
+		if (this.isArray(prop) && this.isAllocatable(prop) && (! this.isAtomic(prop) ) ){
+			cmd.push(this.gbl(bl) + "procedure, public :: resize_" + prop.name );
+		}		
+	}	
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.arrayResize = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	/* initializing properties */
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		var dimList = 0;
+		var p=0
+	
+		if (this.isArray(prop) && this.isAllocatable(prop) && 
+				( (this.isAtomic(prop) && prop.type != 'string') || (!this.isAtomic(prop)) ) ){
+			
+		    dimList = this.getDimensionList(prop);
+			var sizeList=[];
+			for(var k=0; k< dimList.length;k++) {
+				sizeList.push("n" + k)
+			}
+			
+			cmd.push(this.gbl(bl) + this.sep2);
+			cmd.push(this.gbl(bl) + "subroutine resize_" + prop.name + "(this, " + sizeList.join(', ') + ")");
+			cmd.push(this.gbl(bl+1) + "class(" + this.getTypeName() + ")"+ " :: this");
+			cmd.push(this.gbl(bl+1) + "integer,intent(in) :: " + sizeList.join(', ') );
+			cmd.push(this.gbl(bl+1) + "!internal variables");
+			cmd.push(this.gbl(bl+1) + "integer :: error, sv");
+			if ( ! this.isAtomic(prop)) {
+				cmd.push(this.gbl(bl+1) + "type(String) :: name");
+				cmd.push(this.indexVariablesForLoopingDec(bl+1, dimList.length ) );
+			}
+			
+			cmd.push(this.gbl(bl+1) + "call this%destroy_" + prop.name + "()");
+
+			if (this.isAtomic(prop)) {
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")", "this%" + prop.name,
+						"sv", "error", 
+						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
+			}
+			else {					
+				cmd.push(this.allocateBlock(bl+1, 	"this%" + prop.name + "(" + sizeList + ")", "this%" + prop.name,
+						"sv", "error", 
+						"Error during resizing in "+ this.getTypeName() + ", error when trying to allocate memory for " + prop.name));
+				
+				var loopBlock = this.getLoopBlockForProp(bl+1,prop);
+				var nbl = loopBlock.bl;
+				cmd.push(loopBlock.cmd);
+					var loopVars = this.indexVariablesForLooping(dimList.length) 
+					var strIndex = [] 
+					for (var stri=0; stri<loopVars.length; stri++) {
+						strIndex.push( 'String("_") + toString(' + loopVars[stri] + ')')
+					}
+					cmd.push(this.gbl(nbl+1) + 	"name = '" + prop.name + "' + " + strIndex.join('+') );
+					cmd.push(this.gbl(nbl+1) + 	"call this%"+ prop.name + loopBlock.indArray + "%default_init(name%toChars())");
+				cmd.push(loopBlock.endCmd);
+				
+			}
+			
+			cmd.push(this.gbl(bl) + "end subroutine resize_" + prop.name);
+
+		}
+	}	
+
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.setPropertyRef = function(bl, varName, deptProp, varNameRef) {
 	if (bl == undefined) {
 		bl = 0;
@@ -158,104 +386,61 @@ SetGet.prototype.setChildPropRefs = function(bl, childProp, objName) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.propSetDeclaration = function(prop, bl) {
+	if (prop.type == 'string'){
+	    var cmd = [];
+	    	    
+	    cmd.push(this.gbl(bl) + 'generic, public :: set_' + prop.name + ' => set_' + prop.name + 'FromChar,set_' + prop.name +'FromString');
+	    cmd.push(this.gbl(bl) + 'procedure :: set_' + prop.name + 'FromChar');
+	    cmd.push(this.gbl(bl) + 'procedure :: set_' + prop.name + 'FromString');
+	    
+	    return cmd.join('\n');
+    }
+    else {
+    	return '';
+    }
+    
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.propGetDeclaration = function(prop, bl) {
+    return '';
+};
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.propSet = function(prop, bl) {
 	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + '@ ' + prop.name +'.setter' );	
+	if (prop.type == 'string'){
+	    cmd.push(this.gbl(bl) + 'subroutine set_' + prop.name + 'FromChar(this,chbdy)');
+	    cmd.push(this.gbl(bl+1) + 	'! External variables');
+	    cmd.push(this.gbl(bl+1) + 	'! Inputs');
+	    cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
+	    cmd.push(this.gbl(bl+1) + 	'character(*) :: chbdy');
+	    cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=trim(adjustL(chbdy))');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromChar');
+        cmd.push(this.gbl(bl));
+        cmd.push(this.gbl(bl) + 'subroutine set_' + prop.name + 'FromString(this,chbdy)');
+        cmd.push(this.gbl(bl+1) + 	'! External variables');
+        cmd.push(this.gbl(bl+1) + 	'! Inputs');
+        cmd.push(this.gbl(bl+1) + 	'class(' + this.getTypeName() + ') :: this');
+        cmd.push(this.gbl(bl+1) + 	'type(String) :: chbdy');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl+1) + 	'this%' + prop.name + '=chbdy%strip()');
+        cmd.push(this.gbl(bl+1));
+        cmd.push(this.gbl(bl) + 'end subroutine set_' + prop.name + 'FromString');	  
 
-	cmd.push(this.gbl(bl) + 'def ' + prop.name + '(self, val):');
+		return cmd.join('\n');
+	 }
+	 else {
+		 return '';
+	 }
+	 
 	
-	/* SetGet the value */
-	if (this.isAtomic(prop)) {
-		if (this.isArray(prop)) {
-			/*
-			 * no chekcs here, TODO: add casting or checks for atomic type
-			 * arrays
-			 */
-			cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');			
-		}
-		else {
-			/* type casting between atomic types */
-			if (prop.type == "boolean") {
-				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
-						this.changeType(prop.type) +
-						'(' + this.changeType("integer") + '(val)' + ')');
-			}
-			else {
-				if (this.isLimited(prop)) {
-					if (prop.from instanceof Array){ 
-						cmd.push(this.gbl(bl+1) + 
-						'if not(' + this.changeType(prop.type) + '(val) in ' + this.stringify(prop.from) + '): ' );
-						cmd.push(this.gbl(bl+2) + 
-							'raise Exception(str(val) + " must be in " + str(' + this.stringify(prop.from) + ') )');
-					}
-					else{
-						cmd.push(this.gbl(bl+1) + 
-						'if not(' + this.changeType(prop.type) + '(val) in self.' + this.makePrivate(prop.from) + '): ' );
-						cmd.push(this.gbl(bl+2) + 
-							'raise Exception(str(val) + " must be in " + str(self.' + this.makePrivate(prop.from) + ') )');
-					}
-				}
-				cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = ' + 
-						this.changeType(prop.type) +'(val)');
-				
-			}
-
-			
-
-		}
-	}
-	else {
-		/* non-atomic types */
-		if (this.isArray(prop)) {
-			/*
-			 * cheks if all elements is array has the correct type TODO: add the
-			 * check
-			 */
-		}
-		else {
-			/* check if it has the correct type */
-			cmd.push(this.gbl(bl+1) + 
-					'if not(isinstance(val, ' + this.getClassPathFromType(prop.type)  + ')):');
-			cmd.push(this.gbl(bl+2) + 
-					'raise Exception("variable type for ' + prop.name + ' must be an instance of ' + prop.type + ' while " + str(type(val)) + " is passed .")');
-
-		}
-		/* simple assignment */
-		cmd.push(this.gbl(bl+1) + 'self.' + this.makePrivate(prop.name) +' = val');
-	}
-
-	/* change array sizes if prop is a dimension */
-	/*TODO: this functionality must be improved to work with automated data loading 
-	 * and improve efficiency.*/
-	if (this.isDimension(prop)){
-		/* find out the array which has prop as a dimension */
-		var arrays = this.getPropertiesWithDimension(prop);
-		/* resize the array accordingly */
-		/*
-		for (var i = 0; i<arrays.length; i++){
-			cmd.push(this.gbl(bl+1) + 'if not(len(self.' + this.makePrivate(arrays[i].name) + ') == self.' + this.makePrivate(prop.name) +'):');
-			cmd.push(this.gbl(bl+2) + 		'self.' + this.arrayUpdateSizeFuncName(arrays[i]) +'()' );
-		};
-		*/	
-	}
-	
-	/* make relations between child and parrent data sets */
-	if (this.hasDependencies(prop)) {
-		cmd.push(this.setParentPropsRefs(bl+1, prop));
-	}
-	if (this.hasDependents(prop)){
-		/*some other properties depend on this one */
-		cmd.push(this.setChildPropsRefs(bl+1, prop));
-	}
-	
-	cmd.push(this.gbl(bl+1) +	'if not(' + this.stringify(prop.name) + ' in self._loadedItems):');
-	cmd.push(this.gbl(bl+2) + 
-			'self._loadedItems.append(' + this.stringify(prop.name) + ')');
-	
+	    
 	/* return the commands */
-    return cmd.join('\n');
+    
 };
 /*----------------------------------------------------------------------------*/
 SetGet.prototype.arrayUpdateSize = function(prop, bl) {
@@ -278,45 +463,7 @@ SetGet.prototype.arrayUpdateSize = function(prop, bl) {
 };
 /*----------------------------------------------------------------------------*/
 SetGet.prototype.propGet = function(prop, bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
-		
-	cmd.push(this.gbl(bl) +		'@ property');	
-	cmd.push(this.gbl(bl) + 	'def ' + prop.name + '(self):');	
-	
-	if (this.isAtomic(prop)) {
-		if(this.isSingle(prop)){
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-		else {
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) :');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );			
-		}
-	}
-	else {
-		if(this.isArray(prop)){
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (len(self.' + this.makePrivate(prop.name) + ') == 0):');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-		else {
-	cmd.push(this.gbl(bl+1) + 		'name = ' + this.stringify(prop.name));
-	cmd.push(this.gbl(bl+1) + 		'if  not(self.STORAGE ==None) and not(name in self._loadedItems) and (self.' + this.makePrivate(prop.name) + ' == None):');
-	cmd.push(this.gbl(bl+2) + 			'self._loadDataItem(name)');
-	//cmd.push(this.gbl(bl+2) + 			'self._loadedItems.append(name)');
-	cmd.push(this.gbl(bl+1) +		'return self.' + this.makePrivate(prop.name) );
-		}
-	}
-
-			
-	return cmd.join('\n');
+	return '';
 };
 
 /*----------------------------------------------------------------------------*/

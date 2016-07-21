@@ -54,7 +54,7 @@ Packaging.prototype.constructor = function(lang) {
 								  "end"   : "#@@@@@ SIMOS GENERATED LIB DEPS END @@@@@",
 								  "comment": "# SIMOS generated source files libs, DO NOT EDIT",
 								  "varName" : "LIB_DEPENDENCIES_SIMOS",
-								  "files" : []}
+								  "files" : []}					
 						};
 	
 };
@@ -118,6 +118,16 @@ Packaging.prototype.initPackage = function(packageStr) {
          
     } 
 
+    var cmakeListsPath = path.join(packagePath, 'cmake', 'customlibsettings.cmake');
+    
+    if (! fs.existsSync(cmakeListsPath)) {
+        fsextra.copy(path.join(this.getTemplatePath(),'cmake', 'customlibsettings.cmake'), cmakeListsPath , function (err) {
+          if (err) {
+            throw err;
+          }     
+        });
+         
+    } 
     
     //initializing the file lists
 	for (key in this.packageFiles) {
@@ -244,17 +254,31 @@ Packaging.prototype.appendDependencyPackage = function(file) {
 /*----------------------------------------------------------------------------*/
 /*   Handling simos geenrated cmake code */
 /*----------------------------------------------------------------------------*/
+
+Packaging.prototype.findStrInLines = function(lines, str) {
+    for (var i = 0; i<lines.length; i++) {
+    	if (lines[i].indexOf(str) != -1)
+    		return i;
+    }
+    return -1;
+}
+
 Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     if ((code == undefined) || (code == ''))
         return;
     
+    if ((part.start == '') || (part.end == ''))
+        return;
+        
     var lines = code.split('\n');
     var newCode = '';
     
     //var part = this.simosSrcs;
-    var sind = lines.indexOf(part.start);
+    var sind = this.findStrInLines(lines,part.start);
+    //console.log(JSON.stringify(part))
     if (sind != -1) {
-        var eind = lines.indexOf(part.end);
+        var eind =  this.findStrInLines(lines,part.end);
+        //console.log('inds ' + sind + '  ' + eind )
         if ((eind - sind) > 1){
             console.log("            simos " + part.name + " in cmake betweeb lines : " + sind  + " and " + eind);
             
@@ -271,6 +295,7 @@ Packaging.prototype.addGeneratedCMakeCode = function(code, part, addCode) {
     else
     	newCode = [lines.join('\n'), addCode].join('\n');
     	
+    //console.log(newCode)
     return newCode;
 };
 /*----------------------------------------------------------------------------*/
@@ -286,12 +311,12 @@ Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, pack
 	
 	//write a dummy file
 	var cmds = [];
-	cmds.push('subroutine dummy()');
+	cmds.push('subroutine ' +packName + '()');
 	cmds.push('    implicit none');
 	cmds.push('    !Do nothing..');
-	cmds.push('end subroutine dummy');
+	cmds.push('end subroutine ' + packName);
 
-	var outFilePath = path.join(outPath, packName, 'dummy.f90');
+	var outFilePath = path.join(outPath, packName, packName+'.f90');
 	fs.writeFileSync( outFilePath, cmds.join('\n'));
 	
 	//write a CMAKE file for the libraary
@@ -306,7 +331,7 @@ Packaging.prototype.writeGeneratedPackagesList = function(packages,outPath, pack
 		cmds.push('add_subdirectory (' + packNames[i] + ')');
 	}
 	cmds.push('# library');
-	cmds.push('add_library (' + packName + ' dummy.f90)');
+	cmds.push('add_library (' + packName + ' ' + packName + '.f90)');
 	cmds.push('# linking sub-packages');
 	cmds.push('target_link_libraries (' + packName);
 	cmds.push(packNames.join('\n'));

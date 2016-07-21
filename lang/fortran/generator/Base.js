@@ -30,7 +30,14 @@ packageParts = ['./storage/SaveLoad',
                     './properties/SetGet',
                     './properties/Representation'];
 */
-packageParts = ['./properties/Init']
+packageParts = ['./properties/Init',
+                './properties/Destroy',
+                
+                './properties/Query',
+                './properties/SetGet',
+                
+                './storage/HDF5Load',
+                './storage/HDF5Save']
 
 for (var ip=0, len = packageParts.length; ip<len; ip++) {
 	var packPath = packageParts[ip];
@@ -50,6 +57,7 @@ Base.prototype.constructor = function(model) {
 	this.targetType = {
 	    "float"		:"float",
 	    "double"	:"double precision",
+	    "real"		:"real",
 	    "short"		:"int",
 	    "integer"	:"integer",
 	    "boolean"	:"logical",
@@ -57,11 +65,23 @@ Base.prototype.constructor = function(model) {
 	    "char"		:"character",
 	    "char256"	:"character",
 	    "tiny"		:"int",
+	    "complex"	:"complex(dp)",
 	    "object"	:"object"
 	};
-
+	if (this.numericTypeList.indexOf('complex') == -1)
+		this.numericTypeList.push('complex');
+	if (this.numericTypeList.indexOf('real') == -1)
+		this.numericTypeList.push('real');	
+	
 	/*a list of modules/libs to be important for all files*/
-	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'}];
+	this.generalModules = [{'name': 'string_mod', 'lib': 'fcore'},
+	                       {'name': 'StringUtil', 'lib': 'fcore'},
+	                       {'name': 'h5accessor_f', 'lib': 'h5accessor_f'},
+	                       {'name': 'Exception_mod', 'lib': 'fcore'}];
+	
+	//an other possible general libs
+    //{'name': 'parameters, only: sp, dp', 'lib': 'parameters'},
+    
 	
 	this.name = 'fortran';
 	this.ext = 'f90';
@@ -81,6 +101,9 @@ Base.prototype.constructor = function(model) {
                         "prop"    : {"start" : "!@@@@@ USER DEFINED PROPERTIES START @@@@@",
                                      "end"   : "!@@@@@ USER DEFINED PROPERTIES End   @@@@@",
                                      "code"  : ""},
+                        "interface" : {"start" : "!@@@@@ USER DEFINED INTERFACE DECLARATIONS START @@@@@",
+                                     "end"   : "!@@@@@ USER DEFINED INTERFACE DECLARATIONS End   @@@@@",
+                                     "code"  : ""},                                     
                         "funcSig" : {"start" : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS START @@@@@",
                                      "end"   : "!@@@@@ USER DEFINED PROCEDURE DECLARATIONS End   @@@@@",
                                      "code"  : ""},
@@ -88,6 +111,23 @@ Base.prototype.constructor = function(model) {
                                      "end"   : "!@@@@@ USER DEFINED PROCEDURES End   @@@@@",
                                      "code"  : ""} };
 };
+
+/*----------------------------------------------------------------------------*/
+Base.prototype.setModel = function(model){
+	CommonLangBase.prototype.setModel(model);
+	
+	if (this.numericTypeList.indexOf('complex') == -1)
+		this.numericTypeList.push('complex');
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getModelParser = function(model){
+	newBase =  new Base(model);
+	
+	newBase.setModel(model);
+	
+	return newBase;
+};
+/*----------------------------------------------------------------------------*/
 
 Base.prototype.makeModulePath = function(packagedTypeStr) {
 	var type = '';
@@ -101,7 +141,12 @@ Base.prototype.makeModulePath = function(packagedTypeStr) {
     
 	//var versionedPackages = this.makeVersionedPackages(type.packages, type.versions);
 
-	return (type.packages.join(this.packagePathSep) + this.packagePathSep + type.name);
+    var rootPackage = type.packages.join(this.packagePathSep)
+
+    if (rootPackage != '')
+    	return (rootPackage + this.packagePathSep + type.name);
+    else
+    	return (type.name);
 
 };
 
@@ -412,33 +457,75 @@ Base.prototype.gbl = function(blockLevel) {
 	return this.getBlockSpace(blockLevel);
 };
 
-
 /*----------------------------------------------------------------------------*/
-Base.prototype.getLoopBlockForArray = function(bl, prop) {
-	var cmd = [];
+Base.prototype.getArrayDimList = function(prop) {
 	
-	var dimList = this.getPythonArrayDimList(prop);
+	if (this.isArray(prop)){
+		var dimList = this.getDimensionList(prop);
+		for (var i = 0; i<dimList.length; i++){
+			/* check if the dimension is a number */
+			if (!isNaN(parseFloat(dimList[i])) && isFinite(dimList[i])){
+				dimList[i] = dimList[i];
+			}
+			else {
+				if (dimList[i] == "*") {
+					dimList[i] = "1";
+				}
+				else {
+					dimList[i] = 'this%' + this.makePrivate(dimList[i]);
+				}
+			}
+		}
+		return dimList;
+	}
+	else {
+		throw ('Illigal non-array input.',prop);
+	}
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getArrayShape = function(prop) {
+	
+	if (this.isArray(prop)){
+		return '(' + this.getArrayDimList(prop).join() + ')';
+	}
+	else {
+		throw ('Illigal non-array input.',prop);
+	}
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getLoopBlockForProp = function(bl, prop) {
+	/*
+	 * looping over a prop*/
+
+	return this.getLoopBlockForArray(bl, "this%" + prop.name, this.getDimensionList(prop).length);
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.getLoopBlockForArray = function(bl, arr, rank) {
+	/*
+	 * arr: the variable to do loop over
+	 * rank: the rank of the array for looping*/
+	var cmd = [];
+	var endCmd = [];
+	
 	var indNames = [];
-	for (var di =dimList.length-1; di>=0; di--) {
-		var indName = 'i' + di;
+	for (var di =1; di<=rank; di++) {
+		var indName = 'idx' + (di);
 		indNames.push(indName);
 		
-		var levelInd = '';
-		for (var level = 0; level < di; level++){
-			levelInd = levelInd + '[0]';
-		}
-		cmd.push(this.gbl(bl+ (dimList.length-1)-di ) + 
-				 'for ' + indName + ' in range(0,len(self.' + prop.name +levelInd +')):' );
+		cmd.push(this.gbl(bl+ (di-1) ) + 	 'do ' + indName + ' = 1,size(' + arr + ', ' + di + ')' );
+
+		endCmd.push(this.gbl(bl+ (di-1) ) +  'end do' );
 
 	}
-	var indList = '[' + indNames.reverse().join('][') + ']';
-	var indArray = '[' + indNames.join(',') + ']';
+	var indList = '';
+	var indArray = '(' + indNames.join(',') + ')';
 
 	return {'cmd' : cmd.join('\n'),
 			'indNames': indNames,
 			'indList': indList,
 			'indArray': indArray,
-			'bl': bl+(dimList.length)-1};
+			'bl': bl+(rank)-1,
+			'endCmd': endCmd.reverse().join('\n') };
 };
 
 /*----------------------------------------------------------------------------*/
@@ -644,6 +731,341 @@ Base.prototype.isAllocatable = function(prop) {
 
 };
 /*----------------------------------------------------------------------------*/
+Base.prototype.hasBoolean = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean'))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasBooleanSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasBooleanArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'boolean') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasAtomicArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (this.isAtomic(prop) && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasNonAtomic = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) )
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasNonAtomicArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplex = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex'))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplexSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex') && this.isSingle(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasComplexArray = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type == 'complex') && this.isArray(prop))
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.hasStringSingle = function() {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ( (prop.type == 'string') && this.isSingle(prop) && this.isAtomic(prop) )
+			return true;
+	}
+	
+	return false;
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.allocateBlock = function(bl, allocateSize, varName, statVar, errorVar, msg){
+	
+	if (bl == undefined) {
+		bl = 0;
+	}
+	if (allocateSize == undefined) {
+		throw "allocation command must be specified.";
+	}	
+	if (varName == undefined) {
+		throw "variable name must be specified.";
+	}
+	if (statVar == undefined) {
+		statVar = "sv";
+	}
+	if (errorVar == undefined) {
+		errorVar = "error";
+	}	
+	if (msg == undefined) {
+		msg = "Error when allocating memory.";
+	}	
+	
+	var cmd = [];
+
+	cmd.push(this.gbl(bl) + 	"if (allocated("+ varName + ")) deallocate(" + varName +")");	
+	cmd.push(this.gbl(bl) + 	"allocate("+ allocateSize + ",stat=" + statVar +")");
+	cmd.push(this.gbl(bl) + 	"if (" + statVar + ".ne.0) then");
+	cmd.push(this.gbl(bl+1) + 		errorVar + "=-1");
+	//cmd.push(this.gbl(bl+1) + 		"write(*,*) '" + msg + "'");
+	cmd.push(this.gbl(bl+1) + 		"call throw('" + msg + "')");
+	cmd.push(this.gbl(bl) + 	"end if");			
+
+	return cmd.join('\n'); 
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.errorBlock = function(bl, errorVar, msg){
+	if ((bl == undefined)||(errorVar == undefined)||(msg == undefined)) {
+		throw('all input parameters must be provided.')
+	}
+
+	var cmd = [];
+	
+	cmd.push(					"if (" + errorVar + ".lt.0) then");
+	cmd.push(this.gbl(bl+1) + 		"call throw('" + msg + "')");
+	cmd.push(this.gbl(bl) + 	"end if");
+	
+	return cmd.join('\n'); 
+}
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempVariablesForSavingAndLoadingLogicals = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var tempVariables = []
+	var dec = ''
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		
+		if (prop.type=='boolean'){
+		    
+		    if (this.isArray(prop)) {
+		        var dimList = this.getDimensionList(prop);
+		        var arrDim = Array.apply(null, Array(dimList.length)).map(function(){return ':'})
+		        
+		        dec = this.gbl(bl) + 'integer, dimension(' + arrDim.join(',') +'), allocatable :: logicalToIntArray' + dimList.length;
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		    else {
+		        dec = this.gbl(bl) + 'integer :: logicalToIntSingle';
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		}
+	}
+	
+	return tempVariables.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempVariablesForLoadingComplexVariables = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var tempVariables = []
+	var dec = ''
+	    
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		
+		if (prop.type=='complex'){
+		    
+		    if (this.isArray(prop)) {
+		        var dimList = this.getDimensionList(prop);
+		        var arrDim = Array.apply(null, Array(dimList.length)).map(function(){return ':'})
+		        
+		        dec = this.gbl(bl) + 'double precision, dimension(' + arrDim.join(',') +'), allocatable :: realOfComplexArr' + dimList.length + ', imagOfComplexArr' + dimList.length;
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);		        
+		    }
+		    else {
+		        dec = this.gbl(bl) + 'double precision :: realOfComplexSingle, imagOfComplexSingle';
+		        if (tempVariables.indexOf(dec) == -1)
+		            tempVariables.push(dec);
+		    }
+		}
+	}
+	
+	return tempVariables.join('\n');
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.tempIndexVariablesForSavingAndLoading = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	
+	var maxDim = 0;
+	
+	if (this.maxRankOfBooleanArrays() > maxDim)
+		maxDim = this.maxRankOfBooleanArrays();
+	if (this.maxRankOfNonAtomicArrays() > maxDim)
+		maxDim = this.maxRankOfNonAtomicArrays();
+	
+	return this.indexVariablesForLoopingDec(bl, maxDim);
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.maxRankOfBooleanArrays = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var maxDim = 0;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if ((prop.type=='boolean') && this.isArray(prop)){
+	        var dimList = this.getDimensionList(prop);
+	        if (dimList.length > maxDim)
+	        	maxDim = dimList.length;
+		}
+		
+	}
+	
+	return maxDim;
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.maxRankOfNonAtomicArrays = function(bl) {
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	var maxDim = 0;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		if (!this.isAtomic(prop) && this.isArray(prop)){
+	        var dimList = this.getDimensionList(prop);
+	        if (dimList.length > maxDim)
+	        	maxDim = dimList.length;    
+		}
+		
+	}
+	
+	return maxDim;
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.indexVariablesForLooping = function(num) {
+
+	if (num==0)
+		return '';
+	
+	var tempVariables = [];
+	
+	for (var i=1; i<=num; i++){
+	    tempVariables.push('idx' + i);
+	}
+	
+	return (tempVariables);
+
+};
+/*----------------------------------------------------------------------------*/
+Base.prototype.indexVariablesForLoopingDec = function(bl, num) {
+
+	if (num==0)
+		return '';
+	
+	return (this.gbl(bl) + 'integer :: ' + this.indexVariablesForLooping(num).join(','));
+
+};
+/*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 /*   Handling user specified code in generator functions */
 /*----------------------------------------------------------------------------*/
@@ -657,8 +1079,14 @@ Base.prototype.findStrInLines = function(lines, str) {
 }
 
 Base.prototype.extractUserDefinedCode = function(code) {
-    if ((code == undefined) || (code == ''))
+    if ((code == undefined) || (code == '')){
+    	/*files does not exist, clean the existing code */
+    	for (key in this.userCodes) {
+    		var part = this.userCodes[key];
+    		part.code = "";
+    	}
         return;
+    }
     
     var lines = code.split('\n');
 

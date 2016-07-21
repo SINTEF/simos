@@ -22,6 +22,7 @@ cd build || exit $?
 mkdir simos
 cp -rf ../* simos/
 rm -rf simos/build
+rm -rf simos/releng
 
 zip -r simos-$BUILD_ID-$BUILD_TYPE-win64.zip simos/* || exit $?
 

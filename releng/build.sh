@@ -19,11 +19,11 @@ fi
 mkdir -p build
 cd build || exit $?
 
-mkdir src
-cp -rf ../* src/
-rm -rf src/build
+mkdir simos
+cp -rf ../* simos/
+rm -rf simos/build
 
-zip -r simos-$BUILD_ID-$BUILD_TYPE-win64.zip src/* || exit $?
+zip -r simos-$BUILD_ID-$BUILD_TYPE-win64.zip simos/* || exit $?
 
 exit $?
 

@@ -449,6 +449,7 @@ ModelParser.prototype.getPropertyStorableAttrs = function(prop) {
     return propKeys;
 };
 
+
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getAtomicSingleProperties = function() {
 	
@@ -471,7 +472,33 @@ ModelParser.prototype.getNonAtomicArrayProperties = function() {
 	return this.getNonAtomics(this.getArrays(this.getProperties()));
 	
 };
-
+/*----------------------------------------------------------------------------*/
+/* get grouped items */
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getGroups = function() {
+	var propList = new Array();
+	var props = this.getProperties();
+	for (var i = 0; i<props.length; i++){
+		var prop = props[i];
+		if (this.isGroup(prop)) {
+				propList.push(prop);
+		} 
+	}
+	return propList;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.getGroupedProps = function(groupName) {
+	var propList = new Array();
+	var props = this.getProperties();
+	for (var i = 0; i<props.length; i++){
+		var prop = props[i];
+		if (this.isGroupedIn(prop,groupName)) {
+				propList.push(prop);
+		} 
+	}
+	return propList;
+};
+/*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.getDimensionList = function(prop) {
 	if (this.isArray(prop)) {
@@ -603,8 +630,8 @@ ModelParser.prototype.isVariableDimArray = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.isSingle = function(attr) {
-	return (!this.isArray(attr));
+ModelParser.prototype.isSingle = function(prop) {
+	return (!this.isArray(prop));
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isAtomic = function(prop) {
@@ -718,6 +745,47 @@ ModelParser.prototype.isUngroup = function(prop) {
 	}
 	else {
 		return true;
+	}
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.isGrouped = function(prop) {
+	/* the property is in a group, but not the group itself */
+	if ((prop.group == undefined ) || (prop.group == "") ||  this.isGroup(prop)) {
+		return false;
+	}
+	else {
+		return true;
+	}
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.isGroupedIn = function(prop, groupName) {
+	/* the property is placed inside the group 'groupName', but it is not the group itself. */
+	if (this.isGrouped(prop) && prop.group==groupName) {
+		return true;
+	}
+	else {
+		return false;
+	}
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.isGroup = function(prop) {
+	/* the property is the group */
+	if ((prop.group == undefined ) || (prop.group == "")) {
+		return false;
+	}
+	else {
+		if (prop.name == prop.group) {
+			/* this is a group, make sure the type is correct */
+			if ((prop.type == "string") && (this.isArray(prop))) {
+				return true;
+			}
+			else {
+				throw "A group must be an array of type string." + this.str(prop);
+			}
+		}
+		else{
+			return false;
+		}
 	}
 };
 /*----------------------------------------------------------------------------*/

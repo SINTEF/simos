@@ -136,8 +136,14 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 
 	}
 	
-	cmd.push(this.gbl(bl) + 
-	'end');
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];  
+		if(this.isGroup(prop))
+			 cmd.push(this.gbl(bl+1) + this.objName() + '.init' + this.firstToUpper(prop.name) +'AfterLoading();' );
+	}
+	
+	cmd.push(this.gbl(bl) + 'end');
 	
     return cmd.join('\n');
 };
@@ -217,13 +223,15 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicSingle = function(bl) {
 	cmd.push(this.gbl(bl+1) +	'try');
 	cmd.push(this.gbl(bl+2) +		this.objName() + '.(varName) = h5read(' + filePath + ', [handle \'/\' varName]);' );
 	cmd.push(this.gbl(bl+2) +		'if ischar(' + this.objName() + '.(varName))' );
-	cmd.push(this.gbl(bl+3) +			'if ' + this.objName() + '.(varName)(end) == setstr(0)' );
-	cmd.push(this.gbl(bl+4) +				'if length(' + this.objName() + '.(varName)) == 1' );
-	cmd.push(this.gbl(bl+5) +					this.objName() + '.(varName) = \'\';' );
-	cmd.push(this.gbl(bl+4) +				'else' );
-	cmd.push(this.gbl(bl+5) +					this.objName() + '.(varName) = ' + this.objName() + '.(varName)(1:end-1);' );
-	cmd.push(this.gbl(bl+4) +				'end');
-	cmd.push(this.gbl(bl+3) +			'end');
+	cmd.push(this.gbl(bl+3) +			this.objName() + '.(varName) = deblank(' + this.objName() + '.(varName));');
+
+	//cmd.push(this.gbl(bl+3) +			'if ' + this.objName() + '.(varName)(end) == setstr(0)' );
+	//cmd.push(this.gbl(bl+4) +				'if length(' + this.objName() + '.(varName)) == 1' );
+	//cmd.push(this.gbl(bl+5) +					this.objName() + '.(varName) = \'\';' );
+	//cmd.push(this.gbl(bl+4) +				'else' );
+	//cmd.push(this.gbl(bl+5) +					this.objName() + '.(varName) = ' + this.objName() + '.(varName)(1:end-1);' );
+	//cmd.push(this.gbl(bl+4) +				'end');
+	//cmd.push(this.gbl(bl+3) +			'end');
 	cmd.push(this.gbl(bl+2) +		'end');
 	cmd.push(this.gbl(bl+1) +	'catch');
 	cmd.push(this.gbl(bl+1) +	'end' );
@@ -241,6 +249,23 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	
 	cmd.push(this.gbl(bl) + 'function loadFromHDF5HandleItemAtomicArray(' + this.objName() + ', handle, varName)');
 	cmd.push(this.gbl(bl+1) +	this.objName() + '.loadFromHDF5HandleItemAtomicSingle(handle, varName);');
+	cmd.push(this.gbl(bl+1) +	'if iscell(' + this.objName() + '.(varName))' );
+	cmd.push(this.gbl(bl+2) +		'for i = 1:length(' + this.objName() + '.(varName))' );
+	cmd.push(this.gbl(bl+3) +			'if ischar(' + this.objName() + '.(varName){i})' );
+	cmd.push(this.gbl(bl+4) +				this.objName() + '.(varName){i} = deblank(' + this.objName() + '.(varName){i});');
+	
+	//cmd.push(this.gbl(bl+4) +				'if ' + this.objName() + '.(varName){i}(end) == setstr(0)' );
+	//cmd.push(this.gbl(bl+5) +					'if length(' + this.objName() + '.(varName){i}) == 1' );
+	//cmd.push(this.gbl(bl+6) +						this.objName() + '.(varName){i} = \'\';' );
+	//cmd.push(this.gbl(bl+5) +					'else' );
+	//cmd.push(this.gbl(bl+6) +						this.objName() + '.(varName){i} = ' + this.objName() + '.(varName){i}(1:end-1);' );
+	//cmd.push(this.gbl(bl+5) +					'end');
+	//cmd.push(this.gbl(bl+4) +				'end');
+	cmd.push(this.gbl(bl+3) +			'end');
+	cmd.push(this.gbl(bl+2) +		'end');
+	cmd.push(this.gbl(bl+1) +	'end');
+	
+
 	cmd.push(this.gbl(bl) + 'end');
 	
     return cmd.join('\n');

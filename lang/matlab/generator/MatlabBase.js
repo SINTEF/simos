@@ -25,7 +25,8 @@ packageParts = ['./storage/SaveLoad',
                 './properties/Query',
                 './properties/Init',
                 './properties/Assign',
-                './properties/SetGet'
+                './properties/SetGet',
+                './properties/Groups'
                 //'./properties/Representation'
                 ];
 
@@ -129,6 +130,7 @@ MatlabBase.prototype.getArrayDimList = function(prop) {
 				}
 			}
 		}
+		/* treats all awways as two-dimensional */
 		if (dimList.length == 1) {
 			dimList.push('1');
 		}
@@ -317,7 +319,7 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 	
 	var nameFlag = '';
 	
-	for (var di =dimList.length-1; di>=0; di--) {
+	for (var di =(dimList.length-1); di>=0; di--) {
 		var indName = 'i' + di;
 		indNames.push(indName);
 		
@@ -404,7 +406,7 @@ MatlabBase.prototype.cloneToFunc = function(bl) {
 				cmd.push(loopBlock.cmd);
 					cmd.push(this.gbl(loopBlock.bl+1) + 
 							'newObj.' + this.makePrivate(prop.name) + '{end+1} = ' +
-							this.objName() + '.' + this.makePrivate(prop.name) + loopBlock.indList + '.clone();' );    
+							this.objName() + '.' + this.makePrivate(prop.name) + '{' +loopBlock.indArray + '}'  + '.clone();' );    
 				cmd.push(loopBlock.ends);
 			}
 			else {
@@ -425,7 +427,7 @@ MatlabBase.prototype.cloneToFunc = function(bl) {
 };
 
 /*----------------------------------------------------------------------------*/
-MatlabBase.prototype.factoryFunc = function(bl) {
+MatlabBase.prototype.factoryFuncPublic = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
@@ -466,7 +468,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 				'end');	
 				cmd.push(this.getCodeSeparator(bl));
 			
-			if (this.isArray(prop)){
+			if (this.isArray(prop) && !this.isGrouped(prop)){
 				cmd.push(this.getBlockSpace(bl) + 
 				'function obj = append' + this.firstToUpper(prop.name) +'(' + this.objName() + ',name)');
 				cmd.push(this.getBlockSpace(bl+1) + 
@@ -514,7 +516,7 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.getCodeSeparator(bl));
 						
 			}
-			else {
+			else if(this.isSingle(prop)) {
 				if (this.isOptional(prop)) {
 					cmd.push(this.getBlockSpace(bl) + 
 					'function obj = create' + this.firstToUpper(prop.name) +'(' + this.objName() + ', name)');
@@ -577,6 +579,76 @@ MatlabBase.prototype.factoryFunc = function(bl) {
 	
 	return cmd.join('\n');
 };
+
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.factoryFuncPrivate = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+		
+	var props = this.getProperties();
+    for (var i = 0; i<props.length; i++) {
+    	if (!(this.isAtomicType(props[i].type))) {
+    		var prop = props[i];
+    		var propType = this.getClassPathFromType(prop.type);
+			
+			if (this.isArray(prop) && this.isGrouped(prop)){
+				cmd.push(this.getBlockSpace(bl) + 
+				'function obj = append' + this.firstToUpper(prop.name) +'(' + this.objName() + ',name)');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if ~(exist(\'name\',\'var\')) ');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'name = [' + this.stringify(prop.name) + ' num2str(length(' + this.objName() + '.' + prop.name + '))]; ');	
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'end ');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'obj = ' + propType + '(name);');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'for i = 1:length(' + this.objName() + '.' + prop.name + ')');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'if (strcmp(' + this.objName() + '.' + prop.name + '{i}.name, name) == 1)');
+				cmd.push(this.getBlockSpace(bl+3) + 
+							'disp([\'warning:\' name \' already exist. \']);');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'end');		
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'end');
+
+				if (this.hasAssignments(prop))
+					cmd.push(
+						this.assignPropertyValue(bl+1,	this.getAssignments(prop), 'obj')
+						);
+				
+				cmd.push(this.getBlockSpace(bl+1) + 
+					this.objName() + '.' + prop.name + '{end+1} = obj;');
+				
+				/*
+				 * TODO: Check if the name already exist
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'if not(obj.name in [a.name for a in self.' + prop.name + ']):');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						this.objName() + '.' + prop.name + '(end+1) = obj');
+				cmd.push(this.getBlockSpace(bl+1) + 
+					'else');
+				cmd.push(this.getBlockSpace(bl+2) + 
+						'print ("warning: object %s already exist."%(obj.name))');	
+				cmd.push(this.getBlockSpace(bl) + 
+					'end');	
+				*/
+				cmd.push(this.getBlockSpace(bl) + 
+				'end');	
+				cmd.push(this.getCodeSeparator(bl));
+						
+			}
+			
+    	}
+	}
+	
+	
+	return cmd.join('\n');
+};
+
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.getPropModelFunc = function(bl) {

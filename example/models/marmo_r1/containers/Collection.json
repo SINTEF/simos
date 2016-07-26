@@ -1,0 +1,49 @@
+
+{   
+    "name": "Collection",
+    "description": "Collection of data, its description and specification.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+  
+    {"name": "strings", 
+            "type": "marmo:containers:SimpleString",  
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of strings."},
+                        
+    {"name": "numbers", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of dimensional scalars."},
+            
+    {"name": "esArrays", 
+            "type": "marmo:containers:EquallySpacedSignal", 
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of EquallySpacedSignals."},
+
+    {"name": "nesArrays", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of NonEquallySpacedSignals."},
+
+    {"name": "strArrays", 
+            "type": "marmo:containers:StringArray",  
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of strings."},
+                        
+    {"name": "collections", 
+            "type": "Collection", 
+            "dim": "*",
+            "ungroup": "true",
+            "description": "an array of channel collections."}
+    ]
+    
+}
+
+

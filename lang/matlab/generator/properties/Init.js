@@ -41,16 +41,15 @@ Init.prototype.initPublicDependentProperties = function(bl) {
 	var properties = this.getProperties();
 	var propNum = properties.length;
 	
-	cmd.push(this.gbl(bl) + 
-			this.modelDesAtt() );
+	cmd.push(this.gbl(bl) + this.modelDesAtt() );
 	cmd.push(this.gbl(bl));
 	
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];
 
-		/*initializing other properties */
-		cmd.push(this.gbl(bl) + 
-		prop.name + ' = ' + this.getPropertyValue(prop) + ';');
+		/*initializing other properties, present them only if they are not grouped */
+		if (!this.isGrouped(prop))
+			cmd.push(this.gbl(bl) + prop.name + ' = ' + this.getPropertyValue(prop) + ';');
 		
 		/*
 		if (!(this.isAtomic(prop)) && (this.isContained(prop)) ){
@@ -74,12 +73,21 @@ Init.prototype.initPublicHiddenProperties = function(bl) {
 
 	/*add one property for the filepath */
 
-	cmd.push(this.gbl(bl) + 
-		'storageBackEndType');	
+	cmd.push(this.gbl(bl) + 'storageBackEndType');	
 	
-	cmd.push(this.gbl(bl) + 
-			this.makeInternal('FilePath') + ' = \'\';');
+	cmd.push(this.gbl(bl) + this.makeInternal('FilePath') + ' = \'\';');
 
+	
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+		/* initializing hidden grouped properties */
+		if (this.isGrouped(prop))
+			cmd.push(this.gbl(bl) + prop.name + ' = ' + this.getPropertyValue(prop) + ';');
+	}
+	cmd.push(this.gbl(bl));
+    
     return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
@@ -121,7 +129,7 @@ Init.prototype.getPropertyValue = function(prop) {
 	
 	if(prop.value == undefined){
 		if (this.isArray(prop)) {
-			if (this.isAtomic(prop)){				
+			if (this.isAtomic(prop) && !this.isString(prop)){				
 				return '[]';
 			}
 			else {
@@ -196,7 +204,7 @@ Init.prototype.constructorFunc = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];
 		
-		if (this.isArray(prop) && this.isAtomic(prop) ){
+		if (this.isArray(prop) && this.isAtomic(prop) && !this.isString(prop)){
 				cmd.push(this.gbl(bl+1) + 
 				this.objName() + '.' + prop.name + ' = ' + 
 				'zeros(' + this.getArrayShape(prop) + ');');				

@@ -32,7 +32,7 @@ Assign.prototype.assignPropSinglesValues = function(bl, prop) {
 		}
 	}
 	else
-		throw "only single object can be handled here.";
+		throw "only single object can be handled here.\n" + this.str(prop);
 
 	return cmd.join('\n');
 };

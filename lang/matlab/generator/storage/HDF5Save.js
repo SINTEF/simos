@@ -82,6 +82,13 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 	
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
+		if(this.isGroup(prop))
+			 cmd.push(this.gbl(bl+1) + this.objName() + '.prepare' + this.firstToUpper(prop.name) +'ForSaving();' );
+	}
+		
+
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];  
 
 		/* writing the value */
 		if (this.isAtomicType(prop.type)) {
@@ -100,14 +107,12 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 			/*creating references and saving other complex types 
 			 * 'value' will be a or an array of references */
 			
-			/*create a subgroup for the contained values */
-
 			if(this.isArray(prop)){
+				/*create a subgroup for the contained values */
 				/* array non-atomic type reference */
 				 cmd.push(this.gbl(bl+1) + 
 					this.objName() + '.saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', \'NonAtomicArray\')' );
-				 
-			 }
+			}
 			 else{
 				 /* single non-atomic type reference */
 				 cmd.push(this.gbl(bl+1) + 
@@ -139,6 +144,14 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 									this.stringify(this.getPackagedTypeStr()) + ');' );
 	cmd.push(this.gbl(bl+1) + 	'h5writeatt(' + filePath + ',handle,\'ID\',' + 
 									this.objName() + '.ID' +  ');' );
+	
+	
+
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];  
+		if(this.isGroup(prop))
+			 cmd.push(this.gbl(bl+1) + this.objName() + '.init' + this.firstToUpper(prop.name) +'AfterLoading();' );
+	}
 	
 	cmd.push(this.gbl(bl) + 'end');
 	

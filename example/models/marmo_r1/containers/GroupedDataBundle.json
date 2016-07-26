@@ -1,0 +1,61 @@
+
+{   
+    "name": "GroupedDataBundle",
+    "description": "A bundle of dimensional data used for storing, for instance, post-processed data.",
+    
+    "extends": ["marmo:basic:NamedEntity"],
+    
+    "properties": [
+
+    {"name": "data", 
+            "type": "string",  
+            "dim": "*",
+            "group": "data",
+            "description": "the group."},
+            
+    {"name": "strings", 
+            "type": "marmo:containers:SimpleString",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of strings."},
+
+    {"name": "scalars", 
+            "type": "marmo:containers:DimensionalScalar",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of dimensional scalars."},
+
+    {"name": "complexScalars", 
+            "type": "DimensionalComplexScalar",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of complex dimensional scalars."},
+            
+    {"name": "vectors", 
+            "type": "Dimensional3DVector",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of dimensional 3D vectors."},
+
+    {"name": "complexVectors", 
+            "type": "DimensionalComplex3DVector",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of complex dimensional vectors."},
+            
+    {"name": "scalarArrays", 
+            "type": "marmo:containers:NonEquallySpacedSignal", 
+            "dim": "*",
+            "group": "data",
+            "description": "an array of NonEquallySpacedSignals."},         
+
+    {"name": "vectorArrays", 
+            "type": "marmo:containers:NonEquallySpaced3DVectorSignal",  
+            "dim": "*",
+            "group": "data",
+            "description": "an array of NonEquallySpaced3DVectorSignals."}
+    ]
+    
+}
+
+

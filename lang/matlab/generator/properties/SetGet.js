@@ -3,20 +3,67 @@ function SetGet(){
 };
 exports.SetGet = SetGet;
 /*----------------------------------------------------------------------------*/
+SetGet.prototype.getFromGroupFuncs = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+
+	var props = this.getProperties();
+	for (var i=0; i<props.length; i++ ) {
+	    var prop = props[i];
+		if (this.isGroup(prop)) {
+			cmd.push(this.getFromGroup(prop, bl));	
+			cmd.push(this.sep2);	
+		}
+	}
+	
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
+SetGet.prototype.getFromGroup = function(prop, bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	
+	if (this.isGroup(prop)) {
+	    var props = this.getGroupedProps(prop.group);
+	    
+		cmd.push(this.gbl(bl) + 'function item = getFrom' + this.firstToUpper(prop.name) + '(' + this.objName() +', name)');
+		
+		for (var i=0; i<props.length; i++ ) {
+	
+		    /* find in the cell array */
+			cmd.push(this.gbl(bl+1) + 	'for i = 1:length(' + this.objName() + '.' + prop.name + ')' );
+			cmd.push(this.gbl(bl+2) + 		'if (strcmp(' + this.objName() + '.' + prop.name + '{i}.name, name)==1)');
+			cmd.push(this.gbl(bl+3) + 			'item = ' + this.objName() + '.' + prop.name + '{i};');
+			cmd.push(this.gbl(bl+3) + 			'return;');
+			cmd.push(this.gbl(bl+2) +		'end');
+			cmd.push(this.gbl(bl+1) +	'end');
+		}
+		
+		cmd.push(this.gbl(bl) + 'end');	
+			
+	}
+	
+	return cmd.join('\n');
+};
+
+/*----------------------------------------------------------------------------*/
 SetGet.prototype.propGet = function(prop, bl) {
 	if (bl == undefined) {
 		bl = 0;
 	}	
 	var cmd = [];
 
-	cmd.push(this.gbl(bl) + 
-	'function ' + prop.name + ' = get.' + prop.name + '(' + this.objName() +')');	
+	cmd.push(this.gbl(bl) + 'function ' + prop.name + ' = get.' + prop.name + '(' + this.objName() +')');	
 
-	cmd.push(this.gbl(bl+1) + 
-		prop.name + ' = ' + this.objName() + '.' + this.makePrivate(prop.name) + ';' );
+	cmd.push(this.gbl(bl+1) + 	prop.name + ' = ' + this.objName() + '.' + this.makePrivate(prop.name) + ';' );
 
-	cmd.push(this.gbl(bl) + 
-	'end');	
+	cmd.push(this.gbl(bl) + 'end');	
 			
 	return cmd.join('\n');
 };
@@ -65,11 +112,17 @@ SetGet.prototype.propSet = function(prop, bl) {
 				cmd.push(this.gbl(bl+1) + 
 				this.objName() + '.' + this.makePrivate(prop.name) +' = ' + 
 				'(val);');
-			}
+			}			
 
 		}
 	}
 	else {
+	    /* non-atomic types */
+	    //if (this.isGroup(prop))
+	    //    cmd.push(this.gbl(bl+1) + 'error(\'Error: can not directly set value to a group. Try using append...To' + prop.name + ' instead.\')');
+        //if (this.isGrouped(prop))
+        //    cmd.push(this.gbl(bl+1) + 'error(\'Error: can not directly set value to a grouped property. Try using append' + this.firstToUpper(prop.name) +'To' + prop.group + ' instead.\')'); 
+	    
 		/*non-atomic types */
 		if (this.isArray(prop)) {
 			/* cheks if all elements is array has the correct type 
@@ -81,8 +134,7 @@ SetGet.prototype.propSet = function(prop, bl) {
 			 * TODO: add the check*/
 		}
 		/*simple assignment */
-		cmd.push(this.gbl(bl+1) + 
-		this.objName() + '.' + this.makePrivate(prop.name) +' = val;');
+		cmd.push(this.gbl(bl+1) + this.objName() + '.' + this.makePrivate(prop.name) +' = val;');
 	}
 
 	/*change array sizes if prop is a dimension */

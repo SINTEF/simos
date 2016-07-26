@@ -591,15 +591,7 @@ Generator.prototype.generatePackage = function(packageID) {
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
 Generator.prototype.parseModel = function(modelID) {
-	if (modelID==undefined) {
-		throw("please provide modelID, example marmo_r1:basic:NamedEntity.")
-	} 
-	
-	var modelPath = this.sourceModelIDtoPath(modelID);	
-	delete require.cache[path.resolve(modelPath+ '.' + this.modelExt)];
-	var model = require(modelPath);
-	
-	return this.lang.getModelParser(model);
+	return this.getModel(modelID);
 	
 };
 /*----------------------------------------------------------------------------*/

@@ -109,6 +109,12 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push( entity.getPropModelFunc(1));
     cmd.push('');
 	cmd.push('    %-----------------------------------------------------------------------');
+	cmd.push('    % Struct text representation');
+	cmd.push('    %---------------------------------------------------------------------------');
+	cmd.push( entity.getMatStr(1));   
+	cmd.push( entity.saveMatStr(1));    
+	cmd.push( entity.saveMatStrWithName(1));    	
+	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %file access');
 	cmd.push('    %---------------------------------------------------------------------------');      
     cmd.push( entity.loadFunc(1));
@@ -128,8 +134,10 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('    methods (Access = protected, Hidden)');
 	cmd.push('    %---------------------------------------------------------------------------');
     cmd.push('');
-	cmd.push( entity.cloneToFunc(1));
+	cmd.push( entity.getPrivateNameFunc(1));
     cmd.push('');
+	cmd.push( entity.cloneToFunc(1));
+    cmd.push('');    
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %Array update size function');
 	cmd.push('    %-----------------------------------------------------------------------');
@@ -152,6 +160,16 @@ MatlabGenerator.prototype.generate = function(model) {
     cmd.push('');
     cmd.push( entity.initGroupsAfterLoadingFuncs(1));
     cmd.push('');
+	cmd.push('    %-----------------------------------------------------------------------');
+	cmd.push('    % Struct text representation');
+	cmd.push('    %---------------------------------------------------------------------------');
+	cmd.push( entity.getMatStrHandle(1));
+	cmd.push( entity.getMatStrItem(1));
+	cmd.push( entity.getMatStrItemAtomicSingle(1));
+	cmd.push( entity.getMatStrItemAtomicArray(1));
+	cmd.push( entity.getMatStrItemNonAtomicSingle(1));
+	cmd.push( entity.getMatStrItemNonAtomicArray(1));
+    
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %file access, Load');
 	cmd.push('    %---------------------------------------------------------------------------');

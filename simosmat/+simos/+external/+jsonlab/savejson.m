@@ -90,12 +90,12 @@ end
 if(length(varargin)==1 && ischar(varargin{1}))
    opt=struct('FileName',varargin{1});
 else
-   opt=varargin2struct(varargin{:});
+   opt=simos.external.jsonlab.varargin2struct(varargin{:});
 end
 opt.IsOctave=exist('OCTAVE_VERSION','builtin');
 rootisarray=0;
 rootlevel=1;
-forceroot=jsonopt('ForceRootName',0,opt);
+forceroot=simos.external.jsonlab.jsonopt('ForceRootName',0,opt);
 if((isnumeric(obj) || islogical(obj) || ischar(obj) || isstruct(obj) || iscell(obj)) && isempty(rootname) && forceroot==0)
     rootisarray=1;
     rootlevel=0;

@@ -17,6 +17,7 @@ MatlabBase.prototype = Object.create(CommonLangBase.prototype);
 packageParts = ['./storage/SaveLoad',
                 './storage/HDF5Load',
                 './storage/HDF5Save',
+                './storage/MatStrSave',
                 //'./storage/JSONLoad',
                 //'./storage/JSONSave',
                 //'./storage/MongoSave',
@@ -316,12 +317,15 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 	
 	var dimList = this.getArrayDimList(prop);
 	var indNames = [];
+	var strInds = [];
 	
 	var nameFlag = '';
 	
 	for (var di =(dimList.length-1); di>=0; di--) {
 		var indName = 'i' + di;
 		indNames.push(indName);
+		
+		strInds.push('num2str(' + indName + ')'); /* make string rep for matlab*/
 		
 		cmd.push(this.getBlockSpace(bl+ (dimList.length-1)-di ) + 
 		'for ' + indName + ' = 1:size(' + this.objName() + '.' + prop.name + ',' + (di+1) + ')');
@@ -332,10 +336,12 @@ MatlabBase.prototype.loopBlockForArray = function(bl, prop) {
 		nameFlag = nameFlag + this.stringify(indName) + ' num2str(' + indName + ') ';
 	}
 	var indArray = indNames.reverse().join(',');
-
+	var strIndArray = strInds.reverse().join(' \',\' ');
+	
 	return {'cmd' : cmd.join('\n'),
 			'indNames': indNames,
 			'indArray': indArray,
+			'strIndArray': strIndArray,
 			'nameFlag': '[' + nameFlag + ']',
 			'ends': ends.join('\n'),
 			'bl': bl+(dimList.length)-1};
@@ -425,7 +431,20 @@ MatlabBase.prototype.cloneToFunc = function(bl) {
 	
 	return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+MatlabBase.prototype.getPrivateNameFunc = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'function pname = getPrivateName(~,name)');
+	cmd.push(this.gbl(bl+1) +	'pname = [name \'Private\'];');
+	cmd.push(this.gbl(bl) +	'end');   
+	
 
+return cmd.join('\n');
+};
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.factoryFuncPublic = function(bl) {
 	if (bl == undefined) {

@@ -60,8 +60,10 @@ MatStrSave.prototype.getMatStr = function(bl) {
 	var propType = this.getClassPathFromType(this.getType());
 
 	cmd.push(this.gbl(bl) + 'function matstr = getMatStr(' + this.objName() + ', name)');
+    cmd.push(this.gbl(bl+1) +   'blockSpace = repmat(\' \',1,sum(name == \' \')); ');
+
 	cmd.push(this.gbl(bl+1) +   'matstr = {};');
-    cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [\'% \' ' + this.objName() + '.name ];');
+    cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [blockSpace \'% \' ' + this.objName() + '.name ];');
 	cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [name \' = ' + propType + '(); \'];');
 	cmd.push(this.gbl(bl+1) +	'matstr{end+1} = ' + this.objName() + '.getMatStrHandle(name);' );
     cmd.push(this.gbl(bl+1) +   'matstr = strjoin(matstr, \'\\n\');');
@@ -225,9 +227,7 @@ MatStrSave.prototype.getMatStrItemNonAtomicSingle = function(bl) {
 	 /* single non-atomic type value */
 	cmd.push(this.gbl(bl+1) + 	'if (' + this.objName() + '.isSet(varName))');
 	cmd.push(this.gbl(bl+2) +		'if (' + this.objName() + '.isContained(varName))');
-    cmd.push(this.gbl(bl+3) +           'funcName = [\'makea\' upper(varName(1))  varName(2:end)];');
-	cmd.push(this.gbl(bl+3) +           'str{end+1} = [handle \'.\' varName \' = \' handle \'.\' funcName \'()\'];');
-	cmd.push(this.gbl(bl+3) + 			'str{end+1} = ' + this.objName() + '.(varName).getMatStr([handle \'.\' varName]);');
+	cmd.push(this.gbl(bl+3) + 			'str{end+1} = ' + this.objName() + '.(varName).getMatStr([\'  \' handle \'.\' varName]);');
 	cmd.push(this.gbl(bl+2) + 		'else');
 	/*
 	cmd.push(this.gbl(bl+2) +
@@ -276,7 +276,7 @@ MatStrSave.prototype.getMatStrItemNonAtomicArray = function(bl) {
 		cmd.push(loopBlock.cmd);
 		cmd.push(this.gbl(loopBlock.bl+1) +	'item = ' + this.objName() + '.(' + this.objName() + '.getPrivateName(varName))' + 
 												'{' +loopBlock.indArray + '};'	);	
-		cmd.push(this.gbl(loopBlock.bl+1) + 'path = [handle \'.\' varName \'{\' ' +loopBlock.strIndArray + ' \'}\' ];' );	
+		cmd.push(this.gbl(loopBlock.bl+1) + 'path = [\'  \' handle \'.\' varName \'{\' ' +loopBlock.strIndArray + ' \'}\' ];' );	
 		cmd.push(this.gbl(loopBlock.bl+1) + 'str{end+1} = item.getMatStr(path);' );		
 		cmd.push(loopBlock.ends);
 		

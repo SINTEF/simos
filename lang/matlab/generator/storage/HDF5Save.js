@@ -87,6 +87,8 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 	}
 		
 
+	cmd.push(this.gbl(bl+1) + 'try' );
+	
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 
@@ -94,12 +96,12 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 		if (this.isAtomicType(prop.type)) {
 			if(this.isArray(prop)){
 				/* array of atomic type */
-				cmd.push(this.gbl(bl+1) + 
+				cmd.push(this.gbl(bl+2) + 
 						this.objName() + '.saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', \'AtomicArray\')' );
 			 }
 			 else{
 				 /* single atomic type value */
-				cmd.push(this.gbl(bl+1) + 
+				cmd.push(this.gbl(bl+2) + 
 						this.objName() + '.saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', \'AtomicSingle\')' );
 			 }
 		}
@@ -110,39 +112,39 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 			if(this.isArray(prop)){
 				/*create a subgroup for the contained values */
 				/* array non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
+				 cmd.push(this.gbl(bl+2) + 
 					this.objName() + '.saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', \'NonAtomicArray\')' );
 			}
 			 else{
 				 /* single non-atomic type reference */
-				 cmd.push(this.gbl(bl+1) + 
+				 cmd.push(this.gbl(bl+2) + 
 					this.objName() + '.saveToHDF5HandleItem(handle, ' + this.stringify(prop.name) + ', \'NonAtomicSingle\')' );
 			 }
 
 		}
 		 
-		cmd.push(this.gbl(bl+1));
+		cmd.push(this.gbl(bl+2));
 
 	}
 	
 	/* saving root attributes */
 	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
 
-	cmd.push(this.gbl(bl+1) + 	'fileattrib(' + filePath + ',\'+w\');' );
+	cmd.push(this.gbl(bl+2) + 	'fileattrib(' + filePath + ',\'+w\');' );
 	
 	/* putting accessed package names into the main root attributes */
 	var packages = this.getPackages();
 	for(var i = 0, len = packages.length; i< len; i++) {
 		var key = packages[i];
-		cmd.push(this.gbl(bl+1) +'h5writeatt(' + filePath + ',\'/\',' + 
+		cmd.push(this.gbl(bl+2) +'h5writeatt(' + filePath + ',\'/\',' + 
 									this.stringify(key) +',' + 
 									this.stringify(this.getVersion(key)) + ');' );
 
 	}
 	
-	cmd.push(this.gbl(bl+1) + 	'h5writeatt(' + filePath + ',handle,\'type\',' + 
+	cmd.push(this.gbl(bl+2) + 	'h5writeatt(' + filePath + ',handle,\'type\',' + 
 									this.stringify(this.getPackagedTypeStr()) + ');' );
-	cmd.push(this.gbl(bl+1) + 	'h5writeatt(' + filePath + ',handle,\'ID\',' + 
+	cmd.push(this.gbl(bl+2) + 	'h5writeatt(' + filePath + ',handle,\'ID\',' + 
 									this.objName() + '.ID' +  ');' );
 	
 	
@@ -150,8 +152,19 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 		if(this.isGroup(prop))
-			 cmd.push(this.gbl(bl+1) + this.objName() + '.init' + this.firstToUpper(prop.name) +'AfterLoading();' );
+			 cmd.push(this.gbl(bl+2) + this.objName() + '.init' + this.firstToUpper(prop.name) +'AfterLoading();' );
 	}
+	
+	cmd.push(this.gbl(bl+1) + 'catch ME' );
+
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];  
+		if(this.isGroup(prop))
+			 cmd.push(this.gbl(bl+2) + this.objName() + '.init' + this.firstToUpper(prop.name) +'AfterLoading();' );
+	}
+	
+	cmd.push(this.gbl(bl+2) + 	'rethrow(ME)');
+	cmd.push(this.gbl(bl+1) + 'end');
 	
 	cmd.push(this.gbl(bl) + 'end');
 	

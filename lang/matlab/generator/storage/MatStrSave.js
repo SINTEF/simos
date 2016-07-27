@@ -61,7 +61,7 @@ MatStrSave.prototype.getMatStr = function(bl) {
 
 	cmd.push(this.gbl(bl) + 'function matstr = getMatStr(' + this.objName() + ', name)');
 	cmd.push(this.gbl(bl+1) +   'matstr = {};');
-    cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [\'% \' ' + this.objName() + '.name \' , Type = ' + this.getType() + '\'];');
+    cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [\'% \' ' + this.objName() + '.name ];');
 	cmd.push(this.gbl(bl+1) +   'matstr{end+1} = [name \' = ' + propType + '(); \'];');
 	cmd.push(this.gbl(bl+1) +	'matstr{end+1} = ' + this.objName() + '.getMatStrHandle(name);' );
     cmd.push(this.gbl(bl+1) +   'matstr = strjoin(matstr, \'\\n\');');

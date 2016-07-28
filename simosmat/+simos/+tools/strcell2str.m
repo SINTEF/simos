@@ -8,7 +8,11 @@ function out = strcell2str(c)
     for i = 1:size(c,1)
         str = [str '''' strjoin(c(i,:),''',''') ''';'];
     end
-    str(end) = '}';
+    if (str(end) == ';')
+        str(end) = '}';
+    else
+        str(end+1) = '}';
+    end
     
     out = str;
 end

@@ -91,6 +91,10 @@ MatlabGenerator.prototype.generate = function(model) {
     cmd.push('');
 	cmd.push( entity.getFromGroupFuncs(1));
     cmd.push('');
+	cmd.push( entity.groupAppendFuncs(1));
+    cmd.push('');
+	cmd.push( entity.groupRemoveFuncs(1));
+    cmd.push('');    
     cmd.push( entity.groupFactoryFuncs(1));
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %Factory funcs ');

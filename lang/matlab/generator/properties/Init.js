@@ -49,7 +49,8 @@ Init.prototype.initPublicDependentProperties = function(bl) {
 
 		/*initializing other properties, present them only if they are not grouped */
 		if (!this.isGrouped(prop))
-			cmd.push(this.gbl(bl) + prop.name + ' = ' + this.getPropertyValue(prop) + ';');
+			//cmd.push(this.gbl(bl) + prop.name + ' = ' + this.getPropertyValue(prop) + ';');
+			cmd.push(this.gbl(bl) + prop.name + ';');
 		
 		/*
 		if (!(this.isAtomic(prop)) && (this.isContained(prop)) ){
@@ -130,7 +131,8 @@ Init.prototype.getPropertyValue = function(prop) {
 	if(prop.value == undefined){
 		if (this.isArray(prop)) {
 			if (this.isAtomic(prop) && !this.isString(prop)){				
-				return '[]';
+				//return '[]';
+				return 'zeros(' + this.getArrayShape(prop) + ');';				
 			}
 			else {
 				if (this.isContained(prop)){
@@ -153,14 +155,33 @@ Init.prototype.getPropertyValue = function(prop) {
 	}
 	else {
 		if (this.isAtomic(prop)){
-			if (prop.type == "boolean") {
-				return (this.changeType(prop.type) + '(' + prop.value + ')' );
+			if (this.isSingle(prop)) {
+				if (prop.type == "boolean") {
+					return (this.changeType(prop.type) + '(' + prop.value + ')' );
+				}
+				else if (this.isNumeric(prop)){
+					return ('str2num(' + this.stringify(this.changeType(prop.type) + '(' + prop.value + ')') + ')');
+				}
+				else {
+					return ( this.stringify( prop.value ) );
+				}
 			}
-			else if (this.isNumeric(prop)){
-				return ('str2num(' + this.stringify(this.changeType(prop.type) + '(' + prop.value + ')') + ')');
-			}
-			else {
-				return ( this.stringify( prop.value ) );
+			else { //array
+				if (this.isNumeric(prop))
+					return ('[' + prop.value + ']' );
+				else {	//string
+					var cols = prop.value.split(";");
+					var strCols = [];
+					for (var coli=0; coli<cols.length; coli++) {
+						var rows = cols[coli].split(",");
+						var strRows = [];
+						for (var rowi=0; rowi<rows.length; rowi++) {
+							strRows.push(this.stringify( rows[rowi] ));
+						}
+						strCols.push(strRows.join(", "));
+					}
+					return ('{' + strCols.join("; ") + '}' );
+				}
 			}
 		}
 		else {
@@ -204,12 +225,11 @@ Init.prototype.constructorFunc = function(bl) {
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];
 		
-		if (this.isArray(prop) && this.isAtomic(prop) && !this.isString(prop)){
-				cmd.push(this.gbl(bl+1) + 
-				this.objName() + '.' + prop.name + ' = ' + 
-				'zeros(' + this.getArrayShape(prop) + ');');				
-		
-		}
+		//if (this.isArray(prop) && this.isAtomic(prop) && !this.isString(prop) && (prop.value == undefined)){
+		//		cmd.push(this.gbl(bl+1) + 
+		//		this.objName() + '.' + prop.name + ' = ' + 
+		//		'zeros(' + this.getArrayShape(prop) + ');');					
+		//}
 		
 		if (this.isSingle(prop) && (!this.isAtomic(prop)) && 
 			this.isContained(prop) && (!this.isOptional(prop)) ){

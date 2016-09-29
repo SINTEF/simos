@@ -38,6 +38,9 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('');
 	cmd.push(entity.initPublicProperties(2));
     cmd.push('');
+	cmd.push('    %----------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("prop_pub"));
+	cmd.push('    %----------------------------------------------------------------------');    
 	cmd.push('    end %properties');
 	cmd.push('    %***********************************************************************');
 	cmd.push('    properties (Constant)');
@@ -65,7 +68,10 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('    properties ( Hidden)');
 	cmd.push('');
 	cmd.push(entity.initPublicHiddenProperties(2));
-	cmd.push('   ');
+	cmd.push('');
+	cmd.push('    %----------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("prop_hid"));
+	cmd.push('    %----------------------------------------------------------------------');    	
 	cmd.push('    end %properties ( Hidden)');
 	cmd.push('    %***********************************************************************');
 	cmd.push('    properties (SetAccess = private, Hidden)');
@@ -130,6 +136,10 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push( entity.saveToHDF5Handle(1));
 	cmd.push('    %---------------------------------------------------------------------------');
 	cmd.push( entity.hdf5DataType(1));
+	
+	cmd.push('    %---------------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("method_pub"));
+	cmd.push('    %---------------------------------------------------------------------------');    	
 	cmd.push('    %---------------------------------------------------------------------------');
 	cmd.push('    end %methods ');
 	cmd.push('    %***********************************************************************');
@@ -137,6 +147,8 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('    %***********************************************************************');
 	cmd.push('    methods (Access = protected, Hidden)');
 	cmd.push('    %---------------------------------------------------------------------------');
+	cmd.push(entity.getUserDefinedCode("method_hid"));
+	cmd.push('    %---------------------------------------------------------------------------');	
     cmd.push('');
 	cmd.push( entity.getPrivateNameFunc(1));
     cmd.push('');

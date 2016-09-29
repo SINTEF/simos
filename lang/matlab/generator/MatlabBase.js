@@ -70,6 +70,20 @@ MatlabBase.prototype.constructor = function(model) {
 	
 	//make packaging module
 	this.packaging = new Packaging(this);
+
+	this.userCodes = {  
+						"prop_pub"    : {	"start" : "%@@@@@ USER DEFINED PUBLIC PROPERTIES START @@@@@",
+											"end"   : "%@@@@@ USER DEFINED PUBLIC PROPERTIES End   @@@@@",
+											"code"  : ""},
+						"method_pub"  : {	"start" : "%@@@@@ USER DEFINED PUBLIC METHODS START @@@@@",
+											"end"   : "%@@@@@ USER DEFINED PUBLIC METHODS End   @@@@@",
+											"code"  : ""},
+						"prop_hid"    : {	"start" : "%@@@@@ USER DEFINED HIDDEN PROPERTIES START @@@@@",
+											"end"   : "%@@@@@ USER DEFINED HIDDEN PROPERTIES End   @@@@@",
+											"code"  : ""},
+						"method_hid"  : {	"start" : "%@@@@@ USER DEFINED HIDDEN METHODS START @@@@@",
+											"end"   : "%@@@@@ USER DEFINED HIDDEN METHODS End   @@@@@",
+											"code"  : ""}  };	
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.stringify = function(str) {
@@ -734,6 +748,56 @@ MatlabBase.prototype.hdf5DataType = function(bl) {
 	'end');		
 	return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+/*   Handling user specified code in generator functions */
+/*----------------------------------------------------------------------------*/
+
+MatlabBase.prototype.findStrInLines = function(lines, str) {
+    for (var i = 0; i<lines.length; i++) {
+    	if (lines[i].indexOf(str) != -1)
+    		return i;
+    }
+    return -1;
+}
+
+MatlabBase.prototype.extractUserDefinedCode = function(code) {
+    if ((code == undefined) || (code == '')){
+    	/*files does not exist, clean the existing code */
+    	for (key in this.userCodes) {
+    		var part = this.userCodes[key];
+    		part.code = "";
+    	}
+        return;
+    }
+    
+    var lines = code.split('\n');
+
+    for (key in this.userCodes) {
+        var part = this.userCodes[key];
+        var sind = this.findStrInLines(lines,part.start);
+        if (sind != -1) {
+            var eind = this.findStrInLines(lines,part.end);
+            if ((eind - sind) > 1){
+                console.log("            user code for (" + key + ") betweeb lines : " + sind  + " and " + eind);
+                part.code = lines.slice(sind+1,eind).join('\n');
+            }
+            else
+                part.code = "";
+        }
+        else
+            part.code = "";
+    }
+};
+
+MatlabBase.prototype.getUserDefinedCode = function(flag) {
+    if (this.userCodes[flag].code == "")
+            return [this.userCodes[flag].start,this.userCodes[flag].end].join('\n'); 
+    else
+        return [this.userCodes[flag].start,this.userCodes[flag].code, this.userCodes[flag].end].join('\n'); 
+};
+
+/*----------------------------------------------------------------------------*/
+
 
 
 /*----------------------------------------------------------------------------*/

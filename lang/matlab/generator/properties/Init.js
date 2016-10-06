@@ -167,20 +167,30 @@ Init.prototype.getPropertyValue = function(prop) {
 				}
 			}
 			else { //array
-				if (this.isNumeric(prop))
-					return ('[' + prop.value + ']' );
-				else {	//string
-					var cols = prop.value.split(";");
-					var strCols = [];
-					for (var coli=0; coli<cols.length; coli++) {
-						var rows = cols[coli].split(",");
-						var strRows = [];
-						for (var rowi=0; rowi<rows.length; rowi++) {
-							strRows.push(this.stringify( rows[rowi] ));
+				console.log(prop.value)
+				if (prop.value instanceof Array) {
+					if (this.isNumeric(prop))
+						return ('[' + prop.value.join(", ") + ']' );
+					else {	//string
+						return ('{' + "\'" + prop.value.join("\', \'") + "\'" + '}' );
+					}				
+				}
+				else {
+					if (this.isNumeric(prop))
+						return ('[' + prop.value + ']' );
+					else {	//string
+						var cols = prop.value.split(";");
+						var strCols = [];
+						for (var coli=0; coli<cols.length; coli++) {
+							var rows = cols[coli].split(",");
+							var strRows = [];
+							for (var rowi=0; rowi<rows.length; rowi++) {
+								strRows.push(this.stringify( rows[rowi] ));
+							}
+							strCols.push(strRows.join(", "));
 						}
-						strCols.push(strRows.join(", "));
+						return ('{' + strCols.join("; ") + '}' );
 					}
-					return ('{' + strCols.join("; ") + '}' );
 				}
 			}
 		}

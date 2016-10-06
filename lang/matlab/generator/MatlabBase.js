@@ -83,7 +83,14 @@ MatlabBase.prototype.constructor = function(model) {
 											"code"  : ""},
 						"method_hid"  : {	"start" : "%@@@@@ USER DEFINED HIDDEN METHODS START @@@@@",
 											"end"   : "%@@@@@ USER DEFINED HIDDEN METHODS End   @@@@@",
-											"code"  : ""}  };	
+											"code"  : ""},
+						"method_static"  : {"start" : "%@@@@@ USER DEFINED STATIC METHODS START @@@@@",
+											"end"   : "%@@@@@ USER DEFINED STATIC METHODS End   @@@@@",
+											"code"  : ""},
+						"method_static_hid"  : {	"start" : "%@@@@@ USER DEFINED STATIC HIDDEN METHODS START @@@@@",
+													"end"   : "%@@@@@ USER DEFINED HIDDEN STATIC METHODS End   @@@@@",
+													"code"  : ""}
+											};	
 };
 /*----------------------------------------------------------------------------*/
 MatlabBase.prototype.stringify = function(str) {

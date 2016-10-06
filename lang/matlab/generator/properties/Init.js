@@ -167,7 +167,6 @@ Init.prototype.getPropertyValue = function(prop) {
 				}
 			}
 			else { //array
-				console.log(prop.value)
 				if (prop.value instanceof Array) {
 					if (this.isNumeric(prop))
 						return ('[' + prop.value.join(", ") + ']' );

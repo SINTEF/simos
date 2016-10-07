@@ -168,11 +168,31 @@ Init.prototype.getPropertyValue = function(prop) {
 			}
 			else { //array
 				if (prop.value instanceof Array) {
-					if (this.isNumeric(prop))
-						return ('[' + prop.value.join(", ") + ']' );
-					else {	//string
-						return ('{' + "\'" + prop.value.join("\', \'") + "\'" + '}' );
-					}				
+					var dimL = this.getDimensionList(prop);
+					if (dimL.length == 1){
+						if (this.isNumeric(prop))
+							return ('[' + prop.value.join(", ") + ']' );
+						else 
+							return ('{' + "\'" + prop.value.join("\', \'") + "\'" + '}' );
+					}
+					else if (dimL.length == 2) {
+						var arrStr = "";
+						for (var dimi=0; dimi<prop.value.length; dimi++) {
+							if (this.isNumeric(prop))
+								arrStr += (prop.value[dimi].join(", ") + ';' );
+							else
+								arrStr += ( "\'" + prop.value[dimi].join("\', \'") + "\'" + ';' );								
+						}	
+						if (this.isNumeric(prop))
+							return ('[' + arrStr + ']' );
+						else
+							return ('{' + arrStr + '}' );
+					}
+					else if (dimL.length > 2){
+						throw "ERROR: iniialization for arrays with rank larger than 2 is not supported." 
+					}		
+					else
+						return "";
 				}
 				else {
 					if (this.isNumeric(prop))

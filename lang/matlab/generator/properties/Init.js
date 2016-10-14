@@ -167,20 +167,49 @@ Init.prototype.getPropertyValue = function(prop) {
 				}
 			}
 			else { //array
-				if (this.isNumeric(prop))
-					return ('[' + prop.value + ']' );
-				else {	//string
-					var cols = prop.value.split(";");
-					var strCols = [];
-					for (var coli=0; coli<cols.length; coli++) {
-						var rows = cols[coli].split(",");
-						var strRows = [];
-						for (var rowi=0; rowi<rows.length; rowi++) {
-							strRows.push(this.stringify( rows[rowi] ));
-						}
-						strCols.push(strRows.join(", "));
+				if (prop.value instanceof Array) {
+					var dimL = this.getDimensionList(prop);
+					if (dimL.length == 1){
+						if (this.isNumeric(prop))
+							return ('[' + prop.value.join(", ") + ']' );
+						else 
+							return ('{' + "\'" + prop.value.join("\', \'") + "\'" + '}' );
 					}
-					return ('{' + strCols.join("; ") + '}' );
+					else if (dimL.length == 2) {
+						var arrStr = "";
+						for (var dimi=0; dimi<prop.value.length; dimi++) {
+							if (this.isNumeric(prop))
+								arrStr += (prop.value[dimi].join(", ") + ';' );
+							else
+								arrStr += ( "\'" + prop.value[dimi].join("\', \'") + "\'" + ';' );								
+						}	
+						if (this.isNumeric(prop))
+							return ('[' + arrStr + ']' );
+						else
+							return ('{' + arrStr + '}' );
+					}
+					else if (dimL.length > 2){
+						throw "ERROR: iniialization for arrays with rank larger than 2 is not supported." 
+					}		
+					else
+						return "";
+				}
+				else {
+					if (this.isNumeric(prop))
+						return ('[' + prop.value + ']' );
+					else {	//string
+						var cols = prop.value.split(";");
+						var strCols = [];
+						for (var coli=0; coli<cols.length; coli++) {
+							var rows = cols[coli].split(",");
+							var strRows = [];
+							for (var rowi=0; rowi<rows.length; rowi++) {
+								strRows.push(this.stringify( rows[rowi] ));
+							}
+							strCols.push(strRows.join(", "));
+						}
+						return ('{' + strCols.join("; ") + '}' );
+					}
 				}
 			}
 		}

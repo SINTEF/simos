@@ -54,6 +54,7 @@ Generator.prototype.constructor = function(lang) {
 	
 	this.flatModel = true;
 	
+	this.generatedModels = {};
 	this.generatedPackages = [];
 	this.externalPackageDependencies = [];
 	
@@ -487,9 +488,13 @@ Generator.prototype.generateOnePackage = function(packageID) {
 	
 	var depPacks = [];
 	
+	this.generatedModels[packageID] = [];
+	
 	for (var i = 0, len = modelIDs.length; i < len; i++) {
 		var modelID = modelIDs[i];
 	    var mParser = this.generateModel(modelID, outppath);
+	    
+	    this.generatedModels[packageID].push(modelID);
 	    
 	    //var mDepPacks = mParser.getModelDepVersionedPackages();
 	    //var mDepPacks = mParser.getModelDepRootVersionedPackagesAndDepInternalPackages();
@@ -539,6 +544,7 @@ Generator.prototype.generatePackagesRecursively = function(packageID) {
 Generator.prototype.generatePackage = function(packageID) {
 	
 	//empty generated packages list
+	this.generatedModels = {};
 	this.generatedPackages = [];
 	this.externalPackageDependencies = [];
 	
@@ -580,6 +586,11 @@ Generator.prototype.generatePackage = function(packageID) {
 	// Therefore, in case a subpackages only is generated we need to estract the root name
 	rootPackageID = packageID.split(this.lang.packageSep)[0]
 	this.lang.packaging.writeGeneratedPackagesList(this.generatedPackages, this.getOutPath(), rootPackageID);
+	
+	//check if finalization based on generated models is needed
+	if (this.lang.packaging.finalizeGeneratedModels != undefined) {
+		this.lang.packaging.finalizeGeneratedModels(this.generatedModels, this.generatedPackages,this.getOutPath(), rootPackageID);
+	}
 	
 	this.externalPackageDependencies
 	return 'Package generator finished!';

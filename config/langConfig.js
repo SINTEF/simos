@@ -6,4 +6,6 @@ exports.langs = {'python': {'id': 'py',
 				 'matlab': {'id': 'mat', 
     						'interp': 'lang/matlab'},
     			 'fortran': {'id': 'fort', 
-    						'interp': 'lang/fortran'}}
+    						'interp': 'lang/fortran'},
+    			 'latdoc': {'id': 'ld', 
+    						'interp': 'lang/latdoc'}}

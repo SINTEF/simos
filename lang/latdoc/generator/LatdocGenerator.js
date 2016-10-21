@@ -28,7 +28,7 @@ LatdocGenerator.prototype.generate = function(model) {
 	cmd.push('%    Please do not edit');
 	cmd.push('%    Babak Ommani, Offshore Hydrodynamic, MARINTEK """');
 	cmd.push('% ');
-	cmd.push('% ' + entity.getDescription());
+	cmd.push('% ' + entity.lattxt(entity.getDescription()));
 	cmd.push('% Generated with ' + entity.getClassName() );
 	cmd.push('');
 	cmd.push('%***************************************************************************');
@@ -40,19 +40,23 @@ LatdocGenerator.prototype.generate = function(model) {
 	cmd.push(entity.getTypeDescription());
 	cmd.push('%------------------------------------------------------------------------------');
 	cmd.push('%------------------------------------------------------------------------------');
-	cmd.push(entity.getAtomicSingleProperties());
+	cmd.push(entity.getPythonConst());	
+	cmd.push('%------------------------------------------------------------------------------');
+	cmd.push(entity.reportProperties());
+	cmd.push('%------------------------------------------------------------------------------');
+	//cmd.push(entity.getAtomicSingleProperties());
 	cmd.push('%------------------------------------------------------------------------------');	
 	cmd.push('%------------------------------------------------------------------------------');
-	cmd.push(entity.getAtomicArrayProperties());
+	//cmd.push(entity.getAtomicArrayProperties());
 	cmd.push('%------------------------------------------------------------------------------');
 	cmd.push('%------------------------------------------------------------------------------');
-	cmd.push(entity.getComplexSingleProperties());
+	//cmd.push(entity.getComplexSingleProperties());
 	cmd.push('%------------------------------------------------------------------------------');	
 	cmd.push('%------------------------------------------------------------------------------');
-	cmd.push(entity.getComplexArrayProperties());
+	//cmd.push(entity.getComplexArrayProperties());
 	cmd.push('%------------------------------------------------------------------------------');	
 	cmd.push('%------------------------------------------------------------------------------');
-	cmd.push(entity.getPythonMethods());
+	cmd.push(entity.getPythonMethodsMinimal());
 	cmd.push('%------------------------------------------------------------------------------');		
 	
 //	cmd.push('%******************************************************************************');	

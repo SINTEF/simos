@@ -160,9 +160,10 @@ LatdocBase.prototype.lattxt = function(txt) {
 	//make latex compatible text
 	var ntxt = txt;
 	
-	ntxt = ntxt.replace("\\", "\\\\");
-	ntxt = ntxt.replace("%", "\\%");
-	ntxt = ntxt.replace("_", "\\_");
+	ntxt = ntxt.split("\\").join("\\\\");	
+	ntxt = ntxt.split("%").join("\\%");
+	ntxt = ntxt.split("_").join("\\_");
+
 
 	return ntxt
 }
@@ -171,14 +172,14 @@ LatdocBase.prototype.getTypeDescription = function() {
 	
 	var cmd = [];
 	
-	cmd.push("The type is described in table \\ref{tab:" + this.getType() + "_desc}");
+	//cmd.push("The type is described in table \\ref{tab:" + this.getType() + "_desc}");
 	
 	cmd.push("\\begin{table}[h!]")
-	cmd.push("\\centering");
-	cmd.push("\\caption{Description of the type " + this.getType() + " .}");
+	//cmd.push("\\centering");
+	cmd.push("\\caption{Class description.}");
 	cmd.push("\\begin{tabular}{|l|l|}");
 	cmd.push("\\hline");
-	cmd.push("\\textbf{name} 	&	" + this.getName() + " \\\\");
+	cmd.push("\\textbf{class name} 	&	" + this.getName() + " \\\\");
 	cmd.push("\\textbf{package} 	&	" + this.getPackageStr() + " \\\\");
 	cmd.push("\\textbf{description} 	&	" + this.lattxt(this.getDescription()) + " \\\\");
 	cmd.push("\\hline");
@@ -187,6 +188,74 @@ LatdocBase.prototype.getTypeDescription = function() {
 	cmd.push("\\end{table}");
 	
 	return cmd.join("\n");
+	
+};
+/*----------------------------------------------------------------------------*/
+LatdocBase.prototype.reportProperties = function() {
+	var props = this.getProperties();
+	
+	var cmd = [];
+	
+	//cmd.push("The type properties are listed in \\ref{tab:" + this.getType() + "_prop}");
+	
+	cmd.push("\\begin{table}[h!]")
+	//cmd.push("\\centering");
+	cmd.push("\\caption{Member variables/arrays.}");
+	cmd.push("\\begin{tabular}{|l|p{4cm}|c|p{9cm}|}");
+	cmd.push("\\hline");
+	cmd.push("\\textbf{name} 	&	\\textbf{type} & \\textbf{dimension} & \\textbf{description} \\\\");
+	cmd.push("\\hline");
+
+	for (var i=0; i<props.length; i++) {
+		var prop = props[i];
+		if ((prop.name == "name") || (prop.name == "description")) {
+				count += 1;
+				cmd.push(prop.name + "	&	" + prop.type.replace(":", ": ") +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
+				cmd.push("\\hline");
+		}
+	}
+	
+	var count = 0;
+	//prop.type.split(":").join(": ")
+	for (var i=0; i<props.length; i++) {
+		var prop = props[i];
+		if ((prop.name == "name") || (prop.name == "description")) {
+			continue;
+		}
+		if (this.isSingle(prop) && this.isAtomic(prop)) {
+			count += 1;
+			cmd.push(prop.name + "	&	" + prop.type +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push("\\hline");
+		}
+
+		if (this.isArray(prop) && this.isAtomic(prop)) {
+			count += 1;
+			cmd.push(prop.name + "	&	" + prop.type +"	&	" + prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push("\\hline");
+		}
+
+		if (this.isSingle(prop) && !this.isAtomic(prop)) {
+			count += 1;
+			
+			cmd.push(prop.name + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + prop.type +"} }	&	-	&  " + this.lattxt(prop.description) +" \\\\");
+			cmd.push("\\hline");
+		}
+
+		if (this.isArray(prop) && !this.isAtomic(prop)) {
+			count += 1;
+			cmd.push(prop.name + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + prop.type +"} }	&	"+ prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push("\\hline");
+		}
+	}
+	
+	cmd.push("\\end{tabular}");
+	cmd.push("\\label{tab:" +  this.getType()+ "_prop}");
+	cmd.push("\\end{table}");
+	
+	if (count > 0)
+		return cmd.join("\n");
+	else
+		return ""
 	
 };
 /*----------------------------------------------------------------------------*/
@@ -386,7 +455,98 @@ LatdocBase.prototype.getPythonMethods = function() {
 		var prop = props[i];
 		if (this.isArray(prop) && !this.isAtomic(prop)) {
 			count += 1;
-			cmd.push("append" + this.firstToUpper(prop.name) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{"+ prop.type+" }	&	create an instance of the object and return it after appending it to the array \\\\");
+			cmd.push("append" + this.firstToUpper(prop.name) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{"+ prop.type+"} }	&	create an instance of the object and return it after appending it to the array \\\\");
+			cmd.push("\\hline");
+		}
+	}
+	
+	cmd.push("\\end{tabular}");
+	cmd.push("\\label{tab:" +  this.getType()+ "_pyfunc}");
+	cmd.push("\\end{table}");
+	
+	if (count > 0)
+		return cmd.join("\n");
+	else
+		return ""
+	
+};
+/*----------------------------------------------------------------------------*/
+LatdocBase.prototype.getPythonConst = function() {
+	var props = this.getProperties();
+	
+	var cmd = [];
+
+	cmd.push("\\begin{table}[h!]")
+	//cmd.push("\\centering");
+	cmd.push("\\caption{Constructor(s).}");
+	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{9cm}|}");
+	cmd.push("\\hline");
+	cmd.push("\\textbf{method} 	&	\\textbf{input(type)} & \\textbf{return type} & \\textbf{description} \\\\");
+	cmd.push("\\hline");
+	
+	parts = this.getType().split(":")
+	
+	cmd.push(parts[parts.length-1] + " &  name(string)	&	\\hyperref[sec:" + this.getType()+ "]{\\AddBreakableChars{"+ this.getType()+"} }	&	create an instance of the object and return it\\\\");
+	cmd.push("\\hline");
+	
+	cmd.push("\\end{tabular}");
+	cmd.push("\\label{tab:" +  this.getType()+ "_pyconst}");
+	cmd.push("\\end{table}");
+	
+	return cmd.join("\n");
+
+	
+};
+/*----------------------------------------------------------------------------*/
+LatdocBase.prototype.getPythonMethodsMinimal = function() {
+	var props = this.getProperties();
+	
+	var cmd = [];
+
+	
+	//cmd.push("A series of important member functions for this type in generated python-matlab library is listed in \\ref{tab:" + this.getType() + "_pyfunc}");
+	
+	cmd.push("\\begin{table}[h!]")
+	//cmd.push("\\centering");
+	cmd.push("\\caption{Member functions.}");
+	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{7cm}|}");
+	cmd.push("\\hline");
+	cmd.push("\\textbf{method} 	&	\\textbf{input(type)} & \\textbf{return type} & \\textbf{description} \\\\");
+	cmd.push("\\hline");
+
+	var count = 0;
+
+	//cmd.push("clone &  -	&	\\hyperref[sec:" + this.getType() + "]{"+ this.getType()+" }	&	make a clone of the existing object and return it. \\\\");
+	//cmd.push("\\hline");
+	//cmd.push("save &  -	&	-	&	save the object to an hdf5 file. \\\\");
+	//cmd.push("\\hline");
+	//cmd.push("load &  filePath(string)	&	-	&	load the object from an hdf5 file. \\\\");
+	//cmd.push("\\hline");
+			
+	for (var i=0; i<props.length; i++) {
+		var prop = props[i];
+		if (!this.isArray(prop) && !this.isAtomic(prop)) {
+			//cmd.push("makea" + this.firstToUpper(prop.name) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{"+ prop.type+" }	&	create an instance of the object and return it \\\\");
+			//cmd.push("\\hline");
+			//count += 1;
+			
+			if (this.isOptional(prop)) {
+				count += 1;
+				cmd.push("create" + this.firstToUpper(prop.name) + "	&  -  &	 -	&	create and initialize the optional property \\\\");
+				cmd.push("\\hline");
+				//cmd.push("delete" + this.firstToUpper(prop.name) + "	&  -  &	 -	&	delete the optional property \\\\");
+				//cmd.push("\\hline");	
+				//cmd.push("renew" + this.firstToUpper(prop.name) + "	&  -  &	 -	&	renew the optional property \\\\");
+				//cmd.push("\\hline");				
+			}
+		}
+	}
+	
+	for (var i=0; i<props.length; i++) {
+		var prop = props[i];
+		if (this.isArray(prop) && !this.isAtomic(prop)) {
+			count += 1;
+			cmd.push("append" + this.firstToUpper(prop.name) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{"+ prop.type+"} }	&	create an instance of the object and return it after appending it to the array \\\\");
 			cmd.push("\\hline");
 		}
 	}

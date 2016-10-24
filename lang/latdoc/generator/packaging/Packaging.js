@@ -100,7 +100,30 @@ Packaging.prototype.getPackageVersion = function(packID) {
     parts = packID.split(this.lang.packageSep);
     return parts[0].split("_")[1];
 };
-    
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.lattxt = function(txt) {
+	//make latex compatible text
+	var ntxt = txt;
+	
+	if (txt == undefined)
+		return "";
+	
+	ntxt = ntxt.split("\\").join("\textbackslash ");
+	
+	ntxt = ntxt.split("&").join("\\&");	
+	ntxt = ntxt.split("%").join("\\%");
+	ntxt = ntxt.split("$").join("\\$");
+	ntxt = ntxt.split("#").join("\\#");
+	ntxt = ntxt.split("_").join("\\_");
+	ntxt = ntxt.split("{").join("\\{");
+	ntxt = ntxt.split("}").join("\\}");
+	ntxt = ntxt.split("~").join("\\textasciitilde ");
+	ntxt = ntxt.split("^").join("\\textasciicircum ");
+
+
+
+	return ntxt
+}; 
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getModelHeader = function(modelID) {	
 	var cmd = [];
@@ -109,7 +132,7 @@ Packaging.prototype.getModelHeader = function(modelID) {
 	
 	cmd.push('	%------------------------------------------------------------------------------');	
 	cmd.push('\\clearpage');
-	cmd.push('	\\section{' + parts[parts.length-1] + '}');
+	cmd.push('	\\section{' + this.lattxt(parts[parts.length-1]) + '}');
 	cmd.push('	\\label{sec:' + modelID.replace("_" + this.getPackageVersion(modelID), "") + '}');
 	cmd.push('	%------------------------------------------------------------------------------');	
 	cmd.push("		\\input{"+ parts.join("/")+".tex}");

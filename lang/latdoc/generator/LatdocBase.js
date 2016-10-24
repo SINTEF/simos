@@ -160,13 +160,47 @@ LatdocBase.prototype.lattxt = function(txt) {
 	//make latex compatible text
 	var ntxt = txt;
 	
-	ntxt = ntxt.split("\\").join("\\\\");	
+	if (txt == undefined)
+		return "";
+	
+	ntxt = ntxt.split("\\").join("\textbackslash ");
+	
+	ntxt = ntxt.split("&").join("\\&");	
 	ntxt = ntxt.split("%").join("\\%");
+	ntxt = ntxt.split("$").join("\\$");
+	ntxt = ntxt.split("#").join("\\#");
 	ntxt = ntxt.split("_").join("\\_");
-
+	ntxt = ntxt.split("{").join("\\{");
+	ntxt = ntxt.split("}").join("\\}");
+	ntxt = ntxt.split("~").join("\\textasciitilde ");
+	ntxt = ntxt.split("^").join("\\textasciicircum ");
+	
 
 	return ntxt
-}
+};
+/*----------------------------------------------------------------------------*/
+LatdocBase.prototype.nolattxt = function(txt) {
+	//make latex compatible text
+	var ntxt = txt;
+	
+	if (txt == undefined)
+		return "";
+	
+	ntxt = ntxt.split("\\").join("");
+	
+	ntxt = ntxt.split("&").join("");	
+	ntxt = ntxt.split("%").join("");
+	ntxt = ntxt.split("$").join("");
+	ntxt = ntxt.split("#").join("");
+	ntxt = ntxt.split("_").join("");
+	ntxt = ntxt.split("{").join("");
+	ntxt = ntxt.split("}").join("");
+	ntxt = ntxt.split("~").join("");
+	ntxt = ntxt.split("^").join("");
+	
+
+	return ntxt
+};
 /*----------------------------------------------------------------------------*/
 LatdocBase.prototype.getTypeDescription = function() {
 	
@@ -179,8 +213,8 @@ LatdocBase.prototype.getTypeDescription = function() {
 	cmd.push("\\caption{Class description.}");
 	cmd.push("\\begin{tabular}{|l|l|}");
 	cmd.push("\\hline");
-	cmd.push("\\textbf{class name} 	&	" + this.getName() + " \\\\");
-	cmd.push("\\textbf{package} 	&	" + this.getPackageStr() + " \\\\");
+	cmd.push("\\textbf{class name} 	&	" + this.lattxt(this.getName()) + " \\\\");
+	cmd.push("\\textbf{package} 	&	" + this.lattxt(this.getPackageStr()) + " \\\\");
 	cmd.push("\\textbf{description} 	&	" + this.lattxt(this.getDescription()) + " \\\\");
 	cmd.push("\\hline");
 	cmd.push("\\end{tabular}");
@@ -201,7 +235,7 @@ LatdocBase.prototype.reportProperties = function() {
 	cmd.push("\\begin{table}[h!]")
 	//cmd.push("\\centering");
 	cmd.push("\\caption{Member variables/arrays.}");
-	cmd.push("\\begin{tabular}{|l|p{4cm}|c|p{9cm}|}");
+	cmd.push("\\begin{tabular}{|l|p{4cm}|c|p{5cm}|}");
 	cmd.push("\\hline");
 	cmd.push("\\textbf{name} 	&	\\textbf{type} & \\textbf{dimension} & \\textbf{description} \\\\");
 	cmd.push("\\hline");
@@ -210,7 +244,7 @@ LatdocBase.prototype.reportProperties = function() {
 		var prop = props[i];
 		if ((prop.name == "name") || (prop.name == "description")) {
 				count += 1;
-				cmd.push(prop.name + "	&	" + prop.type.replace(":", ": ") +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
+				cmd.push(this.lattxt(prop.name) + "	&	" + prop.type +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
 				cmd.push("\\hline");
 		}
 	}
@@ -224,26 +258,26 @@ LatdocBase.prototype.reportProperties = function() {
 		}
 		if (this.isSingle(prop) && this.isAtomic(prop)) {
 			count += 1;
-			cmd.push(prop.name + "	&	" + prop.type +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push(this.lattxt(prop.name) + "	&	" + prop.type +"	&	-	&	" + this.lattxt(prop.description) +" \\\\");
 			cmd.push("\\hline");
 		}
 
 		if (this.isArray(prop) && this.isAtomic(prop)) {
 			count += 1;
-			cmd.push(prop.name + "	&	" + prop.type +"	&	" + prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push(this.lattxt(prop.name) + "	&	" + prop.type +"	&	" + prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
 			cmd.push("\\hline");
 		}
 
 		if (this.isSingle(prop) && !this.isAtomic(prop)) {
 			count += 1;
 			
-			cmd.push(prop.name + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + prop.type +"} }	&	-	&  " + this.lattxt(prop.description) +" \\\\");
+			cmd.push(this.lattxt(prop.name) + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + this.nolattxt(prop.type) +"} }	&	-	&  " + this.lattxt(prop.description) +" \\\\");
 			cmd.push("\\hline");
 		}
 
 		if (this.isArray(prop) && !this.isAtomic(prop)) {
 			count += 1;
-			cmd.push(prop.name + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + prop.type +"} }	&	"+ prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
+			cmd.push(this.lattxt(prop.name) + "	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{" + this.nolattxt(prop.type) +"} }	&	"+ prop.dim + "	&	" + this.lattxt(prop.description) +" \\\\");
 			cmd.push("\\hline");
 		}
 	}
@@ -479,14 +513,14 @@ LatdocBase.prototype.getPythonConst = function() {
 	cmd.push("\\begin{table}[h!]")
 	//cmd.push("\\centering");
 	cmd.push("\\caption{Constructor(s).}");
-	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{9cm}|}");
+	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{5cm}|}");
 	cmd.push("\\hline");
 	cmd.push("\\textbf{method} 	&	\\textbf{input(type)} & \\textbf{return type} & \\textbf{description} \\\\");
 	cmd.push("\\hline");
 	
 	parts = this.getType().split(":")
 	
-	cmd.push(parts[parts.length-1] + " &  name(string)	&	\\hyperref[sec:" + this.getType()+ "]{\\AddBreakableChars{"+ this.getType()+"} }	&	create an instance of the object and return it\\\\");
+	cmd.push(this.lattxt(parts[parts.length-1]) + " &  name(string)	&	\\hyperref[sec:" + this.getType()+ "]{\\AddBreakableChars{"+ this.nolattxt(this.getType())+"} }	&	create an instance of the object and return it\\\\");
 	cmd.push("\\hline");
 	
 	cmd.push("\\end{tabular}");
@@ -509,7 +543,7 @@ LatdocBase.prototype.getPythonMethodsMinimal = function() {
 	cmd.push("\\begin{table}[h!]")
 	//cmd.push("\\centering");
 	cmd.push("\\caption{Member functions.}");
-	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{7cm}|}");
+	cmd.push("\\begin{tabular}{|l|c|p{4cm}|p{5cm}|}");
 	cmd.push("\\hline");
 	cmd.push("\\textbf{method} 	&	\\textbf{input(type)} & \\textbf{return type} & \\textbf{description} \\\\");
 	cmd.push("\\hline");
@@ -532,7 +566,7 @@ LatdocBase.prototype.getPythonMethodsMinimal = function() {
 			
 			if (this.isOptional(prop)) {
 				count += 1;
-				cmd.push("create" + this.firstToUpper(prop.name) + "	&  -  &	 -	&	create and initialize the optional property \\\\");
+				cmd.push("create" + this.lattxt(this.firstToUpper(prop.name)) + "	&  -  &	 -	&	create and initialize the optional property \\\\");
 				cmd.push("\\hline");
 				//cmd.push("delete" + this.firstToUpper(prop.name) + "	&  -  &	 -	&	delete the optional property \\\\");
 				//cmd.push("\\hline");	
@@ -546,7 +580,7 @@ LatdocBase.prototype.getPythonMethodsMinimal = function() {
 		var prop = props[i];
 		if (this.isArray(prop) && !this.isAtomic(prop)) {
 			count += 1;
-			cmd.push("append" + this.firstToUpper(prop.name) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{"+ prop.type+"} }	&	create an instance of the object and return it after appending it to the array \\\\");
+			cmd.push("append" + this.lattxt(this.firstToUpper(prop.name)) + " &  name(string)	&	\\hyperref[sec:" + prop.type+ "]{\\AddBreakableChars{"+ this.nolattxt(prop.type)+"} }	&	create an instance of the object and return it after appending it to the array \\\\");
 			cmd.push("\\hline");
 		}
 	}

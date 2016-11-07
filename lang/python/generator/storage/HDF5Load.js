@@ -14,8 +14,6 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl) + 	'def loadHDF5(self,name=None, filePath=None, dsType = \'hdf5\', action="init", hdfPath=None):');
 	cmd.push(this.gbl(bl+1) + 	'if not(name == None):');
 	cmd.push(this.gbl(bl+2) +		'self.name = name');
-	cmd.push(this.gbl(bl+1) + 	'if (name == None) and not(filePath == None):');
-	cmd.push(this.gbl(bl+2) + 		'self.name = \'.\'.join(filePath.split(os.path.sep)[-1].split(\'.\')[0:-1])');
 	cmd.push(this.gbl(bl+1) + 	'if (filePath == None):');
 	cmd.push(this.gbl(bl+2) + 		'if hasattr(self, \'name\'):');
 	cmd.push(this.gbl(bl+3) + 			'filePath = self.name + \'.h5\'');
@@ -24,6 +22,18 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 	'if not(os.path.isfile(filePath)):');
 	cmd.push(this.gbl(bl+2) + 		'raise Exception("file %s not found."%filePath)');
+	
+	cmd.push(this.gbl(bl+1) + 	'if (name == None):');
+	cmd.push(this.gbl(bl+2) + 		'#get first item name in the file as the object name');	
+	cmd.push(this.gbl(bl+2) + 		'tempFile = h5py.File(filePath, "r")');
+	cmd.push(this.gbl(bl+2) + 		'folders = tempFile.keys()');
+	cmd.push(this.gbl(bl+2) + 		'if (len(folders) == 0):');
+	cmd.push(this.gbl(bl+3) + 			'raise Exception("no object group in the file.")');
+	cmd.push(this.gbl(bl+2) + 		'if (len(folders) > 1):');
+	cmd.push(this.gbl(bl+3) + 			'warnings.warn("several objects exist in the file, %s . Loading of first object is tried. Please provide name in the input for others."%folders, RuntimeWarning)');
+	cmd.push(this.gbl(bl+2) + 		'self.name = folders[0]');
+	cmd.push(this.gbl(bl+2) + 		'tempFile.close()');
+	
 	cmd.push(this.gbl(bl));
 	cmd.push(this.gbl(bl+1) + 	'self.STORAGE = pyds.getDataStorageBackEndServer(dsType)');
 	cmd.push(this.gbl(bl+1) + 	'self.STORAGE.filePath = filePath');
@@ -131,10 +141,15 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", action=action)' );
 				 
 			 }
-     	    else if(this.isArray(prop) && this.isUngroup(prop)){
-		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", action=action, ungroup=True, propType=' + this.stringify(prop.type) + ')' );
+     	    else if(this.isArray(prop) && this.isUngroup(prop) && this.isRecursive(prop)){
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", action=action, ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=True)' );
      	     
      	     }
+      	    else if(this.isArray(prop) && this.isUngroup(prop) && !this.isRecursive(prop)){
+		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", action=action, ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=False)' );
+     	     
+     	     }
+			
 			 else{
 				 /* single non-atomic type reference */
 		cmd.push(this.gbl(bl+2) +		'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicSingle", action=action)' );
@@ -209,8 +224,11 @@ HDF5Load.prototype.loadDataItemFromHDF5 = function(bl) {
 				 /* array non-atomic type reference */
 				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray")' );
 			}	 
-		    else if(this.isArray(prop) && this.isUngroup(prop)){
-				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", ungroup=True, propType=' + this.stringify(prop.type) + ')');		        
+		    else if(this.isArray(prop) && this.isUngroup(prop) && this.isRecursive(prop)){
+				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=True)');
+		    }	 
+		    else if(this.isArray(prop) && this.isUngroup(prop) && !this.isRecursive(prop)){
+				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=False)');		        	 
 		    }
 		    else{
 				 /* single non-atomic type reference */
@@ -237,7 +255,7 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 
-	'def _loadFromHDF5HandleItem(self, varName, myType, action = "init", ungroup=False, propType=""):');
+	'def _loadFromHDF5HandleItem(self, varName, myType, action = "init", ungroup=False, propType="", isRecursive=False):');
 	
 	cmd.push(this.getBlockSpace(bl+1) + 
 		'loadFlag = True');
@@ -264,7 +282,7 @@ HDF5Load.prototype.loadFromHDF5HandleItem = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicArray") and not(ungroup):');
 	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArray(handle, varName, stat=action)' );
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicArray") and (ungroup):');
-	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArrayUngroup(handle, varName, stat=action, propType=propType)' );	
+	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicArrayUngroup(handle, varName, stat=action, propType=propType, isRecursive=isRecursive)' );	
 	cmd.push(this.gbl(bl+2) + 		'if (myType == "NonAtomicSingle"):');
 	cmd.push(this.gbl(bl+3) + 			'self._loadFromHDF5HandleItemNonAtomicSingle(handle, varName, stat=action)' );
 	
@@ -527,7 +545,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 	}	
 	var cmd = [];
 	
-	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArrayUngroup(self, handle, varName, stat="init", propType=""):');
+	cmd.push(this.gbl(bl) + 'def _loadFromHDF5HandleItemNonAtomicArrayUngroup(self, handle, varName, stat="init", propType="", isRecursive=False):');
 
 	/* array of non-atomic type */
 	/* The items are read from the parrent group into the smaller lists
@@ -551,6 +569,10 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 	cmd.push(this.gbl(bl+4) + 				'if ("type" in handle[anOrder].attrs.keys()):');
 	cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["type"] == propType):');
 	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
+	cmd.push(this.gbl(bl+5) + 					'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');	
+	cmd.push(this.gbl(bl+4) + 				'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');
 	
 	cmd.push(this.gbl(bl+2) + 		'if not(varName in self._loadedItems):');
 	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');

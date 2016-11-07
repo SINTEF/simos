@@ -748,6 +748,15 @@ ModelParser.prototype.isUngroup = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+ModelParser.prototype.isRecursive = function(prop) {
+	if ( prop.type == this.getType() ){
+		return true;
+	}
+	else {
+		return false;
+	}
+};
+/*----------------------------------------------------------------------------*/
 ModelParser.prototype.isGrouped = function(prop) {
 	/* the property is in a group, but not the group itself */
 	if ((prop.group == undefined ) || (prop.group == "") ||  this.isGroup(prop)) {

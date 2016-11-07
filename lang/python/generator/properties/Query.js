@@ -171,3 +171,42 @@ Query.prototype.lookForEntityWithFunc = function(bl) {
     
     return cmd.join('\n');
 };
+/*----------------------------------------------------------------------------*/
+Query.prototype.findEntityFunc = function(bl) {
+    if (bl == undefined) {
+        bl = 0;
+    }   
+    var cmd = [];
+        
+    cmd.push(this.gbl(bl) + 'def find(self,name, path="", propType=None):');  
+    cmd.push(this.gbl(bl+1) + 'objs = []');        
+    cmd.push(this.gbl(bl+1) + 'paths = []');        
+        
+    var props = this.getNonAtomicArrayProperties();
+    for (var i=0; i<props.length; i++) {
+        var prop = props[i];
+        cmd.push(this.gbl(bl+1) +'typeMatch = True '); 
+
+        cmd.push(this.gbl(bl+1) +'if (propType != None): '); 
+        cmd.push(this.gbl(bl+2) +	'if not(fnmatch("' + prop.type + '", propType)): '); 
+        cmd.push(this.gbl(bl+3) +		'typeMatch = False '); 
+
+        cmd.push(this.gbl(bl+1) +'if ( (self.' + prop.name + ' != None) ): '); 
+        cmd.push(this.gbl(bl+2) +	'for ind,obj in enumerate(self.' + prop.name + '):');   
+        cmd.push(this.gbl(bl+3) +		'objPath = "%s.%s[%d]"%(path,"' + prop.name +'", ind)');
+        
+        cmd.push(this.gbl(bl+3) +		'if (fnmatch(obj.name,name) and typeMatch):');
+        cmd.push(this.gbl(bl+4) +			'objs.append(obj)');
+        cmd.push(this.gbl(bl+4) +			'paths.append(objPath)');
+        
+        cmd.push(this.gbl(bl+3) +		'sobjs, spaths = obj.find(name, path=objPath, propType=propType) ');
+        cmd.push(this.gbl(bl+3) +		'objs += sobjs ');            
+        cmd.push(this.gbl(bl+3) +		'paths += spaths ');            
+        
+    }
+  
+    cmd.push(this.gbl(bl+1) + 'return objs, paths' );         
+    
+    
+    return cmd.join('\n');
+};

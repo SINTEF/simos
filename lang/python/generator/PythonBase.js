@@ -104,6 +104,7 @@ PythonBase.prototype.importModules = function() {
 	var cmd = [];
 	
 	cmd.push('#importing general modules');
+	cmd.push('from fnmatch import fnmatch');
 	
 	for (var i = 0; i<this.generalModules.length; i++) {
 	    var module = this.generalModules[i];
@@ -120,6 +121,8 @@ PythonBase.prototype.importModules = function() {
 	    else 
 	    	cmd.push(imp);
 	}
+	
+	
 	
 	cmd.push(this.getSuperTypesImport());
 	

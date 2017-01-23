@@ -100,7 +100,30 @@ Packaging.prototype.getPackageVersion = function(packID) {
     parts = packID.split(this.lang.packageSep);
     return parts[0].split("_")[1];
 };
-    
+/*----------------------------------------------------------------------------*/
+Packaging.prototype.lattxt = function(txt) {
+	//make latex compatible text
+	var ntxt = txt;
+	
+	if (txt == undefined)
+		return "";
+	
+	ntxt = ntxt.split("\\").join("\textbackslash ");
+	
+	ntxt = ntxt.split("&").join("\\&");	
+	ntxt = ntxt.split("%").join("\\%");
+	ntxt = ntxt.split("$").join("\\$");
+	ntxt = ntxt.split("#").join("\\#");
+	ntxt = ntxt.split("_").join("\\_");
+	ntxt = ntxt.split("{").join("\\{");
+	ntxt = ntxt.split("}").join("\\}");
+	ntxt = ntxt.split("~").join("\\textasciitilde ");
+	ntxt = ntxt.split("^").join("\\textasciicircum ");
+
+
+
+	return ntxt
+}; 
 /*----------------------------------------------------------------------------*/
 Packaging.prototype.getModelHeader = function(modelID) {	
 	var cmd = [];
@@ -109,7 +132,7 @@ Packaging.prototype.getModelHeader = function(modelID) {
 	
 	cmd.push('	%------------------------------------------------------------------------------');	
 	cmd.push('\\clearpage');
-	cmd.push('	\\section{' + parts[parts.length-1] + '}');
+	cmd.push('	\\section{' + this.lattxt(parts[parts.length-1]) + '}');
 	cmd.push('	\\label{sec:' + modelID.replace("_" + this.getPackageVersion(modelID), "") + '}');
 	cmd.push('	%------------------------------------------------------------------------------');	
 	cmd.push("		\\input{"+ parts.join("/")+".tex}");
@@ -148,6 +171,7 @@ Packaging.prototype.writeMainTexFile = function(models,packages, outPath, packNa
 	cmd.push("%graphical ackages");
 	cmd.push("\\usepackage{graphicx}");
 	cmd.push("\\DeclareGraphicsExtensions{.pdf,.png,.jpg,.eps}");
+	cmd.push("\\usepackage[singlelinecheck=false]{caption}");
 	cmd.push("\\usepackage{epstopdf}");
 	cmd.push("%-----------------------------------------------------------------------------");
 	cmd.push("\\usepackage[bookmarks=true, hidelinks]{hyperref}");
@@ -159,6 +183,38 @@ Packaging.prototype.writeMainTexFile = function(models,packages, outPath, packNa
     cmd.push("    urlcolor={blue!80!black}");
     cmd.push("}	");
 	cmd.push("\\usepackage{bookmark}");	
+	cmd.push("%-----------------------------------------------------------------------------");
+	cmd.push("%----Add Breakable char for tables -------------------------------------------");
+	cmd.push("%-----------------------------------------------------------------------------");
+	cmd.push("\\usepackage{hyphenat}");
+	cmd.push("\\usepackage{xstring}");
+	cmd.push("\\usepackage{forloop}");
+	cmd.push("\\usepackage{collcell}");
+	cmd.push("");
+	cmd.push("\\newsavebox\\MyBreakChar%");
+	cmd.push("\\sbox\\MyBreakChar{}% char to display the break after non char");
+	cmd.push("\\newsavebox\\MySpaceBreakChar%");
+	cmd.push("\\sbox\\MySpaceBreakChar{-}% char to display the break after space");
+	cmd.push("\\makeatletter%");
+	cmd.push("\\newcommand*{\\BreakableChar}[1][\\MyBreakChar]{%");
+	cmd.push("  \\leavevmode%");
+	cmd.push("  \\prw@zbreak%");
+	cmd.push("  \\discretionary{\\usebox#1}{}{}%");
+	cmd.push("  \\prw@zbreak%");
+	cmd.push("}%");
+	cmd.push("");
+	cmd.push("\\newcounter{index}%");
+	cmd.push("\\newcommand{\\AddBreakableChars}[1]{%");
+	cmd.push("  \\StrLen{#1 }[\\stringLength]%");
+	cmd.push("  \\forloop[1]{index}{1}{\\value{index}<\\stringLength}{%");
+	cmd.push("    \\StrChar{#1}{\\value{index}}[\\currentLetter]%");
+	cmd.push("    \\IfStrEq{\\currentLetter}{:}");
+	cmd.push("        {\\currentLetter\\BreakableChar[\\MyBreakChar]}%");
+	cmd.push("        {\\currentLetter}%");
+	cmd.push("  }%");
+	cmd.push("}%");
+	cmd.push("");
+	cmd.push("\\newcolumntype{P}[1]{>{\\collectcell\\AddBreakableChars}p{#1}<{\\endcollectcell}}");
 	cmd.push("%-----------------------------------------------------------------------------");
 	cmd.push("\\begin{document}");
 	cmd.push("%-----------------------------------------------------------------------------");	

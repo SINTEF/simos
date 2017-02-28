@@ -278,15 +278,21 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 	var cmd = [];
 	
 	cmd.push(this.gbl(bl) + 'function loadFromHDF5HandleItemNonAtomicSingle(' + this.objName() + ', handle, varName)');
+	cmd.push(this.gbl(bl+1) + 	'objExist = 1;');
 	cmd.push(this.gbl(bl+1) + 	'try');
+	cmd.push(this.gbl(bl+2) + 		'h5info(' + filePath + ',[handle varName \'/\']);');
+	cmd.push(this.gbl(bl+1) + 	'catch');
+	cmd.push(this.gbl(bl+2) + 		'objExist = 0;');	
+	cmd.push(this.gbl(bl+1) + 	'end' );
+	
+	cmd.push(this.gbl(bl+1) + 	'if objExist==1');
 	cmd.push(this.gbl(bl+2) + 		'funcName = [\'renew\' upper(varName(1))  varName(2:end)];');
 	cmd.push(this.gbl(bl+2) + 		this.objName() + '.(varName) = ' + this.objName() + '.(funcName)();');
 	
 	cmd.push(this.gbl(bl+2) + 		this.objName() + '.(varName).' + this.makeInternal("FilePath") + ' = ' + 
 									this.objName() + '.' + this.makeInternal("FilePath") + ';');
 	cmd.push(this.gbl(bl+2) + 		this.objName() + '.(varName).loadFromHDF5Handle([handle varName \'/\'])');
-	cmd.push(this.gbl(bl+1) + 	'catch');
-	cmd.push(this.gbl(bl+1) + 	'end' );
+	cmd.push(this.gbl(bl+1) + 	'end');
 
 
 	cmd.push(this.gbl(bl) + 'end');

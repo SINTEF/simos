@@ -276,6 +276,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicSingle = function(bl) {
 		bl = 0;
 	}	
 	var cmd = [];
+	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
 	
 	cmd.push(this.gbl(bl) + 'function loadFromHDF5HandleItemNonAtomicSingle(' + this.objName() + ', handle, varName)');
 	cmd.push(this.gbl(bl+1) + 	'objExist = 1;');

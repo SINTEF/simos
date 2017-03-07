@@ -1,4 +1,0 @@
-#!/bin/bash
-curPath=`pwd`
-cd "$(dirname "$0")"
-nodejs simos.js $1

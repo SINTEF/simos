@@ -10,4 +10,9 @@
 # Make a copy of the file and remove the 'org'. Then do and save the modifications.
 # The modified file is for your local computer, while the 'org' file stays on the repository.
 
-shsimos pathConfig.js
+readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Source configuration
+source $SCRIPT_DIR/config.sh
+
+$SHS_COMMAND

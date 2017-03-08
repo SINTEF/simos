@@ -178,9 +178,10 @@ Query.prototype.findEntityFunc = function(bl) {
     }   
     var cmd = [];
         
-    cmd.push(this.gbl(bl) + 'def find(self,name, path="", propType=None):');  
+    cmd.push(this.gbl(bl) + 'def find(self,name=None, path=None, namePath = "", accPath="", propType=None):');  
     cmd.push(this.gbl(bl+1) + 'objs = []');        
-    cmd.push(this.gbl(bl+1) + 'paths = []');        
+    cmd.push(this.gbl(bl+1) + 'accPaths = []');        
+    cmd.push(this.gbl(bl+1) + 'namePaths = []');        
         
     var props = this.getNonAtomicArrayProperties();
     for (var i=0; i<props.length; i++) {
@@ -192,20 +193,36 @@ Query.prototype.findEntityFunc = function(bl) {
         cmd.push(this.gbl(bl+3) +		'typeMatch = False '); 
 
         cmd.push(this.gbl(bl+1) +'if ( (self.' + prop.name + ' != None) ): '); 
-        cmd.push(this.gbl(bl+2) +	'for ind,obj in enumerate(self.' + prop.name + '):');   
-        cmd.push(this.gbl(bl+3) +		'objPath = "%s.%s[%d]"%(path,"' + prop.name +'", ind)');
+        cmd.push(this.gbl(bl+2) +	'for ind,obj in enumerate(self.' + prop.name + '):');  
+        cmd.push(this.gbl(bl+3) +		'objPath = "%s.%s[%d]"%(accPath,"' + prop.name +'", ind)');
+        cmd.push(this.gbl(bl+3) +		'if (namePath != ""):');
+        cmd.push(this.gbl(bl+4) +			'objNamePath = "%s.%s"%(namePath,obj.name)');
+        cmd.push(this.gbl(bl+3) +		'else:');
+        cmd.push(this.gbl(bl+4) +			'objNamePath = "%s.%s"%(self.name, obj.name)');
         
-        cmd.push(this.gbl(bl+3) +		'if (fnmatch(obj.name,name) and typeMatch):');
+        cmd.push(this.gbl(bl+3) +		'isaMatch = False');
+        cmd.push(this.gbl(bl+3) +		'if (name != None and path == None):');
+        cmd.push(this.gbl(bl+4) +			'if (fnmatch(obj.name,name) and typeMatch):');
+        cmd.push(this.gbl(bl+5) +				'isaMatch = True');
+        cmd.push(this.gbl(bl+3) +		'elif (name == None and path != None):');
+        cmd.push(this.gbl(bl+4) +			'if (fnmatch(objNamePath,path) and typeMatch):');
+        cmd.push(this.gbl(bl+5) +				'isaMatch = True');
+        cmd.push(this.gbl(bl+3) +		'elif (name != None and path != None):');
+        cmd.push(this.gbl(bl+4) +			'if (fnmatch(obj.name,name) and fnmatch(objNamePath,path) and typeMatch):');
+        cmd.push(this.gbl(bl+5) +				'isaMatch = True');
+        
+        cmd.push(this.gbl(bl+3) +		'if (isaMatch):');
         cmd.push(this.gbl(bl+4) +			'objs.append(obj)');
-        cmd.push(this.gbl(bl+4) +			'paths.append(objPath)');
+        cmd.push(this.gbl(bl+4) +			'accPaths.append(objPath)');
+        cmd.push(this.gbl(bl+4) +			'namePaths.append(objNamePath)');
         
-        cmd.push(this.gbl(bl+3) +		'sobjs, spaths = obj.find(name, path=objPath, propType=propType) ');
+        cmd.push(this.gbl(bl+3) +		'sobjs, spaths = obj.find(name=name, path=path, namePath=objNamePath, accPath=objPath, propType=propType) ');
         cmd.push(this.gbl(bl+3) +		'objs += sobjs ');            
-        cmd.push(this.gbl(bl+3) +		'paths += spaths ');            
+        cmd.push(this.gbl(bl+3) +		'accPaths += spaths ');            
         
     }
   
-    cmd.push(this.gbl(bl+1) + 'return objs, paths' );         
+    cmd.push(this.gbl(bl+1) + 'return objs, accPaths' );         
     
     
     return cmd.join('\n');

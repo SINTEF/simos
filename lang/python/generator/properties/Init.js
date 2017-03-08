@@ -383,6 +383,8 @@ Init.prototype.classInit = function(bl) {
 		cmd.push(this.gbl(bl+1));
 
 	}
+	
+	cmd.push(this.gbl(bl+1) + 'self.OBJattrs = collections.OrderedDict()'); 
 
 	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push(this.getUserDefinedCode("prop"));

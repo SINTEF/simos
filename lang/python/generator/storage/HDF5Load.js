@@ -23,7 +23,7 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'if not(os.path.isfile(filePath)):');
 	cmd.push(this.gbl(bl+2) + 		'raise Exception("file %s not found."%filePath)');
 	
-	cmd.push(this.gbl(bl+1) + 	'if (name == None):');
+	cmd.push(this.gbl(bl+1) + 	'if (name == None and hdfPath==None):');
 	cmd.push(this.gbl(bl+2) + 		'#get first item name in the file as the object name');	
 	cmd.push(this.gbl(bl+2) + 		'tempFile = h5py.File(filePath, "r")');
 	cmd.push(this.gbl(bl+2) + 		'folders = tempFile.keys()');
@@ -41,7 +41,7 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'if hdfPath == None:');
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.path = self.STORAGE.path + self.name');
 	cmd.push(this.gbl(bl+1) + 	'else:');
-	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.path = hdfPath');
+	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.path = hdfPath');
 	cmd.push(this.gbl(bl));       
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.backEnd == \'hdf5\':');
 	cmd.push(this.gbl(bl+2) + 		'self.loadFromHDF5Handle(action = action)');
@@ -109,9 +109,15 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'self.ID = str(uuid.uuid4())' );
 	
 	
+	/*load and append all attributes to OBJarrts*/
+
 	var properties = this.getProperties();
 	var propNum = properties.length;
 	
+	cmd.push(this.gbl(bl+1) + 	'self.OBJattrs = collections.OrderedDict()');	
+	cmd.push(this.gbl(bl+1) + 	'for key,val in handle.attrs.iteritems():' );
+	cmd.push(this.gbl(bl+2) + 		'self.OBJattrs[key] = val' );
+
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
 
@@ -160,6 +166,19 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+1));
 	
 	
+	var atomicProps = this.getAtomics(properties);
+	var atomicPropNames = [];
+	for (var i = 0; i<atomicProps.length; i++) {
+	    atomicPropNames.push(atomicProps[i].name);
+	}
+	
+	cmd.push(this.gbl(bl+1) + 	'for key,val in handle.iteritems():' );
+	cmd.push(this.gbl(bl+2) + 		'if isinstance(val, h5py.Dataset):' );
+	cmd.push(this.gbl(bl+3) + 			'if not(key in ' + this.stringify(atomicPropNames)+'):' );
+	cmd.push(this.gbl(bl+4) + 				'self.OBJattrs[key] = val.value');
+
+	cmd.push(this.gbl(bl+1));
+
 	cmd.push(this.gbl(bl+1) + 'if self.STORAGE.isOpen():');
 	cmd.push(this.gbl(bl+2) + 	'self.STORAGE.close()');
 	
@@ -556,23 +575,27 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 					
 	cmd.push(this.gbl(bl+1) +	'try :');
 	cmd.push(this.gbl(bl+2) + 		'order=[]');	
+	cmd.push(this.gbl(bl+2) + 		'allOrders=[]');	
 	cmd.push(this.gbl(bl+2) + 		'if ("order" in handle.attrs.keys()):');
 	cmd.push(this.gbl(bl+3) + 			'allOrders = handle.attrs["order"]');	
 	cmd.push(this.gbl(bl+3) + 			'if not(isinstance(allOrders,np.ndarray)):');	
 	cmd.push(this.gbl(bl+4) + 				'if not(allOrders == ""):');	
 	cmd.push(this.gbl(bl+5) + 					'allOrders = np.array(allOrders.split(","))');
+	cmd.push(this.gbl(bl+2) + 		'else:');
+	cmd.push(this.gbl(bl+3) + 			'allItems = handle.keys()');
+	cmd.push(this.gbl(bl+3) + 			'allOrders = [item for item in allItems if isinstance(handle[item], h5py.Group)]');
 	
-	cmd.push(this.gbl(bl+3) + 			'for anOrder in allOrders:');
-	//cmd.push(this.gbl(bl+4) + 				'if ("group" in handle[anOrder].attrs.keys()):');
-	//cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["group"] == varName):');
-	//cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
-	cmd.push(this.gbl(bl+4) + 				'if ("type" in handle[anOrder].attrs.keys()):');
-	cmd.push(this.gbl(bl+5) + 					'if (handle[anOrder].attrs["type"] == propType):');
-	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');
-	cmd.push(this.gbl(bl+5) + 					'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
-	cmd.push(this.gbl(bl+6) + 						'order.append(anOrder)');	
-	cmd.push(this.gbl(bl+4) + 				'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+2) + 		'for anOrder in allOrders:');
+	//cmd.push(this.gbl(bl+3) + 			'if ("group" in handle[anOrder].attrs.keys()):');
+	//cmd.push(this.gbl(bl+4) + 				'if (handle[anOrder].attrs["group"] == varName):');
+	//cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');
+	cmd.push(this.gbl(bl+3) + 			'if ("type" in handle[anOrder].attrs.keys()):');
+	cmd.push(this.gbl(bl+4) + 				'if (handle[anOrder].attrs["type"] == propType):');
 	cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');
+	cmd.push(this.gbl(bl+4) + 				'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');	
+	cmd.push(this.gbl(bl+3) + 			'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+4) + 				'order.append(anOrder)');
 	
 	cmd.push(this.gbl(bl+2) + 		'if not(varName in self._loadedItems):');
 	cmd.push(this.gbl(bl+3) + 			'self._loadedItems.append(varName)');

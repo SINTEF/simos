@@ -189,6 +189,15 @@ HDF5Save.prototype.saveDataToHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+3) + 			'order = list(curOrders) + order');
 	cmd.push(this.gbl(bl+1) + 	'handle.attrs["order"] = order' );
 	
+	cmd.push(this.gbl(bl+1) + 	'for key,val in self.OBJattrs.iteritems():');
+	cmd.push(this.gbl(bl+2) + 		'#type is exception and it will be overwriten');	
+	cmd.push(this.gbl(bl+2) + 		'if (key == "type"):');
+	cmd.push(this.gbl(bl+3) + 			'handle.attrs[key] = val');
+	cmd.push(this.gbl(bl+2) + 		'#skip name and description');	
+	cmd.push(this.gbl(bl+2) + 		'if (key == "name" or key == "description"):');
+	cmd.push(this.gbl(bl+3) + 			'continue');	
+	cmd.push(this.gbl(bl+2) + 		'if (not key in handle.attrs.keys()):');
+	cmd.push(this.gbl(bl+3) + 			'handle.attrs[key] = val');
 	
     return cmd.join('\n');
 };
@@ -289,6 +298,8 @@ HDF5Save.prototype.saveToHDF5HandleItemNonAtomicSingle = function(bl) {
 	//cmd.push(this.gbl(bl+3) + 			'if ("order" in dgrp.attrs.keys()):');
 	//cmd.push(this.gbl(bl+4) + 				'dgrp.attrs["order"] = ""');
 	cmd.push(this.gbl(bl+3) + 			'getattr(self, varName)._saveDataToHDF5Handle(dgrp)');
+
+	
 	cmd.push(this.gbl(bl+2) + 		'elif not(getattr(self, varName).REF == None ):');
 	cmd.push(this.gbl(bl+3) +			'raise Exception("referenced single value is not implemented.")' );
 

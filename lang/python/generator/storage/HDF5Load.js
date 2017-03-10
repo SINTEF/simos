@@ -114,9 +114,14 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	var properties = this.getProperties();
 	var propNum = properties.length;
 	
-	cmd.push(this.gbl(bl+1) + 	'self.OBJattrs = collections.OrderedDict()');	
-	cmd.push(this.gbl(bl+1) + 	'for key,val in handle.attrs.iteritems():' );
-	cmd.push(this.gbl(bl+2) + 		'self.OBJattrs[key] = val' );
+	cmd.push(this.gbl(bl+1) + 	'self.OBJattrs = collections.OrderedDict()');
+	cmd.push(this.gbl(bl+1) + 	'try:' );
+	cmd.push(this.gbl(bl+2) + 		'for key,val in handle.attrs.iteritems():' );
+	cmd.push(this.gbl(bl+3) + 			'self.OBJattrs[key] = val' );
+	cmd.push(this.gbl(bl+1) + 	'except:' );
+	cmd.push(this.gbl(bl+2) + 		'pass' );
+
+	
 
 	for(var i = 0; i < propNum; i++) {
 		var prop = properties[i];  
@@ -172,10 +177,13 @@ HDF5Load.prototype.loadDataFromHDF5Handle = function(bl) {
 	    atomicPropNames.push(atomicProps[i].name);
 	}
 	
-	cmd.push(this.gbl(bl+1) + 	'for key,val in handle.iteritems():' );
-	cmd.push(this.gbl(bl+2) + 		'if isinstance(val, h5py.Dataset):' );
-	cmd.push(this.gbl(bl+3) + 			'if not(key in ' + this.stringify(atomicPropNames)+'):' );
-	cmd.push(this.gbl(bl+4) + 				'self.OBJattrs[key] = val.value');
+	cmd.push(this.gbl(bl+1) + 	'try:' );
+	cmd.push(this.gbl(bl+2) + 		'for key,val in handle.iteritems():' );
+	cmd.push(this.gbl(bl+3) + 			'if isinstance(val, h5py.Dataset):' );
+	cmd.push(this.gbl(bl+4) + 				'if not(key in ' + this.stringify(atomicPropNames)+'):' );
+	cmd.push(this.gbl(bl+5) + 					'self.OBJattrs[key] = val.value');
+	cmd.push(this.gbl(bl+1) + 	'except:' );
+	cmd.push(this.gbl(bl+2) + 		'pass' );
 
 	cmd.push(this.gbl(bl+1));
 

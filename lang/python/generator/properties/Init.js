@@ -386,6 +386,13 @@ Init.prototype.classInit = function(bl) {
 	
 	cmd.push(this.gbl(bl+1) + 'self.OBJattrs = collections.OrderedDict()'); 
 
+	var ungroups = this.getUngroups();
+	var ungroupTypes = [];
+	for (var i = 0; i < ungroups.length; i++)
+	    ungroupTypes.push(ungroups[i].type);
+	
+	cmd.push(this.gbl(bl+1) + 'self._ungroupTypes = ["' + ungroupTypes.join('", "') + '"]');
+	
 	cmd.push('#------------------------------------------------------------------------------');
 	cmd.push(this.getUserDefinedCode("prop"));
 	cmd.push('#------------------------------------------------------------------------------');

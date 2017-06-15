@@ -254,7 +254,7 @@ HDF5Load.prototype.loadDataItemFromHDF5 = function(bl) {
 		    else if(this.isArray(prop) && this.isUngroup(prop) && this.isRecursive(prop)){
 				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=True)');
 		    }	 
-		    else if(this.isArray(prop) && this.isUngroup(prop) && !this.isRecursive(prop)){
+		    else if(this.isArray(prop) && this.isUngroup(prop) && !(this.isRecursive(prop)) ){
 				 cmd.push(this.gbl(bl+2) + 'self._loadFromHDF5HandleItem(' + this.stringify(prop.name) + ', "NonAtomicArray", ungroup=True, propType=' + this.stringify(prop.type) + ', isRecursive=False)');		        	 
 		    }
 		    else{
@@ -600,7 +600,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemNonAtomicArrayUngroup = function(bl) {
 	cmd.push(this.gbl(bl+3) + 			'if ("type" in handle[anOrder].attrs.keys()):');
 	cmd.push(this.gbl(bl+4) + 				'if (handle[anOrder].attrs["type"] == propType):');
 	cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');
-	cmd.push(this.gbl(bl+4) + 				'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
+	cmd.push(this.gbl(bl+4) + 				'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive and not(handle[anOrder].attrs["type"] in self._ungroupTypes) ):	#this is a group without correct type');
 	cmd.push(this.gbl(bl+5) + 					'order.append(anOrder)');	
 	cmd.push(this.gbl(bl+3) + 			'elif ( ("order" in handle[anOrder].attrs.keys()) and isRecursive ):	#this is a group without correct type');
 	cmd.push(this.gbl(bl+4) + 				'order.append(anOrder)');

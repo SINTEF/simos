@@ -513,7 +513,16 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			
 			if (this.isArray(prop)){
 				cmd.push(this.gbl(bl) + 
-				'def append' + this.firstToUpper(prop.name) +'(self,name=None):');
+				'def append' + this.firstToUpper(prop.name) +'(self,name=None, item=None):');
+				cmd.push(this.gbl(bl+1) + 
+					'if item != None:');				
+				cmd.push(this.gbl(bl+2) + 
+						'if not(' + this.stringify(propType) + ' == (type(item).__module__ + "." + type(item).__name__) ) :' );
+				cmd.push(this.gbl(bl+3) + 
+							'raise Exception("only items of type ' + propType + ' could be added to this list.")' );		
+				cmd.push(this.gbl(bl+2) + 
+						'name = item.name' );		
+				
 				cmd.push(this.gbl(bl+1) + 
 					'objs = [x for x in self.' + prop.name + ' if (x.name == name)]' );
 				cmd.push(this.gbl(bl+1) + 
@@ -525,22 +534,36 @@ PythonBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.gbl(bl+2) + 
 						'print ("warning: object %s already exist."%(name))' );	
 				cmd.push(this.gbl(bl+2) + 
-						'return objs[0]' );	
+						'if item == None:' );				
+				cmd.push(this.gbl(bl+3) + 
+							'return objs[0]' );	
+				cmd.push(this.gbl(bl+2) + 
+						'else:' );				
+				cmd.push(this.gbl(bl+3) + 
+							'item.cloneTo(objs[0])' );					
+				cmd.push(this.gbl(bl+3) + 
+							'return objs[0]' );		
 				cmd.push(this.gbl(bl+1) + 
-					'obj = ' + propType + '(name)');
-				cmd.push(this.gbl(bl+1) + 
-					'self.' + prop.name + '.append(obj)');
+					'if item == None:' );				
+				cmd.push(this.gbl(bl+2) + 
+						'obj = ' + propType + '(name)');
 				if (this.hasAssignments(prop))
 					cmd.push(
-						this.assignPropertyValue(bl+1,	this.getAssignments(prop), 'obj')
+						this.assignPropertyValue(bl+2,	this.getAssignments(prop), 'obj')
 						);
 				if (this.hasDependencies(prop))
 					cmd.push(
-						this.setChildPropRefs(bl+1, prop, 'obj')
+						this.setChildPropRefs(bl+2, prop, 'obj')
 						);
 				if (this.hasDependents(prop))
 					throw "array can not have dependents.";
-					
+				cmd.push(this.gbl(bl+1) + 
+					'else:' );		
+				cmd.push(this.gbl(bl+2) + 
+						'obj = item');				
+				cmd.push(this.gbl(bl+1) + 
+					'self.' + prop.name + '.append(obj)');
+
 				cmd.push(this.gbl(bl+1) + 
 						'return obj');
 				

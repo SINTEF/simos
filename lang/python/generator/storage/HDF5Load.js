@@ -52,6 +52,19 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
+HDF5Load.prototype.loadFromStorage = function(bl) {
+	if (bl == undefined) {
+		bl = 0;
+	}	
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'def loadFromStorage(self, storage=None, dsType = \'hdf5\', action="init"):');
+	cmd.push(this.gbl(bl+1) + 	'if (dsType == \'hdf5\') :');
+	cmd.push(this.gbl(bl+2) + 		'self.loadFromHDF5Handle(storage=storage, action=action)');
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	if (bl == undefined) {
 		bl = 0;
@@ -72,7 +85,6 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	cmd.push(this.gbl(bl+1) + 	'if self.STORAGE.isOpen():' );
 	cmd.push(this.gbl(bl+2) + 		'self.STORAGE.close()' );
 	
-		
 	return cmd.join('\n');
 };
 

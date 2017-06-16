@@ -248,6 +248,19 @@ PythonBase.prototype.getPythonArrayShape = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
+PythonBase.prototype.isStringFunc = function(bl) {
+	var cmd = [];
+	
+	cmd.push(this.gbl(bl) + 'def isString(self, str):');
+
+	cmd.push(this.gbl(bl+1) + 'if (type(str) == type("")) or (type(str) == np.string_) or isinstance(str, unicode):');	
+	cmd.push(this.gbl(bl+2) + 	'return True');
+	cmd.push(this.gbl(bl+1) + 'else :');
+	cmd.push(this.gbl(bl+2) + 	'return False');
+	
+	return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/
 PythonBase.prototype.isSetFunc = function(bl) {
 	var cmd = [];
 	
@@ -495,7 +508,11 @@ PythonBase.prototype.factoryFunc = function(bl) {
 	var cmd = [];
 		
 	cmd.push(this.gbl(bl) + 
-	'def create(self,name):');	
+	'def create(self,name=None):');	
+	cmd.push(this.gbl(bl+1) + 
+		'if (name != None) and not(self.isString(name)):');
+	cmd.push(this.gbl(bl+2) + 
+			'raise Exception("name should be string %s is given."%(type(name)))' );		
 	cmd.push(this.gbl(bl+1) + 
 		'return ' + this.getModel().name + '(name)');
 
@@ -506,7 +523,11 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			var propType = this.getClassPathFromType(prop.type) ;
 			
 				cmd.push(this.gbl(bl) + 
-				'def makea' + this.firstToUpper(prop.name) +'(self,name):');	
+				'def makea' + this.firstToUpper(prop.name) +'(self,name=None):');
+				cmd.push(this.gbl(bl+1) + 
+					'if (name != None) and not(self.isString(name)):');
+				cmd.push(this.gbl(bl+2) + 
+						'raise Exception("name should be string %s is given."%(type(name)))' );						
 				cmd.push(this.gbl(bl+1) + 
 					'return ' + propType + '(name)');
 			
@@ -514,6 +535,11 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			if (this.isArray(prop)){
 				cmd.push(this.gbl(bl) + 
 				'def append' + this.firstToUpper(prop.name) +'(self,name=None, item=None):');
+				cmd.push(this.gbl(bl+1) + 
+					'if (name != None) and not(self.isString(name)):');
+				cmd.push(this.gbl(bl+2) + 
+						'raise Exception("name should be string %s is given."%(type(name)))' );		
+				
 				cmd.push(this.gbl(bl+1) + 
 					'if item != None:');				
 				cmd.push(this.gbl(bl+2) + 
@@ -538,7 +564,9 @@ PythonBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.gbl(bl+3) + 
 							'return objs[0]' );	
 				cmd.push(this.gbl(bl+2) + 
-						'else:' );				
+						'else:' );		
+				cmd.push(this.gbl(bl+3) + 
+							'objs[0].loadFromStorage(action="detach")' );					
 				cmd.push(this.gbl(bl+3) + 
 							'item.cloneTo(objs[0])' );					
 				cmd.push(this.gbl(bl+3) + 
@@ -577,6 +605,10 @@ PythonBase.prototype.factoryFunc = function(bl) {
 				cmd.push(this.gbl(bl) + 
 				'def create' + this.firstToUpper(prop.name) +'(self, name=None):');
 				cmd.push(this.gbl(bl+1) + 
+					'if (name != None) and not(self.isString(name)):');
+				cmd.push(this.gbl(bl+2) + 
+						'raise Exception("name should be string %s is given."%(type(name)))' );						
+				cmd.push(this.gbl(bl+1) + 
 					'if (self.' + prop.name + ' != None): ');
 				cmd.push(this.gbl(bl+2) + 
 						'raise Exception("object ' + prop.name + 
@@ -592,6 +624,10 @@ PythonBase.prototype.factoryFunc = function(bl) {
 				
 				cmd.push(this.gbl(bl) + 
 				'def renew' + this.firstToUpper(prop.name) +'(self, name=None):');
+				cmd.push(this.gbl(bl+1) + 
+					'if (name != None) and not(self.isString(name)):');
+				cmd.push(this.gbl(bl+2) + 
+						'raise Exception("name should be string %s is given."%(type(name)))' );						
 				cmd.push(this.gbl(bl+1) + 
 					'self.' + prop.name + ' = ' + propType 
 							+ '('+ this.stringify(prop.name) +')');

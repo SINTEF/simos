@@ -55,6 +55,8 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push(entity.arraysUpdateSize(1));
 	cmd.push('');
 	cmd.push('    #---------------------------------------------------------------------------');
+	cmd.push(entity.isStringFunc(1));	
+	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.reprFunc(1));
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.typeReprFunc(1));
@@ -113,6 +115,7 @@ PythonGenerator.prototype.generate = function(model) {
 	cmd.push('    #---------------------Load HDF5 functions ----------------------------------');	
 	cmd.push('    #---------------------------------------------------------------------------');
 	cmd.push(entity.loadHDF5Func(1));
+	cmd.push(entity.loadFromStorage(1));
 	cmd.push(entity.loadFromHDF5Handle(1));
 	cmd.push(entity.loadDataItemFromHDF5(1));
 	cmd.push(entity.loadDataFromHDF5Handle(1));

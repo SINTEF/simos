@@ -1,5 +1,5 @@
 
-function catmanToSimos(varargin)
+function catmanToCollection(varargin)
 %
 % translate bin files to hdf file,
 % options and inputs:
@@ -23,11 +23,8 @@ function catmanToSimos(varargin)
     caseName = [inp.prefix fname];
     casePath = fullfile(inp.outPath, [caseName '.h5']);
     
-    if inp.expTime
-        test = marmo_r1.modelTest.ExpTimeChannelCollection(caseName);
-    else
-        test = marmo_r1.modelTest.ChannelCollection(caseName);
-    end
+    test = marmo_r1.containers.Collection(caseName);
+    cnt = test.appendCollections('raw');
     
     % load data
     if strcmpi(inp.reader, 'catman_read') == 1
@@ -40,18 +37,20 @@ function catmanToSimos(varargin)
     strNames = {'filename', 'comment'};
     for i = 1:length(strNames)
         sname = strNames{i};
-        str = test.appendStrings(sname);
+        str = cnt.appendStrings(sname);
         str.value = char(getfield(a1,sname));
     end
     numNames = {'fileid','noofchan','mcl','redufact'};
     for i = 1:length(numNames)
         nname = numNames{i};
-        num = test.appendNumbers(nname);
+        num = cnt.appendNumbers(nname);
         num.value = getfield(a1,nname);
     end
     
     % write channel data
     n = size(a2,2);
+    
+    chs = cnt.appendCollections('channels');
     
     if inp.expTime
         if isempty(strfind(lower(a2(1,1).ChannelName), 'time'))
@@ -61,7 +60,7 @@ function catmanToSimos(varargin)
         chtime = a2(1,1);
         for i = 2:n
             inch = a2(1,i);
-            ch = test.appendChannels(inch.ChannelName);
+            ch = chs.appendNesArrays(inch.ChannelName);
             
             
             ch.xvalue = chtime.data;
@@ -70,7 +69,7 @@ function catmanToSimos(varargin)
             ch.xlabel = 'time';
             ch.xdescription = 'time';
             
-            ch.value = inch.data;              
+            ch.value = inch.data;
             ch.unit = inch.Unit;
             ch.label = ch.name;
             ch.description = inch.comment;
@@ -80,7 +79,7 @@ function catmanToSimos(varargin)
     else
         for i = 1:n
             inch = a2(1,i);
-            ch = test.appendChannels(inch.ChannelName);
+            ch = chs.appendEsArrays(inch.ChannelName);
             
             
             ch.xdelta = 1.0;
@@ -99,6 +98,7 @@ function catmanToSimos(varargin)
     end
     
     if inp.importDetails
+        details = cnt.appendCollections('specs');
         for i = 1:n
             inch = a2(1,i);
             dch = test.appendChannelSpecs(inch.ChannelName);

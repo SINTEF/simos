@@ -3,8 +3,23 @@ function catmanToCollection(varargin)
 %
 % translate bin files to hdf file,
 % options and inputs:
-%    input commands {'reader', 'filePath', 'outPath', 'outName', 'prefix'};
-%    default values {'catread', '','','',''};
+%
+%    Input pairs:
+%          commands {'reader', 'filePath', 'outPath', 'outName', 'prefix'};
+%    default values {'catread',        '',        '',        '',       ''};
+%
+%       reader   : reading method, the default is valid for most cases
+%       filePath : the path to bin file
+%       outName  : specific name for out put, the default results in bin
+%                  file name with .h5 as extension
+%       preFix
+%   
+%    Input Options:
+%          swtiches {'importDetails','expTime'};
+%
+%    Example
+%
+%    simos.io.catman.catmanToCollection('filePath','CE2001.bin', 
     
 
     diary 'catmanToSimos.log'

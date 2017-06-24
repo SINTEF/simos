@@ -533,48 +533,30 @@ PythonBase.prototype.factoryFunc = function(bl) {
 			
 			
 			if (this.isArray(prop)){
-				cmd.push(this.gbl(bl) + 
-				'def append' + this.firstToUpper(prop.name) +'(self,name=None, item=None):');
-				cmd.push(this.gbl(bl+1) + 
-					'if (name != None) and not(self.isString(name)):');
-				cmd.push(this.gbl(bl+2) + 
-						'raise Exception("name should be string %s is given."%(type(name)))' );		
+				cmd.push(this.gbl(bl) + 'def append' + this.firstToUpper(prop.name) +'(self,name=None, item=None):');
+				cmd.push(this.gbl(bl+1) +	'if (name != None) and not(self.isString(name)):');
+				cmd.push(this.gbl(bl+2) +		'raise Exception("name should be string %s is given."%(type(name)))' );		
 				
-				cmd.push(this.gbl(bl+1) + 
-					'if item != None:');				
-				cmd.push(this.gbl(bl+2) + 
-						'if not(' + this.stringify(propType) + ' == (type(item).__module__ + "." + type(item).__name__) ) :' );
-				cmd.push(this.gbl(bl+3) + 
-							'raise Exception("only items of type ' + propType + ' could be added to this list.")' );		
-				cmd.push(this.gbl(bl+2) + 
-						'name = item.name' );		
+				cmd.push(this.gbl(bl+1) +	'if item != None:');				
+				cmd.push(this.gbl(bl+2) +		'if not(' + this.stringify(propType) + ' == (type(item).__module__ + "." + type(item).__name__) ) :' );
+				cmd.push(this.gbl(bl+3) +			'raise Exception("only items of type ' + propType + ' could be added to this list.")' );		
+				cmd.push(this.gbl(bl+2) +		'name = item.name' );		
 				
-				cmd.push(this.gbl(bl+1) + 
-					'objs = [x for x in self.' + prop.name + ' if (x.name == name)]' );
-				cmd.push(this.gbl(bl+1) + 
-					'if len(objs) > 1:' );			
-				cmd.push(this.gbl(bl+2) + 
-						'raise Exception(" more than one " + name + " is found in ' + prop.name + '")' );
-				cmd.push(this.gbl(bl+1) + 
-					'elif len(objs) == 1:' );			
-				cmd.push(this.gbl(bl+2) + 
-						'print ("warning: object %s already exist."%(name))' );	
-				cmd.push(this.gbl(bl+2) + 
-						'if item == None:' );				
-				cmd.push(this.gbl(bl+3) + 
-							'return objs[0]' );	
-				cmd.push(this.gbl(bl+2) + 
-						'else:' );		
-				cmd.push(this.gbl(bl+3) + 
-							'objs[0].loadFromStorage(action="detach")' );					
-				cmd.push(this.gbl(bl+3) + 
-							'item.cloneTo(objs[0])' );					
-				cmd.push(this.gbl(bl+3) + 
-							'return objs[0]' );		
-				cmd.push(this.gbl(bl+1) + 
-					'if item == None:' );				
-				cmd.push(this.gbl(bl+2) + 
-						'obj = ' + propType + '(name)');
+				cmd.push(this.gbl(bl+1) +	'objs = [x for x in self.' + prop.name + ' if (x.name == name)]' );
+				cmd.push(this.gbl(bl+1) +	'if len(objs) > 1:' );			
+				cmd.push(this.gbl(bl+2) +		'raise Exception(" more than one " + name + " is found in ' + prop.name + '")' );
+				cmd.push(this.gbl(bl+1) +	'elif len(objs) == 1:' );			
+				cmd.push(this.gbl(bl+2) +		'print ("warning: object %s already exist."%(name))' );	
+				cmd.push(this.gbl(bl+2) +		'if item == None:' );				
+				cmd.push(this.gbl(bl+3) +			'return objs[0]' );	
+				cmd.push(this.gbl(bl+2) + 		'else:' );		
+				cmd.push(this.gbl(bl+3) + 			'if objs[0].STORAGE != None:' );	
+				cmd.push(this.gbl(bl+4) + 				'if objs[0].STORAGE.isConnected():');
+				cmd.push(this.gbl(bl+5) + 					'objs[0].loadFromStorage(action="detach")' );					
+				cmd.push(this.gbl(bl+3) + 			'item.cloneTo(objs[0])' );					
+				cmd.push(this.gbl(bl+3) + 			'return objs[0]' );		
+				cmd.push(this.gbl(bl+1) + 	'if item == None:' );				
+				cmd.push(this.gbl(bl+2) + 		'obj = ' + propType + '(name)');
 				if (this.hasAssignments(prop))
 					cmd.push(
 						this.assignPropertyValue(bl+2,	this.getAssignments(prop), 'obj')
@@ -585,20 +567,14 @@ PythonBase.prototype.factoryFunc = function(bl) {
 						);
 				if (this.hasDependents(prop))
 					throw "array can not have dependents.";
-				cmd.push(this.gbl(bl+1) + 
-					'else:' );		
-				cmd.push(this.gbl(bl+2) + 
-						'obj = item');				
-				cmd.push(this.gbl(bl+1) + 
-					'self.' + prop.name + '.append(obj)');
+				cmd.push(this.gbl(bl+1) + 	'else:' );		
+				cmd.push(this.gbl(bl+2) + 		'obj = item');				
+				cmd.push(this.gbl(bl+1) + 	'self.' + prop.name + '.append(obj)');
 
-				cmd.push(this.gbl(bl+1) + 
-						'return obj');
+				cmd.push(this.gbl(bl+1) + 	'return obj');
 				
-				cmd.push(this.gbl(bl) + 
-					'def delete' + this.firstToUpper(prop.name) +'(self):');
-				cmd.push(this.gbl(bl+1) + 
-						'self.' + this.makePrivate(prop.name) + ' = [] ');
+				cmd.push(this.gbl(bl) + 'def delete' + this.firstToUpper(prop.name) +'(self):');
+				cmd.push(this.gbl(bl+1) +	'self.' + this.makePrivate(prop.name) + ' = [] ');
 						
 			}
 			else {

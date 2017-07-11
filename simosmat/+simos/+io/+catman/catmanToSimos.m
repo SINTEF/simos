@@ -82,9 +82,16 @@ function catmanToSimos(varargin)
             inch = a2(1,i);
             ch = test.appendChannels(inch.ChannelName);
             
+            chTimeData = chtime.data;
+            chTimeUnit = chtime.Unit;
             
-            ch.xvalue = chtime.data;
-            ch.xunit = chtime.Unit;
+            %if any(ismember(fieldnames(inch), 'dt'))  
+            %    chTimeData =  (0:1:length(inch.data)-1) * inch.dt;
+            %    chTimeUnit = 's';          
+            %end
+            
+            ch.xvalue = chTimeData;
+            ch.xunit = chTimeUnit;
             ch.xname = 'time';
             ch.xlabel = 'time';
             ch.xdescription = 'time';
@@ -102,12 +109,22 @@ function catmanToSimos(varargin)
             ch = test.appendChannels(inch.ChannelName);
             
             
+            
             ch.xdelta = 1.0;
             ch.xstart = 0.0;
             ch.xunit = '';
             ch.xname = 'index';
             ch.xlabel = 'I';
             ch.xdescription = 'array Index';
+            
+            if any(ismember(fieldnames(inch), 'dt'))  
+                ch.xdelta = inch.dt;
+                ch.xstart = 0.0;
+                ch.xunit = 's';
+                ch.xname = 'time';
+                ch.xlabel = 'time';
+                ch.xdescription = 'time';
+            end
             
             ch.value = inch.data;
             ch.unit = inch.Unit;

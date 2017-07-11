@@ -1,6 +1,7 @@
 
 function catmanToCollection(varargin)
 %
+% (NOT COMPLETE) 
 % translate bin files to hdf file,
 % options and inputs:
 %

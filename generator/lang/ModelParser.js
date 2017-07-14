@@ -1149,6 +1149,22 @@ ModelParser.prototype.getSingles = function(props) {
 	return propList;
 };
 /*----------------------------------------------------------------------------*/
+ModelParser.prototype.getUngroups = function(props) {
+	if (props == undefined)
+		props = this.getProperties();
+	
+	var propList = [];
+	
+	for (var i = 0; i<props.length; i++){
+		var prop = props[i];
+		if ( this.isUngroup(prop) ) {
+			propList.push(prop);
+		} 
+	}
+	
+	return propList;
+};
+/*----------------------------------------------------------------------------*/
 ModelParser.prototype.makeVersionedPackages = function(pnames,pvers) {
 	/*two lists 
 	 * pnames: name of packages in order

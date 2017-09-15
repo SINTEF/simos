@@ -22,7 +22,7 @@ HDF5Load.prototype.loadHDF5Func = function(bl) {
 	cmd.push(this.gbl(bl+2) + 			'name = ' + this.objName() + '.name; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1) + 		'if ~(exist(\'action\',\'var\'))'); 
-	cmd.push(this.gbl(bl+2) + 			'action = \'init\'; ');
+	cmd.push(this.gbl(bl+2) + 			'action = \'detach\'; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1) +		this.objName() + '.storageBackEndType = \'hdf5\';');
 	cmd.push(this.gbl(bl+1));
@@ -60,7 +60,7 @@ HDF5Load.prototype.loadFromHDF5Handle = function(bl) {
 	var filePath = this.objName() + '.' + this.makeInternal('FilePath');
 
 	cmd.push(this.gbl(bl+1) + 	'if ~exist(\'action\',\'var\') || isempty(action)');
-	cmd.push(this.gbl(bl+2) + 		'action = \'init\';' );
+	cmd.push(this.gbl(bl+2) + 		'action = \'detach\';' );
 	cmd.push(this.gbl(bl+1) + 	'end');
 	
 	cmd.push(this.gbl(bl+1) + 	'if ~exist(\'handle\',\'var\') || isempty(handle)');
@@ -114,7 +114,11 @@ HDF5Load.prototype.loadPartArrFromHDF5 = function(bl) {
 	}
 	
 	cmd.push(this.gbl(bl+1) + 	'if isAtomicArr == 1');
-	cmd.push(this.gbl(bl+2) +		this.objName() + '.loadFromHDF5HandleItemAtomicArray(' + this.objName() +'.' + this.makeInternal('Handle') + ', varName,  \'detach\', arrPart)' );
+	cmd.push(this.gbl(bl+2) + 		'if ~exist(\'arrPart\',\'var\') || isempty(arrPart)');
+	cmd.push(this.gbl(bl+3) +			this.objName() + '.loadFromHDF5HandleItemAtomicArray(' + this.objName() +'.' + this.makeInternal('Handle') + ', varName,  \'detach\')' );
+	cmd.push(this.gbl(bl+2) + 		'else');
+	cmd.push(this.gbl(bl+3) +			this.objName() + '.loadFromHDF5HandleItemAtomicArray(' + this.objName() +'.' + this.makeInternal('Handle') + ', varName,  \'detach\', arrPart)' );
+	cmd.push(this.gbl(bl+2) + 		'end');	
 	cmd.push(this.gbl(bl+1) + 	'end');
 
 	cmd.push(this.gbl(bl) + 'end');

@@ -59,7 +59,7 @@ SaveLoad.prototype.loadFunc = function(bl) {
 	cmd.push(this.gbl(bl+2) + 			'options.name = ' + this.objName() + '.name; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1) + 		'if ~(simos.hasField(options,\'action\'))'); 
-	cmd.push(this.gbl(bl+2) + 			'options.action = \'init\'; ');
+	cmd.push(this.gbl(bl+2) + 			'options.action = \'detach\'; ');
 	cmd.push(this.gbl(bl+1) + 		'end ');
 	cmd.push(this.gbl(bl+1));
 	cmd.push(this.gbl(bl+1) + 		'if (strcmp(options.dsType, \'hdf5\')==1)'); 

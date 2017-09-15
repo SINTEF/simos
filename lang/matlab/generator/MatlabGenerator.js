@@ -130,6 +130,7 @@ MatlabGenerator.prototype.generate = function(model) {
     cmd.push( entity.loadFunc(1));
 	cmd.push( entity.loadHDF5Func(1));
 	cmd.push( entity.loadFromHDF5Handle(1));
+	cmd.push( entity.loadPartArrFromHDF5(1));
 	cmd.push('    %---------------------------------------------------------------------------');
     cmd.push( entity.saveFunc(1));
 	cmd.push( entity.saveHDF5Func(1));

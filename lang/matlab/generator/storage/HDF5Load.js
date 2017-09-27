@@ -312,7 +312,7 @@ HDF5Load.prototype.loadFromHDF5HandleItemAtomicArray = function(bl) {
 	cmd.push(this.gbl(bl+2) + 		'allArr = 1;' );
 	cmd.push(this.gbl(bl+1) + 	'end');
 
-	cmd.push(this.gbl(bl+1) +	'if action == \'detach\'');
+	cmd.push(this.gbl(bl+1) +	'if strcmpi(action,\'detach\') == 1');
 	cmd.push(this.gbl(bl+2) +		this.objName() + '.loadFromHDF5HandleItemAtomicSingle(handle, varName, action);');
 	cmd.push(this.gbl(bl+2) +		'try');
 	cmd.push(this.gbl(bl+3) +			'if allArr == 1');	

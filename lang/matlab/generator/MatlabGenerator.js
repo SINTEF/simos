@@ -117,6 +117,8 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push( entity.isSetFunc(1));
 	cmd.push( entity.isContainedFunc(1));
 	cmd.push( entity.getPropModelFunc(1));
+	cmd.push( entity.hasEntityFunc(1));	
+	cmd.push( entity.getEntityFunc(1));		
     cmd.push('');
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    % Struct text representation');
@@ -153,6 +155,8 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push( entity.getPrivateNameFunc(1));
     cmd.push('');
 	cmd.push( entity.cloneToFunc(1));
+    cmd.push('');  
+	cmd.push( entity.lookForEntityFunc(1));
     cmd.push('');    
 	cmd.push('    %-----------------------------------------------------------------------');
 	cmd.push('    %Array update size function');

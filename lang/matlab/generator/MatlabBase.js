@@ -407,6 +407,10 @@ MatlabBase.prototype.cloneToFunc = function(bl) {
     
 	var props = this.getProperties();
 	
+	cmd.push(this.gbl(bl) +	'newObj.' + this.makeInternal('FilePath') + ' = ' + this.objName() + '.' + this.makeInternal('FilePath') + ';'  );
+	cmd.push(this.gbl(bl) +	'newObj.' + this.makeInternal('Handle') + ' = ' + this.objName() + '.' + this.makeInternal('Handle') + ';'  );
+
+	
 	for (var i=0; i<props.length; i++) {
 		var prop = props[i];
 		cmd.push(this.gbl(bl+1) + 

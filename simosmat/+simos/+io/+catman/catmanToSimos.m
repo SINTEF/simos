@@ -84,11 +84,11 @@ function catmanToSimos(varargin)
             
             chTimeData = chtime.data;
             chTimeUnit = chtime.Unit;
-            
-            %if any(ismember(fieldnames(inch), 'dt'))  
-            %    chTimeData =  (0:1:length(inch.data)-1) * inch.dt;
-            %    chTimeUnit = 's';          
-            %end
+           
+            if any(ismember(fieldnames(inch), 'dt'))  
+                chTimeData =  (0:1:length(inch.data)-1) * inch.dt/1000.0;
+                chTimeUnit = 's';          
+            end
             
             ch.xvalue = chTimeData;
             ch.xunit = chTimeUnit;

@@ -77,6 +77,7 @@ Init.prototype.initPublicHiddenProperties = function(bl) {
 	cmd.push(this.gbl(bl) + 'storageBackEndType');	
 	
 	cmd.push(this.gbl(bl) + this.makeInternal('FilePath') + ' = \'\';');
+	cmd.push(this.gbl(bl) + this.makeInternal('Handle') + ' = \'\';');
 
 	
 	var properties = this.getProperties();

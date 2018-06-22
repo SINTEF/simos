@@ -737,6 +737,15 @@ ModelParser.prototype.isOptional = function(prop) {
 		return true;
 	}
 };
+ModelParser.prototype.isHidden = function(prop) {
+	if ((prop.hidden == undefined) ||
+		(prop.hidden == 'false')){
+		return false;
+	}
+	else {
+		return true;
+	}
+};
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isUngroup = function(prop) {
 	if ((prop.ungroup == undefined) ||

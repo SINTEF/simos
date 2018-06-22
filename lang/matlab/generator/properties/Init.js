@@ -34,6 +34,23 @@ Init.prototype.initPublicConstantHiddenProperties = function(bl) {
 	return cmd.join('\n');
 };
 /*----------------------------------------------------------------------------*/
+Init.prototype.initPublicDependentHiddenProperties = function(bl) {
+	 
+	var cmd = [];
+	
+	var properties = this.getProperties();
+	var propNum = properties.length;
+	
+	for(var i = 0; i < propNum; i++) {
+		var prop = properties[i];
+
+		if (!this.isGrouped(prop) && this.isHidden(prop))
+			cmd.push(this.gbl(bl) + prop.name + ';');
+	}
+	cmd.push(this.gbl(bl));
+    return cmd.join('\n');
+};
+/*----------------------------------------------------------------------------*/	
 Init.prototype.initPublicDependentProperties = function(bl) {
 	 
 	var cmd = [];
@@ -48,7 +65,7 @@ Init.prototype.initPublicDependentProperties = function(bl) {
 		var prop = properties[i];
 
 		/*initializing other properties, present them only if they are not grouped */
-		if (!this.isGrouped(prop))
+		if (!this.isGrouped(prop) && !this.isHidden(prop))
 			//cmd.push(this.gbl(bl) + prop.name + ' = ' + this.getPropertyValue(prop) + ';');
 			cmd.push(this.gbl(bl) + prop.name + ';');
 		

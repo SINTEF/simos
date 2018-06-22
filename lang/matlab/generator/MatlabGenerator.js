@@ -61,6 +61,12 @@ MatlabGenerator.prototype.generate = function(model) {
 	cmd.push('');   
 	cmd.push('    end %properties (Dependent)');
 	cmd.push('    %***********************************************************************');
+	cmd.push('    properties (Dependent,Hidden)');
+	cmd.push('');
+	cmd.push(entity.initPublicDependentHiddenProperties(2));
+	cmd.push('');   
+	cmd.push('    end %properties (Dependent,Hidden)');
+	cmd.push('    %***********************************************************************');
 	cmd.push('    properties (SetAccess = protected)');
 	cmd.push('');
 	cmd.push('    end %properties (SetAccess = protected)');

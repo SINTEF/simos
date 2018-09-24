@@ -93,3 +93,13 @@ replServer.context.reload = function() {
 	}
 	replServer.context.loadGenerators();
 	};
+	
+//reading script file for command line evaluation
+	if (process.argv.length == 4){
+		var scriptName = process.argv[3];
+		fs.readFile(scriptName, 'utf8', function(err, data) {
+			  if (err) throw err;
+			  console.log('OK: ' + scriptName);
+			  replServer.context.eval(data)
+			});
+	}

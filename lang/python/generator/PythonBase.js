@@ -267,13 +267,13 @@ PythonBase.prototype.isSetFunc = function(bl) {
 	cmd.push(this.gbl(bl) + 'def isSet(self, varName):');
 
 	cmd.push(this.gbl(bl+1) + 	'if (isinstance(getattr(self,varName),list) ):');
-	cmd.push(this.gbl(bl+2) + 		'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
+	cmd.push(this.gbl(bl+2) + 		'if (len(getattr(self,varName)) > 0 and not any([np.any(a==None) for a in getattr(self,varName)])  ):');
 	cmd.push(this.gbl(bl+3) + 			'return True');
 	cmd.push(this.gbl(bl+2) + 		'else :');
 	cmd.push(this.gbl(bl+3) + 			'return False');
 		
 	cmd.push(this.gbl(bl+1) + 	'if (isinstance(getattr(self,varName),np.ndarray) ):');
-	cmd.push(this.gbl(bl+2) +  		'if (len(getattr(self,varName)) > 0 and not any([a==None for a in getattr(self,varName)])  ):');
+	cmd.push(this.gbl(bl+2) +  		'if (len(getattr(self,varName)) > 0 and not any([np.any(a==None) for a in getattr(self,varName)])  ):');
 	cmd.push(this.gbl(bl+3) + 			'return True');
 	cmd.push(this.gbl(bl+2) + 		'else :');
 	cmd.push(this.gbl(bl+3) + 			'return False');

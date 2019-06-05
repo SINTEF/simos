@@ -1,0 +1,16 @@
+{
+        "name": "LineData",
+        "type": "LineData",
+        "extends": ["marmo_r1:basic:NamedEntity"],
+        "description": "Kinematic data for a line in the kinematic grid",
+
+        "properties": [
+
+        {"name": "Point", 
+	 "type": "PointData",
+	 "description": "Kinematic vel & acc for a line in the kinematic grid.",
+	 "dim":"*"
+        }      
+        ]
+
+}

@@ -1,0 +1,39 @@
+//---------------------------------------------------------------------------
+:icons: font
+:sectnums:
+//= Introduction
+:doc-part:  
+//:figure-caption: Figure {doc-part}- 
+:figure-caption: Figure  
+:xrefstyle: short 
+//---------------------------------------------------------------------------
+[appendix]
+== Further work
+
+=== Pitfalls
+* There is inconsitent use of the version numbering. For instance the matgen.generatePackage('<>')  requires the full path name to all folders in subclasses. That is only _marmo_r1_ is accepted in the data modelling file using the command _extend_.
+* the fortran code on the SIMOS-branch _srv_generator_ accepts a mixture. That is the source code is generated independent on the revision number extension in the json-file.
+* there are two ways to generate fortran code, one on the SIMOS master branch. The other one is on the SIMOS branch called _srv_generator_
+* if a property in the class is defined as optional (_i.e._ "optional":"true"), the property cannot be inspected before a value is set. See for instance the _simos/simos/example/models/my_new_model_r1/drops/PointData.json_
+
+=== Improvements
+
+* there should be a tidyer way or a template prepared for making new libraries.
+
+NOTE: This pretty easy using the original setup on the  master branch, <<GeneratingSourceCodeMasterBranch, check this out>>.
+
+* the SIMOS-branch _srv_generator_ should be merged with master
+
+=== General confusion
+
+* I am confused of the terms marmo and simos. I kind of get the impression that basic and container er the bricks in the system. I have referred to them as smallest Lego pieces in SIMOS, but in reality they are probably just small pieces in Marmo or where you have stored them.
+* Note from Skype converation with Pål Levold:
+----
+Dersom jeg bruker ditt og babak sitt oppsett for å generere f90-code: 
+.  vil koden bli lik? 
+    .. Pål: No
+. vil bruken av koden være lik? 
+    .. Pål: yes and no. 
+    .. No: The types will have a different name. omtrent, men ikke helt hvis du har en json-fil i mypackage/subpackage/mytype.json så vil du få en Fortran-type som heter mypackage_subpackage_mytype med generatoren som ligger på master og en Fortran-type som heter mytype med branchen srv-generator.
+    .. yes:  men du kan bruke obj%my_property = 42, call obj%save_hdf5(filname) osv. likt som før.
+----

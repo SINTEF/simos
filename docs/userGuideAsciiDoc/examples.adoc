@@ -1,0 +1,106 @@
+//---------------------------------------------------------------------------
+:icons: font
+:sectnums:
+//= Introduction
+:doc-part:  
+//:figure-caption: Figure {doc-part}- 
+:figure-caption: Figure  
+:xrefstyle: short 
+//---------------------------------------------------------------------------
+== Examples
+
+=== General
+
+This chapter includes a several examples covering 
+
+.  Modelling the Data (json-file)
+.  Generating Source Code. The options are
+    * Python
+    * fortran (f90)
+    * Matlab
+.  Use generate code  
+
+
+link:https://stash.code.sintef.no/projects/SIMOS/repos/simos-fortran-examples/browse/results-storage/[]
+
+=== Simple Example
+==== Modelling the Data
+
+Let us define the json-file describing the data
+
+. A data type with name _my type_
+. The data type _my type_ has has two properties
+    * one double variable with name _x_
+    * one integer array with name _i_arr_
+----
+{
+    "name": "my_type",
+    "description": "A very simple type",
+    "extends": [
+        "marmo_r1:basic:NamedEntity"
+    ],
+
+    "properties": [
+        {
+            "name": "x",
+            "type": "double",
+            "description": "A double precision value",
+        },
+        {
+            "name": "i_arr",
+            "type": "int",
+            "dim": "*",
+            "description": "An integer array",
+        },
+    ]
+}
+----
+
+==== Generate Code (Fortran)
+When we run the code generator, we will get a Fortran source file with a type which looks something like this:
+----
+(...)
+type   :: my_type
+        private
+        ! A double precision value
+        real(dp), public :: x
+        ! An integer array
+        integer, dimension(:), allocatable, public :: i_arr
+        ! variable name for named accessing
+        type(String), public :: name
+        ! instance description
+        type(String), public :: description
+(...)
+----
+
+As we can see, SIMOS generated variables for the entries we added to the properties section of the JSON file. SIMOS also added to other variables, name and description. This is because our JSON-file says that our data type "extends" marmo_r1:basic:NamedEntity and is needed if we want to save our instance to a file.
+
+NOTE: By convention, all types that we would like to save to a file must have a name.
+
+==== Apply Generated Code
+
+We can now easily work with our type and save it when we're satisfied with it:
+
+----
+type(my_type) :: var1, var2
+
+! Create some data
+var1%name = 'My Data'
+var1%x = 123.0
+var1%i_arr = [1, 1, 2, 3, 5, 8, 13]
+
+! Save it to a file
+call var1%save_hdf5(string('my_data.h5'))
+
+! Load it into the other variable, var2
+call var2%load_hdf5(string('my_data.h5'), string('My Data'))
+write(*, *) var2%i_arr ! Prints '1 1 2 3 5 8 13' to the console
+----
+
+Result:
+
+ 1 1 2 3 5 8 13
+
+
+
+

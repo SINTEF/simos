@@ -1,0 +1,30 @@
+{
+  "name": "SimpleString",
+  "type": "marmo:containers:SimpleString",
+  "description": "String data.",
+  "properties": [
+    {
+      "name": "value",
+      "type": "string",
+      "value": "",
+      "description": "string."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "value": "none",
+      "description": "variable name for named accessing"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "value": "",
+      "description": "instance description"
+    }
+  ],
+  "package": "marmo:containers",
+  "__versions__": {
+    "marmo": "r1",
+    "containers": ""
+  }
+}

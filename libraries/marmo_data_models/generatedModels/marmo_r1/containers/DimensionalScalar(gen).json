@@ -1,0 +1,42 @@
+{
+  "name": "DimensionalScalar",
+  "type": "marmo:containers:DimensionalScalar",
+  "description": "single scalar value with dimension",
+  "properties": [
+    {
+      "name": "value",
+      "type": "double",
+      "value": "0.0",
+      "description": "value"
+    },
+    {
+      "name": "label",
+      "type": "string",
+      "value": "",
+      "description": "label for the value."
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "value": "",
+      "description": "data unit."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "value": "none",
+      "description": "variable name for named accessing"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "value": "",
+      "description": "instance description"
+    }
+  ],
+  "package": "marmo:containers",
+  "__versions__": {
+    "marmo": "r1",
+    "containers": ""
+  }
+}

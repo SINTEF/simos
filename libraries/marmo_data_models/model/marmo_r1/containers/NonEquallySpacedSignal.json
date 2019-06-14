@@ -1,0 +1,67 @@
+{
+    "name": "NonEquallySpacedSignal",
+    "type": "NonEquallySpacedSignal",
+    "description": "data model for a non-equally spaced signal.",
+    "extends": [
+        "marmo:basic:NamedEntityWithUnit"
+    ],
+    "properties": [
+        {
+            "name": "xname",
+            "type": "string",
+            "value": "time",
+            "description": "name for the x value."
+        },
+        {
+            "name": "xlabel",
+            "type": "string",
+            "value": "",
+            "description": "label for the x value."
+        },
+        {
+            "name": "xdescription",
+            "type": "string",
+            "value": "time",
+            "description": "description for the x value."
+        },
+        {
+            "name": "xunit",
+            "type": "string",
+            "value": "s",
+            "description": "x signal unit",
+            "simaAttr": "xunit"
+        },
+        {
+            "name": "xvalue",
+            "type": "double",
+            "dim": "*",
+            "description": "x data points.",
+            "simaAttr": "xdata"
+        },
+        {
+            "name": "value",
+            "type": "double",
+            "dim": "*",
+            "description": "data points.",
+            "simaAttr": "ydata."
+        },
+        {
+            "name": "unit",
+            "type": "string",
+            "value": "",
+            "description": "signal unit"
+        },
+        {
+            "name": "label",
+            "type": "string",
+            "value": "",
+            "description": "label for the y value."
+        },
+        {
+            "name": "legend",
+            "type": "string",
+            "value": "",
+            "description": "description of xy values to be used as legend."
+        }
+    ]
+}

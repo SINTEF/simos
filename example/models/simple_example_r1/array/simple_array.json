@@ -1,0 +1,18 @@
+{
+    "name": "simple_array",
+    "description": "A very simple type",
+    "extends": ["marmo_r1:basic:NamedEntity"],
+    "properties": [
+        {
+            "name": "x",
+            "type": "double",
+            "description": "A double precision value"
+        },
+        {
+            "name": "i_arr",
+            "type": "int",
+            "dim": "*",
+            "description": "An integer array"
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 = SIMOS Code Generator: User Instructions
 :author: Gro Sagli Baarholm, Babak Ommani
 :icons: font
+//:stylesheet: css/ascidoctor.css
 
 [big]*Internal Version* +
 OC2019 XXX - Restricted

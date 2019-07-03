@@ -1,4 +1,5 @@
 //---------------------------------------------------------------------------
+:stem: latexmath
 :icons: font
 :sectnums:
 //= Introduction
@@ -9,6 +10,15 @@
 //---------------------------------------------------------------------------
 
 == SIMOS Code Generator
+
+//latexmath:[$C = \alpha + \beta Y^{\gamma} + \epsilon$]
+
+//latexmath:[$ \sqrt(2)+\alpha + \beta $]
+
+//latexmath:[ \sqrt(2)+\alpha + \beta ]
+
+//latexmath:[$\sum_{n=1}^\infty \frac{1}{2^n}$]
+//asciimath:[`x/x={(1,if x!=0),(text{undefined},if x=0):}`]
 
 === General
 
@@ -491,7 +501,7 @@ output directory C:\git\simos\simos\example\lang\matlab\models\+my_new_model_r1\
 'Package generator finished!'
 ----
 
-NOTE: In the file _config_ you can set up, add or change the folders where the models are and where the generated code is stored. File location: _simos/simos/config\pathConfig-org.js_. Example below <<#simos_config, config.js>>, see the new added outPath and modelPath for MAF2019.
+NOTE: In the file _config_ you can set up, add or change the folders where the models are and where the generated code is stored. File location: _simos/simos/config\pathConfig-org.js_. Example below <<#simos_config, pathConfig-org.js>>, see the new added outPath and modelPath for MAF2019.
 
 [source,js]
 [#simos_config]

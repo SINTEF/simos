@@ -582,13 +582,6 @@ body.manpage div.sectionbody {
 <li><a href="#_simple_example">4.2. Simple Example</a></li>
 </ul>
 </li>
-<li><a href="#_further_work">Appendix A: Further work</a>
-<ul class="sectlevel2">
-<li><a href="#_pitfalls">A.1. Pitfalls</a></li>
-<li><a href="#_improvements">A.2. Improvements</a></li>
-<li><a href="#_general_confusion">A.3. General confusion</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -596,7 +589,7 @@ body.manpage div.sectionbody {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong class="big">Internal Version</strong><br>
+<p><strong class="big">External Version</strong><br>
 OC2019 XXX - Restricted</p>
 </div>
 </div>
@@ -2393,87 +2386,10 @@ title(my_array.description);
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_further_work">Appendix A: Further work</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_pitfalls">A.1. Pitfalls</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>There is inconsitent use of the version numbering. For instance the matgen.generatePackage('&lt;&gt;')  requires the full path name to all folders in subclasses. That is only <em>marmo_r1</em> is accepted in the data modelling file using the command <em>extend</em>.</p>
-</li>
-<li>
-<p>the fortran code on the SIMOS-branch <em>srv_generator</em> accepts a mixture. That is the source code is generated independent on the revision number extension in the json-file.</p>
-</li>
-<li>
-<p>there are two ways to generate fortran code, one on the SIMOS master branch. The other one is on the SIMOS branch called <em>srv_generator</em></p>
-</li>
-<li>
-<p>if a property in the class is defined as optional (<em>i.e.</em> "optional":"true"), the property cannot be inspected before a value is set. See for instance the <em>simos/simos/example/models/my_new_model_r1/drops/PointData.json</em></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_improvements">A.2. Improvements</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>there should be a tidyer way or a template prepared for making new libraries.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<img src="./images/icons/note.png" alt="Note">
-</td>
-<td class="content">
-This pretty easy using the original setup on the  master branch, <a href="#GeneratingSourceCodeMasterBranch">check this out</a>.
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the SIMOS-branch <em>srv_generator</em> should be merged with master</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_general_confusion">A.3. General confusion</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>I am confused of the terms marmo and simos. I kind of get the impression that basic and container er the bricks in the system. I have referred to them as smallest Lego pieces in SIMOS, but in reality they are probably just small pieces in Marmo or where you have stored them.</p>
-</li>
-<li>
-<p>Note from Skype converation with Pål Levold:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>Dersom jeg bruker ditt og babak sitt oppsett for å generere f90-code:
-.  vil koden bli lik?
-    .. Pål: No
-. vil bruken av koden være lik?
-    .. Pål: yes and no.
-    .. No: The types will have a different name. omtrent, men ikke helt hvis du har en json-fil i mypackage/subpackage/mytype.json så vil du få en Fortran-type som heter mypackage_subpackage_mytype med generatoren som ligger på master og en Fortran-type som heter mytype med branchen srv-generator.
-    .. yes:  men du kan bruke obj%my_property = 42, call obj%save_hdf5(filname) osv. likt som før.</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-25 15:14:25 +0200
+Last updated 2019-06-25 12:07:24 +0200
 </div>
 </div>
 <script type="text/x-mathjax-config">

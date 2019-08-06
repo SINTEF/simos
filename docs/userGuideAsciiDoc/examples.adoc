@@ -188,7 +188,7 @@ write(*, *) var2%i_arr !
 
 Result:
 
-EXAMPLE: dsaad 
+EXAMPLE:  
 
 -----
 grob@SINTEFPC7475 MINGW64 /c/git/simos/simos-fortran-examples/simple_array/build (simple_array_example)

@@ -1,13 +1,19 @@
 = SIMOS Code Generator: User Instructions
 :author: Gro Sagli Baarholm, Babak Ommani
 :icons: font
+:toc:
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
 
 [big]*External Version* +
 OC2019 XXX - Restricted
 
+
 //:figure-caption: Figure
 :numbered: 
-:sectnums:
+//:sectnums:
+
 
 // captions
 //= Minimal Working Example 
@@ -20,6 +26,8 @@ OC2019 XXX - Restricted
 // table caption 
 :table-caption: Table
 :xrefstyle: short 
+
+
 
 //[#fig:{doc-part}:a]
 //[.center.text-center] 

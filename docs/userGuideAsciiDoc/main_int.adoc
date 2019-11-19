@@ -2,13 +2,17 @@
 :author: Gro Sagli Baarholm, Babak Ommani
 :icons: font
 //:stylesheet: css/ascidoctor.css
+:toc:
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
 
 [big]*Internal Version* +
 OC2019 XXX - Restricted
 
 //:figure-caption: Figure
 :numbered: 
-:sectnums:
+//:sectnums:
 
 // captions
 //= Minimal Working Example 

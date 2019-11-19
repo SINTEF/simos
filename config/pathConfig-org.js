@@ -13,7 +13,19 @@ path = require('path');
 //Relative paths
 exports.outPath = path.resolve(path.join(__dirname, '..', 'example'));
 exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'models'))];
+// ------------------------------------------	
+// MAF2019 - userguide example
+// ------------------------------------------	
+//exports.outPath="c:\\git\\maf\\models\\libraries";
+//exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'models')), "c:\\git\\maf\\models\\libraries\\models"];
+//
+//exports.codeGenerators = {'python': {'outPath': 'lang/python/models'},
+//			   'matlab': {'outPath': 'lang/matlab/models'},
+//			   'fortran': {'outPath': 'lang/fortran/models'}}
+// ------------------------------------------	  
+// MAF 2019 - end 
+// ------------------------------------------
 
 exports.codeGenerators = {'python': {'outPath': 'lang/python/models'},
-				 		  'matlab': {'outPath': 'lang/matlab/models'},
-				 		  'fortran': {'outPath': 'lang/fortran/models'}}
+                                                 'matlab': {'outPath': 'lang/matlab/models'},
+                                                 'fortran': {'outPath': 'lang/fortran/models'}}

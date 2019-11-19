@@ -441,6 +441,8 @@ To generate the source, follow the next steps
 [title="Example data model. Kinematics in a grid (DROPS-JIP)."] 
 image::./images/figures/example_data_model_drops.png[float="center", align="center"] 
 
+==== Alternative I
+
 . In the folder *_simos_* start running <<start_simos,_EXAMPLE: Running SIMOS_>>
 
 . The source code is generated using the command
@@ -503,6 +505,10 @@ output directory C:\git\simos\simos\example\lang\matlab\models\+my_new_model_r1\
 
 NOTE: In the file _config_ you can set up, add or change the folders where the models are and where the generated code is stored. File location: _simos/simos/config\pathConfig-org.js_. Example below <<#simos_config, pathConfig-org.js>>, see the new added outPath and modelPath for MAF2019.
 
+'''
+EXAMPLE: pathConfig-org.js
+
+'''
 [source,js]
 [#simos_config]
 ----
@@ -529,6 +535,85 @@ exports.codeGenerators = {'python': {'outPath': 'lang/python/models'},
 				 		  'matlab': {'outPath': 'lang/matlab/models'},
 				 		  'fortran': {'outPath': 'lang/fortran/models'}}
 
+----
+
+==== Alternative II: Store pathConfig.js locally
+
+You can also make a copy of the `pathConfig.js` in the folder where you have your model and set the input and output path there.
+
+See example in simos/example/:
+
+* `simos/example/pathConfig.js`
+* generate the package usuing the shell script `generate.sh` 
+
+'''
+EXAMPLE: pathConfig.js
+
+'''
+[source,js]
+[#simos_config_local]
+----
+// Here the developer must add the path to the data model and the generated 
+// code distination path. Use absolute paths to be able to run it from everywhere.
+// Copy this file to pathConfig.js, do the modifications and save.
+// Remmember to change also the run script ('shs' in Linux and 'shs.bat' in Windows)
+
+path = require('path');
+
+//Absolute paths
+//remember entering paths with two path seperators if you want it in windows format: '\\'
+//exports.outPath = "E:\\babako\\dev\\frevesBB\\git\\freves\\libraries";
+//exports.modelsPaths = ["E:\\babako\\dev\\frevesBB\\git\\freves\\dataModel"];
+
+//Relative paths
+exports.outPath = path.resolve(path.join(__dirname,'lang'));
+exports.modelsPaths = [path.resolve(__dirname,'models')];
+// ------------------------------------------
+// store model in these folders:
+// ------------------------------------------
+ exports.codeGenerators = {'python': {'outPath': 'python'},
+			   'matlab': {'outPath': 'matlab'},
+			   'fortran': {'outPath': 'fortran'}}
+// ------------------------------------------	  
+// end 
+// ------------------------------------------
+----
+
+'''
+EXAMPLE: Running SIMOS
+
+'''
+[source,js]
+[#simos_config_local_run]
+----
+grob@SINTEFPC7475 MINGW64 /c/git/simos/simos/example (SIMOS-11-make-user-manual)
+$ generate.sh
+Starting SIMOS ...
+        reading config file: pathConfig.js
+        reading lang config file: ..\..\config\langConfig.js
+simos > *******************************************************
+collecting versions for my_new_model_r1
+{}
+*******************************************************
+*******************************************************
+creating package my_new_model_r1
+my_new_model_r1
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1
+-------------------------------------------------------
+*******************************************************
+sub-packages are :
+my_new_model_r1:drops
+*******************************************************
+creating package my_new_model_r1:drops
+my_new_model_r1:drops
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1\+drops
+-------------------------------------------------------
+         generating Model my_new_model_r1:drops:DropsData !
+         writing DropsData.m !
+         generating Model my_new_model_r1:drops:LineData !
+         writing LineData.m !
+         generating Model my_new_model_r1:drops:PointData !
+         writing PointData.m !
 ----
 
 === Generating Source Code (fortran)- srv-generator branch

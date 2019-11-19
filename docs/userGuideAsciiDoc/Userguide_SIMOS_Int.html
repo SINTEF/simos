@@ -570,16 +570,60 @@ body.manpage div.sectionbody {
 <li><a href="#_simos_code_generator">3. SIMOS Code Generator</a>
 <ul class="sectlevel2">
 <li><a href="#_general_3">3.1. General</a></li>
-<li><a href="#_modelling_the_data_json_file">3.2. Modelling the Data (json-file)</a></li>
-<li><a href="#_generating_source_code_matlab_python_master_branch_version">3.3. Generating Source Code (Matlab  &amp; Python)- master branch version</a></li>
+<li><a href="#_modelling_the_data_json_file">3.2. Modelling the Data (json-file)</a>
+<ul class="sectlevel3">
+<li><a href="#ModellingTheData">3.2.1. General</a></li>
+<li><a href="#_structure_of_the_json_file_data_modeling_file">3.2.2. Structure of the json-file (data modeling file)</a></li>
+<li><a href="#_simos_classes">3.2.3. SIMOS classes</a>
+<ul class="sectlevel4">
+<li><a href="#_building_a_class">3.2.3.1. Building a class</a></li>
+</ul>
+</li>
+<li><a href="#_classes_basic_and_containers">3.2.4. Classes - <em>basic</em> and <em>Containers</em></a>
+<ul class="sectlevel4">
+<li><a href="#_namedentity_json">3.2.4.1. NamedEntity.json</a></li>
+<li><a href="#_namedentitywithunit_json">3.2.4.2. NamedEntityWithUnit.json</a></li>
+<li><a href="#_dimensionalscalar_json">3.2.4.3. DimensionalScalar.json</a></li>
+<li><a href="#_simplestring_json">3.2.4.4. SimpleString.json</a></li>
+<li><a href="#_equallyspacedsignal_json">3.2.4.5. EquallySpacedSignal.json</a></li>
+<li><a href="#_nonequallyspacedsignal_json">3.2.4.6. NonEquallySpacedSignal.json</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_generating_source_code_matlab_python_master_branch_version">3.3. Generating Source Code (Matlab  &amp; Python)- master branch version</a>
+<ul class="sectlevel3">
+<li><a href="#_alternative_i">3.3.1. Alternative I</a></li>
+<li><a href="#_alternative_ii_store_pathconfig_js_locally">3.3.2. Alternative II: Store pathConfig.js locally</a></li>
+</ul>
+</li>
 <li><a href="#_generating_source_code_fortran_srv_generator_branch">3.4. Generating Source Code (fortran)- srv-generator branch</a></li>
-<li><a href="#_use_generated_code">3.5. Use Generated Code</a></li>
+<li><a href="#_use_generated_code">3.5. Use Generated Code</a>
+<ul class="sectlevel3">
+<li><a href="#_matlab">3.5.1. Matlab</a></li>
+<li><a href="#_fortran">3.5.2. Fortran</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_examples">4. Examples</a>
 <ul class="sectlevel2">
 <li><a href="#_general_4">4.1. General</a></li>
-<li><a href="#_simple_example">4.2. Simple Example</a></li>
+<li><a href="#_simple_example">4.2. Simple Example</a>
+<ul class="sectlevel3">
+<li><a href="#_modelling_the_data">4.2.1. Modelling the Data</a></li>
+<li><a href="#_generate_code_fortran">4.2.2. Generate Code (Fortran)</a></li>
+<li><a href="#_simple_array">4.2.3. simple_array</a></li>
+<li><a href="#_apply_generated_code_fortran">4.2.4. Apply Generated Code: Fortran</a>
+<ul class="sectlevel4">
+<li><a href="#_get_submodules">4.2.4.1. Get Submodules</a></li>
+<li><a href="#_compile_the_code_sinesim_example">4.2.4.2. Compile the Code - sinesim example</a></li>
+<li><a href="#_compile_the_code_simple_array_example">4.2.4.3. Compile the Code - simple_array example</a></li>
+</ul>
+</li>
+<li><a href="#_apply_generated_code_matlab">4.2.5. Apply Generated Code: Matlab</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_further_work">Appendix A: Further work</a>
@@ -1013,7 +1057,7 @@ Any properties defined in the class included using <em>extend</em> will be ovewr
 </table>
 </div>
 <div class="sect4">
-<h5 id="_building_a_class">Building a class</h5>
+<h5 id="_building_a_class">3.2.3.1. Building a class</h5>
 <div class="paragraph">
 <p>A class in SIMOS is build up using properties and classes. As mentioned, a class inherit properties using <em>extend</em>. This is shown in <a href="#fig::classes_inherit_property">Figure 4</a>. The class <em>DimensionalScalar</em> inherits its properties from <em>NamedEntityUnit</em>. <em>NamedEntityUnit</em> inherits its properties from <em>NamedEntity</em>. The object <strong>wave</strong> of type <em>DimensionalScalar</em> has  name, derscription, unit, value and label once created and given values.</p>
 </div>
@@ -1086,7 +1130,7 @@ wave =
 <p>The smallest SIMOS building bricks are shown in this section.</p>
 </div>
 <div class="sect4">
-<h5 id="_namedentity_json">NamedEntity.json</h5>
+<h5 id="_namedentity_json">3.2.4.1. NamedEntity.json</h5>
 <div id="NamedEntity" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1114,7 +1158,7 @@ wave =
 </div>
 </div>
 <div class="sect4">
-<h5 id="_namedentitywithunit_json">NamedEntityWithUnit.json</h5>
+<h5 id="_namedentitywithunit_json">3.2.4.2. NamedEntityWithUnit.json</h5>
 <div id="NamedEntityWithUnit" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1137,7 +1181,7 @@ wave =
 </div>
 </div>
 <div class="sect4">
-<h5 id="_dimensionalscalar_json">DimensionalScalar.json</h5>
+<h5 id="_dimensionalscalar_json">3.2.4.3. DimensionalScalar.json</h5>
 <div id="DimensionalScalar" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1166,7 +1210,7 @@ wave =
 </div>
 </div>
 <div class="sect4">
-<h5 id="_simplestring_json">SimpleString.json</h5>
+<h5 id="_simplestring_json">3.2.4.4. SimpleString.json</h5>
 <div id="SimpleString" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1189,7 +1233,7 @@ wave =
 </div>
 </div>
 <div class="sect4">
-<h5 id="_equallyspacedsignal_json">EquallySpacedSignal.json</h5>
+<h5 id="_equallyspacedsignal_json">3.2.4.5. EquallySpacedSignal.json</h5>
 <div id="EquallySpacedSignal" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1260,7 +1304,7 @@ wave =
 </div>
 </div>
 <div class="sect4">
-<h5 id="_nonequallyspacedsignal_json">NonEquallySpacedSignal.json</h5>
+<h5 id="_nonequallyspacedsignal_json">3.2.4.6. NonEquallySpacedSignal.json</h5>
 <div id="NonEquallySpacedSignal" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-json" data-lang="json">{
@@ -1395,6 +1439,8 @@ wave =
 </div>
 <div class="title">Figure 5. Example data model. Kinematics in a grid (DROPS-JIP).</div>
 </div>
+<div class="sect3">
+<h4 id="_alternative_i">3.3.1. Alternative I</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -1486,6 +1532,11 @@ In the file <em>config</em> you can set up, add or change the folders where the 
 </tr>
 </table>
 </div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: pathConfig-org.js</p>
+</div>
+<hr>
 <div id="simos_config" class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-js" data-lang="js">// Here the developer must add the path to the data model and the generated
@@ -1510,6 +1561,96 @@ exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'model
 exports.codeGenerators = {'python': {'outPath': 'lang/python/models'},
 				 		  'matlab': {'outPath': 'lang/matlab/models'},
 				 		  'fortran': {'outPath': 'lang/fortran/models'}}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternative_ii_store_pathconfig_js_locally">3.3.2. Alternative II: Store pathConfig.js locally</h4>
+<div class="paragraph">
+<p>You can also make a copy of the <code>pathConfig.js</code> in the folder where you have your model and set the input and output path there.</p>
+</div>
+<div class="paragraph">
+<p>See example in simos/example/:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>simos/example/pathConfig.js</code></p>
+</li>
+<li>
+<p>generate the package usuing the shell script <code>generate.sh</code></p>
+</li>
+</ul>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: pathConfig.js</p>
+</div>
+<hr>
+<div id="simos_config_local" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-js" data-lang="js">// Here the developer must add the path to the data model and the generated
+// code distination path. Use absolute paths to be able to run it from everywhere.
+// Copy this file to pathConfig.js, do the modifications and save.
+// Remmember to change also the run script ('shs' in Linux and 'shs.bat' in Windows)
+
+path = require('path');
+
+//Absolute paths
+//remember entering paths with two path seperators if you want it in windows format: '\\'
+//exports.outPath = "E:\\babako\\dev\\frevesBB\\git\\freves\\libraries";
+//exports.modelsPaths = ["E:\\babako\\dev\\frevesBB\\git\\freves\\dataModel"];
+
+//Relative paths
+exports.outPath = path.resolve(path.join(__dirname,'lang'));
+exports.modelsPaths = [path.resolve(__dirname,'models')];
+// ------------------------------------------
+// store model in these folders:
+// ------------------------------------------
+ exports.codeGenerators = {'python': {'outPath': 'python'},
+			   'matlab': {'outPath': 'matlab'},
+			   'fortran': {'outPath': 'fortran'}}
+// ------------------------------------------
+// end
+// ------------------------------------------</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: Running SIMOS</p>
+</div>
+<hr>
+<div id="simos_config_local_run" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-js" data-lang="js">grob@SINTEFPC7475 MINGW64 /c/git/simos/simos/example (SIMOS-11-make-user-manual)
+$ generate.sh
+Starting SIMOS ...
+        reading config file: pathConfig.js
+        reading lang config file: ..\..\config\langConfig.js
+simos &gt; *******************************************************
+collecting versions for my_new_model_r1
+{}
+*******************************************************
+*******************************************************
+creating package my_new_model_r1
+my_new_model_r1
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1
+-------------------------------------------------------
+*******************************************************
+sub-packages are :
+my_new_model_r1:drops
+*******************************************************
+creating package my_new_model_r1:drops
+my_new_model_r1:drops
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1\+drops
+-------------------------------------------------------
+         generating Model my_new_model_r1:drops:DropsData !
+         writing DropsData.m !
+         generating Model my_new_model_r1:drops:LineData !
+         writing LineData.m !
+         generating Model my_new_model_r1:drops:PointData !
+         writing PointData.m !</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -2113,7 +2254,7 @@ for each json file you have made, there is created a fortran module with the cla
 <div class="sect3">
 <h4 id="_apply_generated_code_fortran">4.2.4. Apply Generated Code: Fortran</h4>
 <div class="sect4">
-<h5 id="_get_submodules">Get Submodules</h5>
+<h5 id="_get_submodules">4.2.4.1. Get Submodules</h5>
 <div class="paragraph">
 <p>If this the first time you are using the fortan code, you need several submodules. The submodules are</p>
 </div>
@@ -2162,7 +2303,7 @@ for each json file you have made, there is created a fortran module with the cla
 </div>
 </div>
 <div class="sect4">
-<h5 id="_compile_the_code_sinesim_example">Compile the Code - sinesim example</h5>
+<h5 id="_compile_the_code_sinesim_example">4.2.4.2. Compile the Code - sinesim example</h5>
 <div class="paragraph">
 <p>An example, <strong>sinesim</strong>, is in the folder, <strong>simos-fortran-examples\results-storage\</strong></p>
 </div>
@@ -2218,7 +2359,7 @@ for each json file you have made, there is created a fortran module with the cla
 </div>
 </div>
 <div class="sect4">
-<h5 id="_compile_the_code_simple_array_example">Compile the Code - simple_array example</h5>
+<h5 id="_compile_the_code_simple_array_example">4.2.4.3. Compile the Code - simple_array example</h5>
 <div class="paragraph">
 <p>An example, <strong>simple_array</strong>, is in the folder, <strong>simos-fortran-examples\simple_array\</strong></p>
 </div>
@@ -2473,7 +2614,7 @@ This pretty easy using the original setup on the  master branch, <a href="#Gener
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-25 15:14:25 +0200
+Last updated 2019-11-19 14:14:27 +0100
 </div>
 </div>
 <script type="text/x-mathjax-config">

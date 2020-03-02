@@ -8,8 +8,20 @@ exports.ModelParser = ModelParser;
 ModelParser.prototype.constructor = function(model) {
 	
 	this.model = undefined;
+	this.dmtModel = undefined;
 	
-	this.setModel(model);
+	var inputModel = model;
+	console.log("initializing model : " + JSON.stringify(model));
+	//throw("hahaha");
+	if (model != undefined){
+		if (model.type == "system/SIMOS/Blueprint"){
+			console.log("    translating model ");
+			this.dmtModel = model;
+			inputModel = this.DMTtoSIMOS(this.dmtModel);
+		}
+	}
+	
+	this.setModel(inputModel);
 	
 	
 	this.dimensionType = "integer";
@@ -636,7 +648,7 @@ ModelParser.prototype.isSingle = function(prop) {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isAtomic = function(prop) {
 	if (prop.type == undefined) {
-		throw "prop does nopt have a type. ModelParser.prototype.isAtomic";
+		throw ("prop does not have a type. ModelParser.prototype.isAtomic" + "\n" + JSON.stringify(prop));
 	}
 	if (this.isAtomicType(prop.type)){
 		return true;
@@ -1374,4 +1386,104 @@ ModelParser.prototype.validateMainAttributes = function() {
 	/*check if main attributes are all right*/
 };
 /*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
+    var simosModel = {};
+    
+    simosModel['name'] = dmtModel.name;
+    simosModel['description'] = dmtModel.description;    
+    //simosModel['type'] = "system/SIMOS/Blueprint";
+    
+    simosModel['properties'] = [];
+    
+    var attributes = dmtModel.attributes;
+    var props = [];
+    
+    for(var i = 0; i < attributes.length; i++) {
+    	
+    	var att = attributes[i];  
+    	var prop = {};
+    	
+    	prop["name"] = att.name;
+    	
+    	if (att.attributeType == undefined){
+    	    if (att.type == 'number'){
+    	        prop["type"] = "float";
+    	    }
+    	    else {
+    	    	prop["type"] = att.type;
+    	    }
+    	}
+    	else {
+    	    if (att.attributeType == 'number'){
+    	        prop["type"] = "float";
+    	    }
+    	    else {
+    	        prop["type"] = att.attributeType;
+    	    }    		
+    	}
+    	    	
+    		
+    	prop["description"] = att.description;
+    	
+    	if (att["default"] != undefined){
+    	    prop["value"] = att["default"];
+        }
+        
+        //if (prop.name == 'name'){
+        //    dmtProp["default"] = simosModel.name.charAt(0).toLowerCase() + simosModel.name.slice(1);
+        //}
+        
+
+        //dmtProp["dimensions"] = "";
+        if (att.dimensions != undefined){
+            prop["dim"] = att.dimensions;
+        }
+
+        if (att.contained == undefined){
+            prop["contained"] = true;
+        }
+        else{
+            prop["contained"] = att.contained;
+        }
+        if (att.optional == undefined){
+            prop["optional"] = false;
+        }        
+        else{
+            prop["optional"] = att.optional;
+        }
+
+        prop["contained"] = this.isContained(prop);
+        prop["optional"] = this.isOptional(prop);
+    	
+        //dmtProp["enumType"] = "";
+
+        props.push(prop);
+
+        //if (['name', 'description', 'type'].indexOf(att.name) >= 0){ 
+        //	dmtModel.attributes.push(dmtProp);
+        //}
+        //else {
+        //    props.push(prop);
+        //}
+	}
+	
+	//adding type attribute
+    var typeProp = {"name": "type",
+    				"type": "string"}
+                    //"description": "",
+                    //"contained": true,
+                    //"optinal": false,
+                    //"default": "SSR-DataSource/"+ simosModel.type.replace(/:/g,"/"),
+    				//"enumType": "",
+    				//"dimensions": ""}
+    
+    //props.push(typeProp);
+	
+	for (var i =0; i<props.length; i++){
+	    simosModel.properties.push(props[i]);
+	    }
+    
+    return simosModel;
+}
 

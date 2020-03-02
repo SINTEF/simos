@@ -15,9 +15,12 @@ LatdocGenerator.prototype.toString = function() {
 	return "LatdocGenerator";
 };
 /*----------------------------------------------------------------------------*/
-LatdocGenerator.prototype.generate = function(model) {
-	if (model != undefined)
-		this.setModel(model);
+LatdocGenerator.prototype.generate = function(pmodel) {
+	if (pmodel != undefined){
+		   if (pmodel.model != undefined) {
+		       this.setModel(pmodel.model);
+		   }
+		}
 	
 	var entity =  this;
 	

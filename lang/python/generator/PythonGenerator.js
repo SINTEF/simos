@@ -15,9 +15,12 @@ PythonGenerator.prototype.toString = function() {
 	return "PythonGenerator";
 };
 /*----------------------------------------------------------------------------*/
-PythonGenerator.prototype.generate = function(model) {
-	if (model != undefined)
-		this.setModel(model);
+PythonGenerator.prototype.generate = function(pmodel) {
+	if (pmodel != undefined){
+		   if (pmodel.model != undefined) {
+		       this.setModel(pmodel.model);
+		   }
+		}
 	
 	var entity =  this;
 	

@@ -10,4 +10,8 @@ exports.langs = {'python': {'id': 'py',
     			 'fortran': {'id': 'fort', 
     						'interp': 'lang/fortran'},
     			 'latdoc': {'id': 'ld', 
-    						'interp': 'lang/latdoc'}}
+    						'interp': 'lang/latdoc'},
+    			 'dmt'   : {'id': 'dmt', 
+    						'interp': 'lang/dmt'},
+    			 'dmt_migrator'   : {'id': 'dmig', 
+    						'interp': 'lang/dmt_migrator'}}

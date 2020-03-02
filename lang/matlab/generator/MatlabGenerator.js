@@ -15,9 +15,12 @@ MatlabGenerator.prototype.toString = function() {
 	return "MatlabGenerator";
 };
 /*----------------------------------------------------------------------------*/
-MatlabGenerator.prototype.generate = function(model) {
-	if (model != undefined)
-		this.setModel(model);
+MatlabGenerator.prototype.generate = function(pmodel) {
+	if (pmodel != undefined){
+		   if (pmodel.model != undefined) {
+		       this.setModel(pmodel.model);
+		   }
+		}
 	
 	var entity =  this;
 	

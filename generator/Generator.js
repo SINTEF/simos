@@ -381,6 +381,11 @@ Generator.prototype.initModel = function(modelID) {
 	
 	var pmodel = this.getModel(modelID);
 	
+	//by pass everything if the model is in DMT format
+	console.log(modelID);
+	console.log("hahaha ***** " + JSON.stringify(pmodel));
+	
+	
 	pmodel.setType(pmodel.getName());
 	
 	var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
@@ -420,12 +425,12 @@ Generator.prototype.initModel = function(modelID) {
 /* Code generator */
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-Generator.prototype.generate = function(model, outFileContent) {
+Generator.prototype.generate = function(pmodel, outFileContent) {
 	
     if ('extractUserDefinedCode' in this.lang)
         this.lang.extractUserDefinedCode(outFileContent);
     
-	return this.lang.generate(model);
+	return this.lang.generate(pmodel);
 	
 	
 };
@@ -455,7 +460,7 @@ Generator.prototype.generateModel = function(modelID, outppath) {
     }
     catch (e) {};
 
-	fs.writeFileSync( outFilePath, this.generate(modelParser.model, outFileContent));
+	fs.writeFileSync( outFilePath, this.generate(modelParser, outFileContent));
 	
 	this.lang.packaging.appendPackageSourceFile(outFileName)
 	

@@ -15,9 +15,12 @@ Generator.prototype.toString = function() {
 	return "Generator (Fortran)";
 };
 /*----------------------------------------------------------------------------*/
-Generator.prototype.generate = function(model) {
-	if (model != undefined)
-		this.setModel(model);
+Generator.prototype.generate = function(pmodel) {
+	if (pmodel != undefined){
+		   if (pmodel.model != undefined) {
+		       this.setModel(pmodel.model);
+		   }
+		}
 	
 	var entity =  this;
 	

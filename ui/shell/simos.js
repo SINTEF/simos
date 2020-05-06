@@ -12,8 +12,8 @@ var relSimosPath = '../..'
 var configFilePath = '';
 try{
     configFilePath = process.argv[2];
-    config = require(configFilePath);
-    
+    //config = require(configFilePath);
+	config = require(process.cwd()+'/'+configFilePath);
 }
 catch (e) {
 	try{

@@ -1,0 +1,11 @@
+:sectnums!:
+== Abbreviations
+
+[cols="1,2",]
+|====================================================
+|SIMOS | ....
+|json | JSON (JavaScript Object Notation) is a lightweight data-interchange format,  https://www.json.org/
+| marmo | Name of the marine mooring classes. The name stems from MArine MOoring
+| | 
+|f90 | Fortran 90
+|====================================================

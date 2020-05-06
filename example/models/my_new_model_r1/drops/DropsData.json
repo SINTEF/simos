@@ -1,0 +1,16 @@
+{
+        "name": "DropsData",
+        "type": "DropsData",
+        "extends": ["marmo_r1:basic:NamedEntity"],
+        "description": "Kinematic data for a grid",
+
+        "properties": [
+
+        {"name": "Line", 
+	 "type": "LineData",
+	 "description": "Kinematic vel & acc for a grid of x,y,z coordinates.",
+	 "dim":"*"
+        }      
+        ]
+
+}

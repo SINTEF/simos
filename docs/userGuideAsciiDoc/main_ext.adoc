@@ -1,0 +1,57 @@
+= SIMOS Code Generator: User Instructions
+:author: Gro Sagli Baarholm, Babak Ommani
+:icons: font
+:toc:
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+
+[big]*External Version* +
+OC2019 XXX - Restricted
+
+
+//:figure-caption: Figure
+:numbered: 
+//:sectnums:
+
+
+// captions
+//= Minimal Working Example 
+:doc-part: 
+// figure caption  
+//:figure-caption: Figure {doc-part}- 
+:figure-caption: Figure  
+:xrefstyle: short 
+
+// table caption 
+:table-caption: Table
+:xrefstyle: short 
+
+
+
+//[#fig:{doc-part}:a]
+//[.center.text-center] 
+//[title="This is the caption of the figure"] 
+//image::https://avatars0.githubusercontent.com/u/1817009?s=400&v=4[float="center", align="center"] 
+//
+//Please see <<fig:{doc-part}:a>> 
+
+//<<#tab:{doc-part}:b>>
+//[#tab:{doc-part}:b]
+//[title="Formal tablesss"]
+//|===
+//|Name of Column 1 |Name of Column 2
+//
+//|Cell in column 1, row 1
+//|Cell in column 2, row 1
+//
+//|Cell in column 1, row 2
+//|Cell in column 2, row 2
+//|===
+
+include::abbrevations.adoc[]
+include::introduction.adoc[]
+include::classes.adoc[]
+include::simos.adoc[]
+include::examples.adoc[]
+

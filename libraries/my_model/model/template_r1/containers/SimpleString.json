@@ -1,0 +1,16 @@
+{
+    "name": "SimpleString",
+    "type": "SimpleString",
+    "description": "String data.",
+    "extends": [
+        "marmo:basic:NamedEntity"
+    ],
+    "properties": [
+        {
+            "name": "value",
+            "type": "string",
+            "value": "",
+            "description": "string."
+        }
+    ]
+}

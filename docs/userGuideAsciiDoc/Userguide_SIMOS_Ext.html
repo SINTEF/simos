@@ -1,0 +1,2561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<meta name="author" content="Gro Sagli Baarholm, Babak Ommani">
+<title>SIMOS Code Generator: User Instructions</title>
+<style>
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+</style>
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>SIMOS Code Generator: User Instructions</h1>
+<div class="details">
+<span id="author" class="author">Gro Sagli Baarholm, Babak Ommani</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_abbreviations">Abbreviations</a></li>
+<li><a href="#_introduction">1. Introduction</a>
+<ul class="sectlevel2">
+<li><a href="#_general">1.1. General</a></li>
+<li><a href="#_how_the_simos_code_generator_works">1.2. How the SIMOS Code Generator Works</a></li>
+<li><a href="#_advantages_of_defining_data_with_simos">1.3. Advantages of defining data with SIMOS</a></li>
+</ul>
+</li>
+<li><a href="#_classes_objects">2. Classes &amp; Objects</a>
+<ul class="sectlevel2">
+<li><a href="#_general_2">2.1. General</a></li>
+<li><a href="#_class">2.2. Class</a></li>
+<li><a href="#_what_is_the_difference_between_a_class_and_an_object">2.3. What is the difference between a class and an object</a></li>
+<li><a href="#_object">2.4. Object</a></li>
+<li><a href="#_properties_methods">2.5. Properties &amp; Methods</a></li>
+<li><a href="#_example_dog_class">2.6. Example: Dog class</a></li>
+<li><a href="#_example_fruit">2.7. Example: Fruit</a></li>
+<li><a href="#_useful_links">2.8. Useful links</a></li>
+</ul>
+</li>
+<li><a href="#_simos_code_generator">3. SIMOS Code Generator</a>
+<ul class="sectlevel2">
+<li><a href="#_general_3">3.1. General</a></li>
+<li><a href="#_modelling_the_data_json_file">3.2. Modelling the Data (json-file)</a>
+<ul class="sectlevel3">
+<li><a href="#ModellingTheData">3.2.1. General</a></li>
+<li><a href="#_structure_of_the_json_file_data_modeling_file">3.2.2. Structure of the json-file (data modeling file)</a></li>
+<li><a href="#_simos_classes">3.2.3. SIMOS classes</a>
+<ul class="sectlevel4">
+<li><a href="#_building_a_class">3.2.3.1. Building a class</a></li>
+</ul>
+</li>
+<li><a href="#_classes_basic_and_containers">3.2.4. Classes - <em>basic</em> and <em>Containers</em></a>
+<ul class="sectlevel4">
+<li><a href="#_namedentity_json">3.2.4.1. NamedEntity.json</a></li>
+<li><a href="#_namedentitywithunit_json">3.2.4.2. NamedEntityWithUnit.json</a></li>
+<li><a href="#_dimensionalscalar_json">3.2.4.3. DimensionalScalar.json</a></li>
+<li><a href="#_simplestring_json">3.2.4.4. SimpleString.json</a></li>
+<li><a href="#_equallyspacedsignal_json">3.2.4.5. EquallySpacedSignal.json</a></li>
+<li><a href="#_nonequallyspacedsignal_json">3.2.4.6. NonEquallySpacedSignal.json</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_generating_source_code_matlab_python_master_branch_version">3.3. Generating Source Code (Matlab  &amp; Python)- master branch version</a>
+<ul class="sectlevel3">
+<li><a href="#_alternative_i">3.3.1. Alternative I</a></li>
+<li><a href="#_alternative_ii_store_pathconfig_js_locally">3.3.2. Alternative II: Store pathConfig.js locally</a></li>
+</ul>
+</li>
+<li><a href="#_generating_source_code_fortran_srv_generator_branch">3.4. Generating Source Code (fortran)- srv-generator branch</a></li>
+<li><a href="#_use_generated_code">3.5. Use Generated Code</a>
+<ul class="sectlevel3">
+<li><a href="#_matlab">3.5.1. Matlab</a></li>
+<li><a href="#_fortran">3.5.2. Fortran</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_examples">4. Examples</a>
+<ul class="sectlevel2">
+<li><a href="#_general_4">4.1. General</a></li>
+<li><a href="#_simple_example">4.2. Simple Example</a>
+<ul class="sectlevel3">
+<li><a href="#_modelling_the_data">4.2.1. Modelling the Data</a></li>
+<li><a href="#_generate_code_fortran">4.2.2. Generate Code (Fortran)</a></li>
+<li><a href="#_simple_array">4.2.3. simple_array</a></li>
+<li><a href="#_apply_generated_code_fortran">4.2.4. Apply Generated Code: Fortran</a>
+<ul class="sectlevel4">
+<li><a href="#_get_submodules">4.2.4.1. Get Submodules</a></li>
+<li><a href="#_compile_the_code_sinesim_example">4.2.4.2. Compile the Code - sinesim example</a></li>
+<li><a href="#_compile_the_code_simple_array_example">4.2.4.3. Compile the Code - simple_array example</a></li>
+</ul>
+</li>
+<li><a href="#_apply_generated_code_matlab">4.2.5. Apply Generated Code: Matlab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong class="big">External Version</strong><br>
+OC2019 XXX - Restricted</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_abbreviations">Abbreviations</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SIMOS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&#8230;&#8203;.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">json</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON (JavaScript Object Notation) is a lightweight data-interchange format,  <a href="https://www.json.org/" class="bare">https://www.json.org/</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">marmo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of the marine mooring classes. The name stems from MArine MOoring</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">f90</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fortran 90</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general">1.1. General</h3>
+<div class="paragraph">
+<p>This document explains the use of the SIMOS Code generator. The document contains three main chapters</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A short introduction to classes and objects</p>
+</li>
+<li>
+<p>Modelling data and generating code using the SIMOS code generator</p>
+</li>
+<li>
+<p>Examples - using the generated code in an application</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_the_simos_code_generator_works">1.2. How the SIMOS Code Generator Works</h3>
+<div class="paragraph">
+<p>When using SIMOS we define the structure of our data in JSON text files instead of writing Fortran types directly.</p>
+</div>
+<div class="paragraph">
+<p>JSON is a standardised format for representing data which is easy to read and write by humans as well as computers. When we have defined our data structures we then run the code generator which will generate Fortran types which we can use in our program. The advantage of doing it this way is that SIMOS will also generate code for saving and loading our types to files. Currently, only the HDF5 file format is implemented, but that&#8217;s exactly what we&#8217;re looking for in this case. SIMOS can also generate code for other programming languages like Python and MATLAB which makes working with multiple programming languages easier.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_advantages_of_defining_data_with_simos">1.3. Advantages of defining data with SIMOS</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Code for saving and loading HDF5 files</p>
+</li>
+<li>
+<p>Easy to use data across different programming languages</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_classes_objects">2. Classes &amp; Objects</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general_2">2.1. General</h3>
+<div class="paragraph">
+<p>Class and Object are two most important concepts of an Object oriented programming language. The main difference between the two is that class is a blueprint which is used to create different objects of the same type.</p>
+</div>
+<div class="paragraph">
+<p>The information in this chapter is found in:
+<a href="http://www.differencebetween.info/difference-between-object-and-class">Difference-between-object-and-class</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_class">2.2. Class</h3>
+<div class="paragraph">
+<p>A class is said to be a blueprint of an object.</p>
+</div>
+<div class="paragraph">
+<p>It is an extensible guide used for creating objects; it is a subroutine that creates an object. A class does not represent the object; it represents all the information and methods an object should have. One class can be used to instantiate multiple objects. It is considered to be an extended TYPE declaration</p>
+</div>
+<div class="paragraph">
+<p>A class is a template used to create an object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_is_the_difference_between_a_class_and_an_object">2.3. What is the difference between a class and an object</h3>
+<div class="paragraph">
+<p>A class is a blueprint or prototype that defines the variables and the methods (functions) common to all objects of a certain kind.</p>
+</div>
+<div class="paragraph">
+<p>A class holds the methods and properties that are shared by all of the objects that are created from it.</p>
+</div>
+<div class="paragraph">
+<p>An object is a specimen of a class. Software objects are often used to model real-world objects you find in everyday life.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_object">2.4. Object</h3>
+<div class="paragraph">
+<p>An object contains properties and methods which are needed to make a certain type of data useful. An object’s properties are what it knows and its methods are what it can do. The methods provide functionality to applications and ensure that an object’s data is being used properly. Methods also allow the actual execution of tasks to be hidden and to be standardized for particular operations for different types of objects. Methods are used to access the objects of a class. All the interaction is done through the object’s methods. This is known as data encapsulation. The objects are also used for data or code hiding.</p>
+</div>
+<div class="paragraph">
+<p>Although the objects share the same code, they can behave differently because they can have different values assigned to them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_properties_methods">2.5. Properties &amp; Methods</h3>
+<div class="paragraph">
+<p>An object&#8217;s properties are what it knows and its methods are what it can do.</p>
+</div>
+<div id="fig::classes_objects" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/classes_objects.png" alt="classes objects">
+</div>
+<div class="title">Figure 1. Object with properties and methods</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_dog_class">2.6. Example: Dog class</h3>
+<div id="fig::example_class_dog" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_class_dog.png" alt="example class dog">
+</div>
+<div class="title">Figure 2. Example - Dog Class (<a href="https://www.guru99.com/">www.guru99.com</a>)</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_example_fruit">2.7. Example: Fruit</h3>
+<div id="fig::example_class_fruit" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_class_fruit.png" alt="example class fruit">
+</div>
+<div class="title">Figure 3. Example - Fruit Class (<a href="https://scriptverse.academy/tutorials/php-oops-classes-objects.html/">https://scriptverse.academy/</a>)</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_useful_links">2.8. Useful links</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://www.differencebetween.info/difference-between-object-and-clas">Difference-between-object-and-class</a></p>
+</li>
+<li>
+<p><a href="http://leetusman.com/intermediate-programming/posts/classes-and-objects/">Classes and Objects in Javascript ES6</a></p>
+</li>
+<li>
+<p><a href="https://www.guru99.com/java-oops-class-objects.html">Class Dog example</a></p>
+</li>
+<li>
+<p><a href="https://slideplayer.com/slide/8974938/">Tutorial video</a></p>
+</li>
+<li>
+<p><a href="https://phpenthusiast.com/object-oriented-php-tutorials/create-classes-and-objects">Create classes and objects</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_simos_code_generator">3. SIMOS Code Generator</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general_3">3.1. General</h3>
+<div class="paragraph">
+<p>The use of the code generator tool consist of three steps</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#ModellingTheData">Modelling the Data</a> (json-file)</p>
+</li>
+<li>
+<p><a href="#GeneratingSourceCode">Generating Source Code</a>. The options are</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Python</p>
+</li>
+<li>
+<p>fortran (f90)</p>
+</li>
+<li>
+<p>Matlab</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="#UseGeneratedCode">Use generated code</a></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_modelling_the_data_json_file">3.2. Modelling the Data (json-file)</h3>
+<div class="sect3">
+<h4 id="ModellingTheData">3.2.1. General</h4>
+<div class="paragraph">
+<p>This chapter includes a description of the SIMOS-classes. The classes, in addition to standard properties, are used to model the data structure and used as input to the SIMOS code generator. The SIMOS code generator with generate the source code (Puthon, Matlab,Fortran).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_structure_of_the_json_file_data_modeling_file">3.2.2. Structure of the json-file (data modeling file)</h4>
+<div class="paragraph">
+<p>The structure of a class specfied in json-fromat consists of</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>class description</p>
+<div class="ulist">
+<ul>
+<li>
+<p>name &amp; description</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>extends</p>
+<div class="ulist">
+<ul>
+<li>
+<p>add/inherit properties in a defined class</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>properties</p>
+<div class="ulist">
+<ul>
+<li>
+<p>defines the characteristics of the object</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>EXAMPLE:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    "name": "&lt;NameOfTheClass&gt;",
+    "description": "&lt;description of the class&gt;",
+    "extends": ["&lt;include all properties in this class&gt;"],
+    "properties": [
+
+        {"name": "&lt;name of property&gt;",
+        "type": "&lt;property type&gt;",
+        "value": "&lt;default value of the property&gt;",
+        "dim"  :"&lt;dimension&gt;",
+        "description": "&lt;description of the property&gt;"
+        }
+        {&lt; next property&gt;,
+
+        }
+	]
+
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The options for <em>type</em> are:
+* string
+* double
+* integer
+* an other class</p>
+</div>
+<div class="paragraph">
+<p>The options for <em>dim</em> are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>for an allocatable array: &lt;dimension&gt; = *</p>
+</li>
+<li>
+<p>for an array of size ndim: &lt;dimension&gt;=ndim</p>
+</li>
+<li>
+<p>for an matrix of dimension [ndim,mdim]:  &lt;dimension&gt;=ndim,mdim</p>
+</li>
+<li>
+<p>for an allocateable 2 dimensional matrix:  &lt;dimension&gt;=* , *</p>
+</li>
+<li>
+<p>etc. etc.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+<em>Extends</em> is not required. The purpose of <em>extends</em> is to add/inherit whatever properties defined in the class the <em>extend</em>-command refers to. An option is to copy whatever is defined in this class to the new one.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+Any properties defined in the class included using <em>extend</em> will be ovewritten if redefined in the <em>properties</em>-section
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+<em>dim</em> is only applied for arrays, for all other types <em>dim</em> should not be included in the <em>properties</em>-section.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_simos_classes">3.2.3. SIMOS classes</h4>
+<div class="paragraph">
+<p>The SIMOS classes are sorted in two cathegiores, <em>basic</em> and <em>Containers</em>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Basic</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#NamedEntity">NamedEntity</a></p>
+</li>
+<li>
+<p><a href="#NamedEntityWithUnit">NamedEntityWithUnit</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Containers</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#DimensionalScalar">DimensionalScalar</a></p>
+</li>
+<li>
+<p><a href="#SimpleString">SimpleString</a></p>
+</li>
+<li>
+<p><a href="#EquallySpacedSignal">EquallySpacedSignal</a></p>
+</li>
+<li>
+<p><a href="#NonEquallySpacedSignal">NonEquallySpacedSignal</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Basic</em> are the smallest building bricks. The smallest named class <em>NamedEntity</em> is not dependent on any other class.</p>
+</div>
+<div class="paragraph">
+<p>The classes in the <em>container</em> are a double value and string, <em>DimensionalScalar</em> and <em>SimpleString</em> . The last two are arrays, <em>EquallySpacedSignal</em> and <em>NonEquallySpacedSignal</em> . The former is an equally spaced array, i.e. for instance a signal with constant time step. The latter is a signal which has non equally stepping, i.e.  for instance tension peaks versus curvature.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+<a href="#EquallySpacedSignal">EquallySpacedSignal</a> and <a href="#NonEquallySpacedSignal">NonEquallySpacedSignal</a> are the two classes that can be directly accessed in plots in SIMA.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_building_a_class">3.2.3.1. Building a class</h5>
+<div class="paragraph">
+<p>A class in SIMOS is build up using properties and classes. As mentioned, a class inherit properties using <em>extend</em>. This is shown in <a href="#fig::classes_inherit_property">Figure 4</a>. The class <em>DimensionalScalar</em> inherits its properties from <em>NamedEntityUnit</em>. <em>NamedEntityUnit</em> inherits its properties from <em>NamedEntity</em>. The object <strong>wave</strong> of type <em>DimensionalScalar</em> has  name, derscription, unit, value and label once created and given values.</p>
+</div>
+<div id="fig::classes_inherit_property" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_inherit_properties.png" alt="example inherit properties">
+</div>
+<div class="title">Figure 4. Object with inherited properties</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+The marmo_r1 classses are located in the repository
+<a href="https://stash.code.sintef.no/projects/SIMOS/repos/marmo_r1/browse" class="bare">https://stash.code.sintef.no/projects/SIMOS/repos/marmo_r1/browse</a>
+at code.sintef.no
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>EXAMPLE: Matlab (code generated using SIMOS code generator)</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-matlab" data-lang="matlab">&gt;&gt; wave=marmo_r1.containers.DimensionalScalar()
+wave =
+
+  DimensionalScalar with properties:
+
+             ID: 'b74e5aa0-2702-4a77-9d1b-3c32ee0ec752'
+          MODEL: [1×1 struct]
+          value: 0
+          label: ''
+           unit: ''
+           name: 'OBJ'
+    description: ''
+
+&gt;&gt; wave.name='waveHeight';
+&gt;&gt; wave.value=10.0;
+&gt;&gt; wave.unit='m';
+&gt;&gt; wave.description='significant wave height';
+&gt;&gt; wave.label='Hs';
+&gt;&gt; % object:
+&gt;&gt; wave
+
+wave =
+
+  DimensionalScalar with properties:
+
+             ID: 'b74e5aa0-2702-4a77-9d1b-3c32ee0ec752'
+          MODEL: [1×1 struct]
+          value: 10
+          label: 'Hs'
+           unit: 'm'
+           name: 'waveHeight'
+    description: 'significant wave height'</code></pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_classes_basic_and_containers">3.2.4. Classes - <em>basic</em> and <em>Containers</em></h4>
+<div id="basic_container" class="paragraph">
+<p>The smallest SIMOS building bricks are shown in this section.</p>
+</div>
+<div class="sect4">
+<h5 id="_namedentity_json">3.2.4.1. NamedEntity.json</h5>
+<div id="NamedEntity" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+	"name": "NamedEntity",
+	"type": "NamedEntity",
+	"description": "a named entity",
+
+	"properties": [
+
+	{"name": "name",
+			"type": "string",
+			"value": "none",
+			"description": "variable name for named accessing"
+			},
+
+	{"name": "description",
+			"type": "string",
+			"value": "",
+			"description": "instance description"}
+
+	]
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_namedentitywithunit_json">3.2.4.2. NamedEntityWithUnit.json</h5>
+<div id="NamedEntityWithUnit" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+	"name": "NamedEntityWithUnit",
+	"type": "NamedEntityWithUnit",
+	"description": "a named entity with unit",
+
+	"extends": ["marmo:basic:NamedEntity"],
+
+	"properties": [
+
+	{"name": "unit",
+			 "type": "string", "value": "",
+			 "description": "data unit."}
+
+	]
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_dimensionalscalar_json">3.2.4.3. DimensionalScalar.json</h5>
+<div id="DimensionalScalar" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "name": "DimensionalScalar",
+    "type": "DimensionalScalar",
+    "description": "single scalar value with dimension",
+    "extends": [
+        "marmo:basic:NamedEntityWithUnit"
+    ],
+    "properties": [
+        {
+            "name": "value",
+            "type": "double",
+            "value": "0.0",
+            "description": "value"
+        },
+        {
+            "name": "label",
+            "type": "string",
+            "value": "",
+            "description": "label for the value."
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_simplestring_json">3.2.4.4. SimpleString.json</h5>
+<div id="SimpleString" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "name": "SimpleString",
+    "type": "SimpleString",
+    "description": "String data.",
+    "extends": [
+        "marmo:basic:NamedEntity"
+    ],
+    "properties": [
+        {
+            "name": "value",
+            "type": "string",
+            "value": "",
+            "description": "string."
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_equallyspacedsignal_json">3.2.4.5. EquallySpacedSignal.json</h5>
+<div id="EquallySpacedSignal" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "name": "EquallySpacedSignal",
+    "type": "EquallySpacedSignal",
+    "description": "data model for an equally spaced signal.",
+    "extends": [
+        "marmo:basic:NamedEntityWithUnit"
+    ],
+    "properties": [
+        {
+            "name": "value",
+            "type": "double",
+            "dim": "*",
+            "description": "data points."
+        },
+        {
+            "name": "xname",
+            "type": "string",
+            "value": "time",
+            "description": "name for the x value"
+        },
+        {
+            "name": "xdescription",
+            "type": "string",
+            "value": "",
+            "description": "name for the x value"
+        },
+        {
+            "name": "xunit",
+            "type": "string",
+            "value": "",
+            "description": "delta unit."
+        },
+        {
+            "name": "xdelta",
+            "type": "double",
+            "value": 1,
+            "description": "signal spacing."
+        },
+        {
+            "name": "xstart",
+            "type": "double",
+            "value": 0,
+            "description": "start of the signal input."
+        },
+        {
+            "name": "xlabel",
+            "type": "string",
+            "value": "",
+            "description": "label for the x value."
+        },
+        {
+            "name": "label",
+            "type": "string",
+            "value": "",
+            "description": "label for the y value."
+        },
+        {
+            "name": "legend",
+            "type": "string",
+            "value": "",
+            "description": "description of xy values to be used as legend."
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_nonequallyspacedsignal_json">3.2.4.6. NonEquallySpacedSignal.json</h5>
+<div id="NonEquallySpacedSignal" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+    "name": "NonEquallySpacedSignal",
+    "type": "NonEquallySpacedSignal",
+    "description": "data model for a non-equally spaced signal.",
+    "extends": [
+        "marmo:basic:NamedEntityWithUnit"
+    ],
+    "properties": [
+        {
+            "name": "xname",
+            "type": "string",
+            "value": "time",
+            "description": "name for the x value."
+        },
+        {
+            "name": "xlabel",
+            "type": "string",
+            "value": "",
+            "description": "label for the x value."
+        },
+        {
+            "name": "xdescription",
+            "type": "string",
+            "value": "time",
+            "description": "description for the x value."
+        },
+        {
+            "name": "xunit",
+            "type": "string",
+            "value": "s",
+            "description": "x signal unit",
+            "simaAttr": "xunit"
+        },
+        {
+            "name": "xvalue",
+            "type": "double",
+            "dim": "*",
+            "description": "x data points.",
+            "simaAttr": "xdata"
+        },
+        {
+            "name": "value",
+            "type": "double",
+            "dim": "*",
+            "description": "data points.",
+            "simaAttr": "ydata."
+        },
+        {
+            "name": "unit",
+            "type": "string",
+            "value": "",
+            "description": "signal unit"
+        },
+        {
+            "name": "label",
+            "type": "string",
+            "value": "",
+            "description": "label for the y value."
+        },
+        {
+            "name": "legend",
+            "type": "string",
+            "value": "",
+            "description": "description of xy values to be used as legend."
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_generating_source_code_matlab_python_master_branch_version">3.3. Generating Source Code (Matlab  &amp; Python)- master branch version</h3>
+<div id="GeneratingSourceCodeMasterBranch" class="paragraph">
+<p>To generate the source, follow the next steps</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Make a folder called <strong><em>models/</em></strong></p>
+</li>
+<li>
+<p>Ensure that you have the necessary classes available in this folder if you are using these classes/inheriting properties from them:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong><em>models/marmo_r1/basic</em></strong></p>
+</li>
+<li>
+<p><strong><em>models/marmo_r1/containers</em></strong></p>
+</li>
+<li>
+<p><strong><em>models/&lt;other_model_rX&gt;/&lt;subfolder&gt;/</em></strong></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Make a folder for the new model</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Make a subfolder for the model <strong>models/my_new_model_r1/drops/</strong></p>
+</li>
+<li>
+<p>Add the json-files describing the data model. Example <a href="#fig::example_data_model_drops">Figure 5</a>:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>PointData.json</p>
+</li>
+<li>
+<p>LineData.json</p>
+</li>
+<li>
+<p>DropsData.json</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div id="fig::example_data_model_drops" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_data_model_drops.png" alt="example data model drops">
+</div>
+<div class="title">Figure 5. Example data model. Kinematics in a grid (DROPS-JIP).</div>
+</div>
+<div class="sect3">
+<h4 id="_alternative_i">3.3.1. Alternative I</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the folder <strong><em>simos</em></strong> start running <a href="#start_simos"><em>EXAMPLE: Running SIMOS</em></a></p>
+</li>
+<li>
+<p>The source code is generated using the command
+<strong>&lt;programming language&gt;.generatePackage('my_new_model_r1')</strong>. The programming laguage options are:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Matlab: matgen.generatePackage('my_new_model_r1')</strong></p>
+</li>
+<li>
+<p><strong>Python: pygen.generatePackage('my_new_model_r1')</strong></p>
+</li>
+<li>
+<p><strong>Fortran: see <a href="#GeneratingFortranSourceCode"><em>Generate fortran code</em></a></strong></p>
+</li>
+<li>
+<p>Example using matlab, see <a href="#start_simos"><em>Example: simos</em></a></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>The generated code is stored in the folder <strong><em>lang</em></strong>, <a href="#fig::example_data_model_drops_gencode">Figure 6</a>:</p>
+</li>
+</ol>
+</div>
+<div id="fig::example_data_model_drops_gencode" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_data_model_drops_gencode.png" alt="example data model drops gencode">
+</div>
+<div class="title">Figure 6. Example data model - generated code. Kinematics in a grid (DROPS-JIP).</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: Running SIMOS</p>
+</div>
+<hr>
+<div id="start_simos" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">grob@SINTEFPC7475 /cygdrive/c/git/simos/simos
+$ ./runner/node.exe ui/shell/simos.js
+Starting SIMOS ...
+        reading config file: ..\..\config\pathConfig-org.js
+        reading lang config file: ..\..\config\langConfig.js
+simos &gt;
+simos &gt; matgen.generatePackage('my_new_model_r1')
+*******************************************************
+collecting versions for my_new_model_r1
+{}
+*******************************************************
+*******************************************************
+creating package my_new_model_r1
+my_new_model_r1
+output directory C:\git\simos\simos\example\lang\matlab\models\+my_new_model_r1
+-------------------------------------------------------
+*******************************************************
+sub-packages are :
+my_new_model_r1:drops
+*******************************************************
+creating package my_new_model_r1:drops
+my_new_model_r1:drops
+output directory C:\git\simos\simos\example\lang\matlab\models\+my_new_model_r1\+drops
+-------------------------------------------------------
+         generating Model my_new_model_r1:drops:DropsData !
+         writing DropsData.m !
+         generating Model my_new_model_r1:drops:LineData !
+         writing LineData.m !
+         generating Model my_new_model_r1:drops:PointData !
+         writing PointData.m !
+*******************************************************
+*******************************************************
+*******************************************************
+'Package generator finished!'</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+In the file <em>config</em> you can set up, add or change the folders where the models are and where the generated code is stored. File location: <em>simos/simos/config\pathConfig-org.js</em>. Example below <a href="#simos_config">pathConfig-org.js</a>, see the new added outPath and modelPath for MAF2019.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: pathConfig-org.js</p>
+</div>
+<hr>
+<div id="simos_config" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-js" data-lang="js">// Here the developer must add the path to the data model and the generated
+// code distination path. Use absolute paths to be able to run it from everywhere.
+// Copy this file to pathConfig.js, do the modifications and save.
+// Remmember to change also the run script ('shs' in Linux and 'shs.bat' in Windows)
+
+path = require('path');
+
+//Absolute paths
+//remmeber entering paths with two path seperators if you want it in windows format: '\\'
+//exports.outPath = "E:\\babako\\dev\\frevesBB\\git\\freves\\libraries";
+//exports.modelsPaths = ["E:\\babako\\dev\\frevesBB\\git\\freves\\dataModel"];
+
+//Relative paths
+exports.outPath = path.resolve(path.join(__dirname, '..', 'example'));
+exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'models'))];
+// MAF2019
+exports.outPath="c:\\git\\maf\\models\\libraries";
+exports.modelsPaths = [path.resolve(path.join(__dirname, '..', 'example', 'models')), "c:\\git\\maf\\models\\libraries\\models"];
+
+exports.codeGenerators = {'python': {'outPath': 'lang/python/models'},
+				 		  'matlab': {'outPath': 'lang/matlab/models'},
+				 		  'fortran': {'outPath': 'lang/fortran/models'}}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternative_ii_store_pathconfig_js_locally">3.3.2. Alternative II: Store pathConfig.js locally</h4>
+<div class="paragraph">
+<p>You can also make a copy of the <code>pathConfig.js</code> in the folder where you have your model and set the input and output path there.</p>
+</div>
+<div class="paragraph">
+<p>See example in simos/example/:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>simos/example/pathConfig.js</code></p>
+</li>
+<li>
+<p>generate the package usuing the shell script <code>generate.sh</code></p>
+</li>
+</ul>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: pathConfig.js</p>
+</div>
+<hr>
+<div id="simos_config_local" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-js" data-lang="js">// Here the developer must add the path to the data model and the generated
+// code distination path. Use absolute paths to be able to run it from everywhere.
+// Copy this file to pathConfig.js, do the modifications and save.
+// Remmember to change also the run script ('shs' in Linux and 'shs.bat' in Windows)
+
+path = require('path');
+
+//Absolute paths
+//remember entering paths with two path seperators if you want it in windows format: '\\'
+//exports.outPath = "E:\\babako\\dev\\frevesBB\\git\\freves\\libraries";
+//exports.modelsPaths = ["E:\\babako\\dev\\frevesBB\\git\\freves\\dataModel"];
+
+//Relative paths
+exports.outPath = path.resolve(path.join(__dirname,'lang'));
+exports.modelsPaths = [path.resolve(__dirname,'models')];
+// ------------------------------------------
+// store model in these folders:
+// ------------------------------------------
+ exports.codeGenerators = {'python': {'outPath': 'python'},
+			   'matlab': {'outPath': 'matlab'},
+			   'fortran': {'outPath': 'fortran'}}
+// ------------------------------------------
+// end
+// ------------------------------------------</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: Running SIMOS</p>
+</div>
+<hr>
+<div id="simos_config_local_run" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-js" data-lang="js">grob@SINTEFPC7475 MINGW64 /c/git/simos/simos/example (SIMOS-11-make-user-manual)
+$ generate.sh
+Starting SIMOS ...
+        reading config file: pathConfig.js
+        reading lang config file: ..\..\config\langConfig.js
+simos &gt; *******************************************************
+collecting versions for my_new_model_r1
+{}
+*******************************************************
+*******************************************************
+creating package my_new_model_r1
+my_new_model_r1
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1
+-------------------------------------------------------
+*******************************************************
+sub-packages are :
+my_new_model_r1:drops
+*******************************************************
+creating package my_new_model_r1:drops
+my_new_model_r1:drops
+output directory C:\git\simos\simos\example\lang\matlab\+my_new_model_r1\+drops
+-------------------------------------------------------
+         generating Model my_new_model_r1:drops:DropsData !
+         writing DropsData.m !
+         generating Model my_new_model_r1:drops:LineData !
+         writing LineData.m !
+         generating Model my_new_model_r1:drops:PointData !
+         writing PointData.m !</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_generating_source_code_fortran_srv_generator_branch">3.4. Generating Source Code (fortran)- srv-generator branch</h3>
+<div id="GeneratingFortranSourceCode" class="paragraph">
+<p>For each data model, a separate folder is created on the folder libraries</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>libraries/&lt;myNewModel&gt;/model/&lt;myNewModel with revision number&gt;/</p>
+<div class="ulist">
+<ul>
+<li>
+<p>&lt;subfolder 1&gt;/&lt;newModel.json&gt;</p>
+</li>
+<li>
+<p>&lt;subfolder .. &gt;/&lt;newModel.json&gt;</p>
+</li>
+<li>
+<p>&lt;subfolder n&gt;/&lt;newModel.json&gt;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>libraries/&lt;myNewModel&gt;/model/</p>
+<div class="ulist">
+<ul>
+<li>
+<p>pathConfig.js , contains user input:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>path to depedent models, <em>i.e.</em> marmo-libabrary</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>config.sh , contains user input:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Location of SIMOS, SIMOS_DIR="&lt;..&gt;"</p>
+</li>
+<li>
+<p>Name of package to be generated, PACKAGE_NAME=&lt;myNewModel&gt;</p>
+</li>
+<li>
+<p>Version of package to be generated, PACKAGE_VERSION="rX"</p>
+</li>
+<li>
+<p>Language generator to be used, PACKAGEGENERATOR="&lt;code&gt;"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>two scripts:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>generate - this generate the code</p>
+</li>
+<li>
+<p>shs</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+Options for &lt;code&gt;:  <strong>fortgen</strong>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+subfolders are optional
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+you can have as many json as you want in each folder
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The code is generated by running <strong><em>generate</em></strong> in the model-folder. The script is platform independent. Two examples on Linux, <a href="#example_gen_f90_linux">example on Linux</a>, and Windows (Minnty), <a href="#example_gen_f90_win">example on Windows</a>, are shown below.</p>
+</div>
+<div class="paragraph">
+<p>The generated code is stored in separate folders depedent on the PACKAGEGENERATOR="&lt;code&gt;"</p>
+</div>
+<div class="ulist">
+<div class="title">PACKAGEGENERATOR=fortgen:</div>
+<ul>
+<li>
+<p>libraries/&lt;myNewModel&gt;/&lt;myNewModel with revision number&gt;/</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+There are generated som temporary folders, <em>i.e.</em> <em>generatedModels/</em> and some txt-files.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>EXAMPLE: Generate f90-code, LINUX</p>
+</div>
+<div id="example_gen_f90_linux" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-LINUX" data-lang="LINUX">[grob@hvitting /work/grob/development/deepline/src/libraries/deepline_model/model]$ generate
+Starting SIMOS ...
+        reading config file: /work/grob/development/deepline/src/libraries/deepline_model/model/pathConfig.js
+        reading lang config file: ../../config/langConfig.js
+simos &gt; fortgen.generatePackage('deepline_model_r1')
+*******************************************************
+collecting versions for deepline_model_r1
+{}
+*******************************************************
+*******************************************************
+creating package deepline_model_r1
+deepline_model_r1
+sub-packages are :
+deepline_model_r1:drops
+*******************************************************
+creating package deepline_model_r1:drops
+deepline_model_r1:drops
+output directory /work/grob/development/deepline/src/libraries/deepline_model/deepline_model_r1/src_gen/drops
+-------------------------------------------------------
+         generating Model deepline_model_r1:drops:DropsData !
+         writing DropsData.F90 !
+         generating Model deepline_model_r1:drops:LineData !
+         writing LineData.F90 !
+         generating Model deepline_model_r1:drops:PointData !
+         writing PointData.F90 !
+*******************************************************
+*******************************************************
+*******************************************************
+            simos sources in cmake between lines : 4 and 12
+            simos libs in cmake between lines : 5 and 14</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>EXAMPLE: Generate f90-code, Windows</p>
+</div>
+<div id="example_gen_f90_win" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Mintty (Windows)" data-lang="Mintty (Windows)">grob@SINTEFPC7475 MINGW64 /c/git/simos/simos-fortran-examples/simple_array/libraries/simple_example/model (master)
+$ generate
+node is /c/Program Files/nodejs/node
+Starting SIMOS ...
+        reading config file: C:/git/simos/simos-fortran-examples/simple_array/libraries/simple_example/model/pathConfig.js
+        reading lang config file: ..\..\config\langConfig.js
+simos &gt; (node:14516) fs: re-evaluating native module sources is not supported. If you are using the graceful-fs module, please update it to a more recent version.
+*******************************************************
+collecting versions for simple_example_r1
+{}
+*******************************************************
+*******************************************************
+creating package simple_example_r1
+simple_example_r1
+sub-packages are :
+simple_example_r1:array
+*******************************************************
+creating package simple_example_r1:array
+simple_example_r1:array
+output directory C:\git\simos\simos-fortran-examples\simple_array\libraries\simple_example\simple_example_r1\src_gen\array
+-------------------------------------------------------
+         generating Model simple_example_r1:array:simple_array !
+         writing simple_array.F90 !
+*******************************************************
+*******************************************************
+*******************************************************
+            simos sources in cmake between lines : 4 and 10
+            simos libs in cmake between lines : 5 and 12
+'Package generator finished!'
+simos &gt;
+grob@SINTEFPC7475 MINGW64 /c/git/simos/simos-fortran-examples/simple_array/libraries/simple_example/model (master)</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+Complete example (<strong>deepline/libraries/</strong>) can be in ssh://git@git.code.sintef.no/msfp/deepline.git
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+Complete examples (<strong>results-storage/libraries/</strong>, <strong>simple_example/libraries/</strong>) can be in ssh://git@git.code.sintef.no/simos/simos-fortran-examples.git
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_use_generated_code">3.5. Use Generated Code</h3>
+<div id="UseGeneratedCode" class="paragraph">
+<p>Examples of usage of the generated code is shown using</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#UseGeneratedCodeMatlab">Matlab</a></p>
+</li>
+<li>
+<p>Fortran</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_matlab">3.5.1. Matlab</h4>
+<div id="UseGeneratedCodeMatlab" class="paragraph">
+<p>To use the genereted libraries/classes in Matlab, you have to start with adding the path to the folders, see <a href="#fig::example_add_path_Matlab">Figure 7</a> .</p>
+</div>
+<div class="paragraph">
+<p>An example defining object of the class DropsData are shown in the <a href="#example_use_dropsdata_matlab">Matlab example</a>.</p>
+</div>
+<div class="paragraph">
+<p>The result or conent of the file in SIMA is shown in <a href="#fig::example_sima_kinematic_sima">Figure 8</a>.</p>
+</div>
+<div id="fig::example_add_path_Matlab" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_add_path_Matlab.png" alt="example add path Matlab">
+</div>
+<div class="title">Figure 7. Example - Add path with Subfolders in Matlab</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: Generating an object called <em>kinematics</em> in Matlab using the <em>DropsData</em>-class</p>
+</div>
+<hr>
+<div id="generate_drops_data" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Matlab" data-lang="Matlab">&gt;&gt; kinematics=my_new_model_r1.drops.DropsData()
+
+kinematics =
+
+  DropsData with properties:
+
+             ID: '57562a83-36c1-4d79-ae8c-f2d7659a31ec'
+          MODEL: [1×1 struct]
+           Line: {}
+           name: 'OBJ'
+    description: ''
+
+&gt;&gt; kinematics.description='This is all the kinematics in the grid'
+
+kinematics =
+
+  DropsData with properties:
+
+             ID: '57562a83-36c1-4d79-ae8c-f2d7659a31ec'
+          MODEL: [1×1 struct]
+           Line: {}
+           name: 'OBJ'
+    description: 'This is all the kinematics in the grid'
+
+&gt;&gt;</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: Use class dropsdata in Matlab</p>
+</div>
+<hr>
+<div id="example_use_dropsdata_matlab" class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-Matlab" data-lang="Matlab">%--------------------------------------------------------------------------
+% make a grid with three lines with five points on each line
+%--------------------------------------------------------------------------
+nLines=3;
+nPoints=5;
+%--------------------------------------------------------------------------
+% create an object:
+%--------------------------------------------------------------------------
+kinematics=my_new_model_r1.drops.DropsData();
+% give a name
+kinName='ExampleKin';
+kinematics.name=kinNam;
+%--------------------------------------------------------------------------
+% Allocate the number of lines:
+%--------------------------------------------------------------------------
+kinematics.Line=cell(nLines,1);
+
+%--------------------------------------------------------------------------
+% Allocate the number og points on each line - iLine with nPoints
+%--------------------------------------------------------------------------
+for iLine=1:nLines
+    %--------------------------------------------------------------------------
+    % Set each iLine to type LineData
+    % Give a unique name
+    %--------------------------------------------------------------------------
+    kinematics.Line{iLine}=my_new_model_r1.drops.LineData();
+    kinematics.Line{iLine}.name=strcat('Line',num2str(iLine));
+    %--------------------------------------------------------------------------
+    % Allocate the number og points on each line - iLine with nPoints
+    %--------------------------------------------------------------------------
+    kinematics.Line{iLine}.Point=cell(nPoints,1);
+    for iPoint=1:nPoints
+        %--------------------------------------------------------------------------
+        % Set each iPoint to type PointData
+        %--------------------------------------------------------------------------
+        kinematics.Line{iLine}.Point{iPoint}=my_new_model_r1.drops.PointData();
+        %--------------------------------------------------------------------------
+        % Give each point a Name
+        %-------------------------------------------------------------------------
+        newName=strcat('Line',num2str(iLine),'Point',num2str(iPoint));
+        kinematics.Line{iLine}.Point{iPoint}.name=newName;
+    end
+end
+%--------------------------------------------------------------------------
+% save to file
+%--------------------------------------------------------------------------
+kinematics.saveHDF5('test.h5')
+%--------------------------------------------------------------------------
+% read h5-file to a new object
+%--------------------------------------------------------------------------
+kinematicsR=my_new_model_r1.drops.DropsData('default');
+kinematicsR.load('filePath','test.h5','name','ExampleKin');
+%--------------------------------------------------------------------------
+% end
+%--------------------------------------------------------------------------</code></pre>
+</div>
+</div>
+<div id="fig::example_sima_kinematic_sima" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/example_sima_kinematic_sima.png" alt="example sima kinematic sima">
+</div>
+<div class="title">Figure 8. Example - Open the file in SIMA</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fortran">3.5.2. Fortran</h4>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: make h5-file</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-f90" data-lang="f90">    use deepline_model_drops, only: DropsData
+
+    ...
+    type(DropsData) :: ddata
+    integer :: iLine, iCoord, iCoord_acc, indx
+    class(base_exception), pointer :: ex
+    ...
+    ..
+        !------------------------------------------------------------------
+       ! Store all kinematics in hdf5-file:
+       !------------------------------------------------------------------
+       h5FileName='drops-data-irrwa-' // to_string(irrwa) // '.h5'
+       !
+       ddata%name = 'SimlaData'
+       ALLOCATE(ddata%Line(NGRDLINES))
+       !
+       xdelta=simpar(1,irrwa)          ! time step - dt
+       xstart=0.d0                     ! ts start
+       DO iLine = 1,NGRDLINES
+          name='Line_' // to_string(iLine)
+          ddata%Line(iLine)%name = name
+          ALLOCATE(ddata%Line(iLine)%Point(NBDGRDC))
+          !
+          DO iCoord = 1,NBDGRDC
+             name='Point_' // to_string(iCoord)
+             ddata%Line(iLine)%Point(iCoord)%name = name ..
+             ..
+             .
+             ....
+             ..
+              ! store x, y &amp; z coordinate
+             call store_coord(ddata%Line(iLine)%Point(iCoord)%xG,'x',DGRIDCOR(1,iCoord,iLine))
+             call store_coord(ddata%Line(iLine)%Point(iCoord)%yG,'y',DGRIDCOR(2,iCoord,iLine))
+             call store_coord(ddata%Line(iLine)%Point(iCoord)%zG,'z',DGRIDCOR(3,iCoord,iLine))
+          END DO
+       END DO
+
+       !    Save h5-file
+       CALL ddata%save_hdf5(string(TRIM(h5FileName)))
+       IF (catch_any(ex)) GOTO 930
+       !------------------------------------------------------------------
+       ! end store to h5-file
+       !------------------------------------------------------------------
+..</code></pre>
+</div>
+</div>
+<hr>
+<div class="paragraph">
+<p>EXAMPLE: open h5-file and read the data</p>
+</div>
+<hr>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-f90" data-lang="f90">type(DropsData) :: input
+call input%load_hdf5(string('drops-data.h5'))
+write(*,*) size(input%Line)
+iline=2
+write(*,*) input%Line(iLine)%Point(iCoord)%name%toChars() ! for text
+write(*,*) input%Line(iLine)%Point(iCoord)%xG%value
+write(*,*) input%Line(iLine)%Point(iCoord)%xG%legend%toChars() ! for text
+write(*,*) input%Line(iLine)%Point(iCoord)%uX%value(:)
+write(*,*) input%Line(iLine)%Point(iCoord)%uX%xdelta</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_examples">4. Examples</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_general_4">4.1. General</h3>
+<div class="paragraph">
+<p>This chapter includes a several examples covering</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Modelling the Data (json-file)</p>
+</li>
+<li>
+<p>Generating Source Code. The options are</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Python</p>
+</li>
+<li>
+<p>Matlab</p>
+</li>
+<li>
+<p>Fortran (f90)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Use generate code</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><a href="https://stash.code.sintef.no/projects/SIMOS/repos/simos-fortran-examples/browse/results-storage/" class="bare">https://stash.code.sintef.no/projects/SIMOS/repos/simos-fortran-examples/browse/results-storage/</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_simple_example">4.2. Simple Example</h3>
+<div class="sect3">
+<h4 id="_modelling_the_data">4.2.1. Modelling the Data</h4>
+<div class="paragraph">
+<p>Let us define the json-file describing the data</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A data type with name <em>simple_array</em></p>
+</li>
+<li>
+<p>The data type  <em>simple_array</em> has has two properties</p>
+<div class="ulist">
+<ul>
+<li>
+<p>one double variable with name <em>x</em></p>
+</li>
+<li>
+<p>one integer array with name <em>i_arr</em></p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    "name": "simple_array",
+    "description": "A very simple type",
+    "extends": ["marmo_r1:basic:NamedEntity"],
+    "properties": [
+        {
+            "name": "x",
+            "type": "double",
+            "description": "A double precision value"
+        },
+        {
+            "name": "i_arr",
+            "type": "integer",
+            "dim": "*",
+            "description": "An integer array"
+        }
+    ]
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_generate_code_fortran">4.2.2. Generate Code (Fortran)</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_simple_array">4.2.3. simple_array</h4>
+<div class="paragraph">
+<p>When we run the code generator, we will get a Fortran source file with a type which looks something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>(...)
+type   :: simple_array
+        private
+        ! A double precision value
+        real(dp), public :: x
+        ! An integer array
+        integer, dimension(:), allocatable, public :: i_arr
+        ! variable name for named accessing
+        type(String), public :: name
+        ! instance description
+        type(String), public :: description
+(...)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As we can see, SIMOS generated variables for the entries we added to the properties section of the JSON file. SIMOS also added to other variables, name and description. This is because our JSON-file says that our data type "extends" marmo_r1:basic:NamedEntity and is needed if we want to save our instance to a file.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+By convention, all types that we would like to save to a file must have a name.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/important.png" alt="Important">
+</td>
+<td class="content">
+for each json file you have made, there is created a fortran module with the class-type. In addition there is one main module file that refers to the c class module-file. In the fortran file refered to in your code is the main module file, see <a href="#fig::name_on_submodules_fortran">Figure 9</a>.
+</td>
+</tr>
+</table>
+</div>
+<div id="fig::name_on_submodules_fortran" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/name_on_submodules_fortran.png" alt="name on submodules fortran">
+</div>
+<div class="title">Figure 9. Modules in fortran  (example: simos/simos-fortran-examples/simple_array/mainf.90 and simos/simos-fortran-examples/simple_array/libraries/simple_example/simple_example_r1/src_gen/array)</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_apply_generated_code_fortran">4.2.4. Apply Generated Code: Fortran</h4>
+<div class="sect4">
+<h5 id="_get_submodules">4.2.4.1. Get Submodules</h5>
+<div class="paragraph">
+<p>If this the first time you are using the fortan code, you need several submodules. The submodules are</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>fcore</p>
+</li>
+<li>
+<p>h5storage</p>
+</li>
+<li>
+<p>simos</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To get the submodules</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Move the the git-folder, <em>for example the simos folder</em></p>
+</li>
+<li>
+<p>clone the repo <strong>simos-fortran-examples</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>git clone ssh://git@git.code.sintef.no/simos/simos-fortran-examples.git</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>initiate the submodules</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>git submodules update --init --recursive</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_compile_the_code_sinesim_example">4.2.4.2. Compile the Code - sinesim example</h5>
+<div class="paragraph">
+<p>An example, <strong>sinesim</strong>, is in the folder, <strong>simos-fortran-examples\results-storage\</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Move to the folder <strong>results-storage</strong></p>
+</li>
+<li>
+<p>Make a build folder</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>mkdir build</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>move to folder:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>cd build/</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In Mintty: Compile the fortran code using the following steps</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>cmake .. -G"NMake Makefiles JOM"</p>
+</li>
+<li>
+<p>jom</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Run the program</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>sinesim 3</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_compile_the_code_simple_array_example">4.2.4.3. Compile the Code - simple_array example</h5>
+<div class="paragraph">
+<p>An example, <strong>simple_array</strong>, is in the folder, <strong>simos-fortran-examples\simple_array\</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Move to the folder <strong>simple_array</strong></p>
+</li>
+<li>
+<p>Make a build folder</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>mkdir build</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>move to folder:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>cd build/</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>In Mintty: Compile the fortran code using the following steps</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>cmake .. -G"NMake Makefiles JOM"</p>
+</li>
+<li>
+<p>jom</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+Before you compile, you have to set up the <em>CMakeList.txt</em>-file correct. This included to add path to the new libraries inn addition to the submodules <em>fcore</em> and <em>h5storage</em>. Example is shown in <a href="#fig::CMakeLists">Figure 10</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<img src="./images/icons/note.png" alt="Note">
+</td>
+<td class="content">
+it is observed a bug compiling the code on Windows. This is related to backslash (/). The fix is shown in <a href="#fig::bug_windows_back_shlash">Figure 11</a>
+</td>
+</tr>
+</table>
+</div>
+<div id="fig::CMakeLists" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/CMakeList.png" alt="CMakeList">
+</div>
+<div class="title">Figure 10. CMakeLists.txt.  (example: simos/simos-fortran-examples/simple_array/CMakeLists.txt)</div>
+</div>
+<div id="fig::bug_windows_back_shlash" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/generate_f90_change_backslash_windows.png" alt="generate f90 change backslash windows">
+</div>
+<div class="title">Figure 11. Observed error in Windows: src_gen/cmake/libsources.cmake</div>
+</div>
+<div class="paragraph">
+<p>Run the program</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>simple</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>EXAMPLE: SIMPLE_ARRAY</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>program main_simple_array
+  use class_string
+  !----------------------------------------------------------------
+  ! simple prohram to create an object of type simple_array
+  !----------------------------------------------------------------
+  use simple_example_array, only : simple_array
+  !
+type(simple_array) :: var1, var2
+
+! Create some data
+var1%name = 'My Data'
+var1%x = 123.0
+var1%i_arr = [1, 1, 2, 3, 5, 8, 13]
+
+! Save it to a file
+call var1%save_hdf5(string('my_data.h5'))
+
+print*,' Load it into the other variable, var2'
+print*,' Prints var2%i_arr to the console '
+call var2%load_hdf5(string('my_data.h5'), string('My Data'))
+write(*, *) var2%i_arr !</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Result:</p>
+</div>
+<div class="paragraph">
+<p>EXAMPLE:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>grob@SINTEFPC7475 MINGW64 /c/git/simos/simos-fortran-examples/simple_array/build (simple_array_example)
+$ simple
+  Load it into the other variable, var2
+  Prints var2%i_arr to the console
+           1           1           2           3           5           8</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_apply_generated_code_matlab">4.2.5. Apply Generated Code: Matlab</h4>
+<div class="listingblock">
+<div class="content">
+<pre>%--------------------------------------------------------------------------
+% make a simple array using a sinus signal
+%--------------------------------------------------------------------------
+dt=0.1;
+timesteps=dt:dt:10;
+%--------------------------------------------------------------------------
+% make an object: type simple_array()
+%--------------------------------------------------------------------------
+my_array=simple_example_r1.array.simple_array();
+my_array.x=dt;
+my_array.i_arr=sin(x);
+my_array.description='my array as sinus';
+%--------------------------------------------------------------------------
+% make a plot
+%--------------------------------------------------------------------------
+figure(1)
+plot(timesteps,my_array.i_arr);
+title(my_array.description);
+%--------------------------------------------------------------------------
+% end
+%--------------------------------------------------------------------------</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Result:</p>
+</div>
+<div id="fig::simple_array" class="imageblock center text-center center text-center">
+<div class="content">
+<img src="./images/figures/simple_array.png" alt="simple array">
+</div>
+<div class="title">Figure 12. Example - Simple array as sinus signal</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-11-19 14:13:57 +0100
+</div>
+</div>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: { equationNumbers: { autoNumber: "none" } }
+})
+MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
+  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
+    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains('stemblock')) {
+      data.math.root.display = "block"
+    }
+    return data
+  })
+})
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+</body>
+</html>

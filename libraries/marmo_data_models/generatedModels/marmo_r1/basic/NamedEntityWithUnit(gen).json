@@ -1,0 +1,30 @@
+{
+  "name": "NamedEntityWithUnit",
+  "type": "marmo:basic:NamedEntityWithUnit",
+  "description": "a named entity with unit",
+  "properties": [
+    {
+      "name": "unit",
+      "type": "string",
+      "value": "",
+      "description": "data unit."
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "value": "none",
+      "description": "variable name for named accessing"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "value": "",
+      "description": "instance description"
+    }
+  ],
+  "package": "marmo:basic",
+  "__versions__": {
+    "marmo": "r1",
+    "basic": ""
+  }
+}

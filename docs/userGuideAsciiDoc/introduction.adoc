@@ -1,0 +1,35 @@
+//---------------------------------------------------------------------------
+:sectnums:
+//= Introduction
+:doc-part:  
+//:figure-caption: Figure {doc-part}- 
+:figure-caption: Figure  
+:xrefstyle: short 
+//---------------------------------------------------------------------------
+== Introduction 
+
+=== General
+
+This document explains the use of the SIMOS Code generator. The document contains three main chapters
+
+* A short introduction to classes and objects
+* Modelling data and generating code using the SIMOS code generator
+* Examples - using the generated code in an application
+
+=== How the SIMOS Code Generator Works
+When using SIMOS we define the structure of our data in JSON text files instead of writing Fortran types directly. 
+
+JSON is a standardised format for representing data which is easy to read and write by humans as well as computers. When we have defined our data structures we then run the code generator which will generate Fortran types which we can use in our program. The advantage of doing it this way is that SIMOS will also generate code for saving and loading our types to files. Currently, only the HDF5 file format is implemented, but that's exactly what we're looking for in this case. SIMOS can also generate code for other programming languages like Python and MATLAB which makes working with multiple programming languages easier.
+
+=== Advantages of defining data with SIMOS
+
+. Code for saving and loading HDF5 files
+. Easy to use data across different programming languages
+
+
+ 
+
+
+
+
+

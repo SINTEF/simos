@@ -1,0 +1,68 @@
+{
+        "name": "PointData",
+        "type": "PointData",
+        "extends": ["marmo_r1:basic:NamedEntity"],
+        "description": "Kinematic data for a point",
+
+        "properties": [
+
+        {"name": "WaveElevation", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m",
+	 "description": "Wave elevation",
+	 "optional":"true"
+        },
+        {"name": "Ux", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s",
+	 "description": "Kinematic velocity in x-direction",
+	 "optional":"true"
+        },
+        {"name": "Uy", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s",
+	 "description": "Kinematic velocity in y-direction",
+	 "optional":"true"
+        },
+        {"name": "Uz", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s",
+	 "description": "Kinematic velocity in z-direction",
+	 "optional":"true"
+        },
+        {"name": "Ax", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s^2",
+	 "description": "Kinematic acceleration in x-direction",
+	 "optional":"true"
+        },
+        {"name": "Ay", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s^2",
+	 "description": "Kinematic acceleration in y-direction",
+	 "optional":"true"
+        },
+        {"name": "Az", 
+	 "type": "marmo_r1:containers:EquallySpacedSignal",
+	 "unit": "m/s^2",
+	 "description": "Kinematic acceleration in z-direction",
+	 "optional":"true"
+        },
+        {"name": "xG", 
+	 "type": "marmo_r1:containers:DimensionalScalar",
+	 "unit": "m",
+	 "description": "Global x-coordinate for kinematic point"
+        },
+        {"name": "yG", 
+	 "type": "marmo_r1:containers:DimensionalScalar",
+	 "unit": "m",
+	 "description": "Global x-coordinate for kinematic point"
+        },
+        {"name": "zG", 
+	 "type": "marmo_r1:containers:DimensionalScalar",
+	 "unit": "m",
+	 "description": "Global x-coordinate for kinematic point"
+        }        
+        ]
+
+}

@@ -1,0 +1,17 @@
+
+{	
+	"name": "NamedEntityWithUnit",
+	"type": "NamedEntityWithUnit",
+	"description": "a named entity with unit",
+
+	"extends": ["marmo:basic:NamedEntity"],
+	
+	"properties": [
+			
+	{"name": "unit", 
+			 "type": "string", "value": "",
+			 "description": "data unit."}
+		 
+	]
+	
+}

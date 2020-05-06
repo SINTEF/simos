@@ -28,4 +28,10 @@ readonly SIMOS_JS="$SIMOS_DIR/ui/shell/simos.js"
 readonly PATHCONFIG_JS="$MODEL_DIR/pathConfig.js"
 
 # Simos shell command
-readonly SHS_COMMAND="$SIMOS_DIR/runner/node $SIMOS_JS $PATHCONFIG_JS"
+if [[ "$(uname)" = "Linux" ]]
+then
+    readonly SHS_COMMAND="$SIMOS_DIR/runner/node $SIMOS_JS $PATHCONFIG_JS"
+else
+    readonly SHS_COMMAND="$SIMOS_DIR/runner/node.exe $SIMOS_JS $PATHCONFIG_JS"
+fi
+

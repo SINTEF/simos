@@ -16,11 +16,13 @@ try{
     
 }
 catch (e) {
+	console.log(e)
 	try{
 	    configFilePath = path.join(relSimosPath, 'pathConfig.js');
 	    config = require(configFilePath);
 	}
 	catch (e) {
+		console.log(e)
 	    configFilePath = path.join(relSimosPath, 'config', 'pathConfig-org.js')
 	    config = require(configFilePath);
 	}

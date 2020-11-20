@@ -440,21 +440,32 @@ Generator.prototype.generateModel = function(modelID, outppath) {
 	
 	console.log("\t generating Model " + modelID + ' !');
 	var modelParser = this.initModel(modelID);
-			
-	//var packageID = this.lang.removeTypeFromPackagedTypeStr(modelID);
-	
-	//var outppath = this.initPackagePath(packageID);
-	
-	var outFileName = this.lang.getOutCodeFileNameFromVersionedPackagedTypeStr(modelID);
 
+	var phases = this.lang.getOutCodeFileNameFromVersionedPackagedTypeStr(modelID);
+	if(typeof(phases) == 'string'){
+		// Just one phase
+		outFileName = phases;
+		this.generateModelFile(modelParser,phase,outppath)
+	}else{
+		phases.forEach(phase => {
+			this.lang.phase = phase
+			this.generateModelFile(modelParser,phase.path,outppath)
+		});
+	}
+
+	return modelParser;
+};
+
+Generator.prototype.generateModelFile = function(modelParser,outFileName,outppath) {
 	var outFilePath = path.join(outppath, outFileName);
     var outFileContent = '';	
     try {
         if (fs.statSync(outFilePath).isFile())
             outFileContent = fs.readFileSync(outFilePath).toString();
     }
-    catch (e) {};
-
+	catch (e) {};
+	
+	fs.mkdirPathSync(path.dirname(outFilePath));
 	fs.writeFileSync( outFilePath, this.generate(modelParser.model, outFileContent));
 	
 	this.lang.packaging.appendPackageSourceFile(outFileName)
@@ -463,9 +474,8 @@ Generator.prototype.generateModel = function(modelID, outppath) {
 	//get model custom types and added to libs
 	
 	console.log("\t writing " + outFileName + ' !');
-	
-	return modelParser;
-};
+}
+
 /*----------------------------------------------------------------------------*/
 Generator.prototype.generateOnePackage = function(packageID) {
 	console.log(njs.sep1);

@@ -1,0 +1,7 @@
+{
+    "name": "simos",
+    "main": "ui/shell/simos.js",
+    "dependencies": {
+        "fs-extra": "^9.0.0"
+    }
+}

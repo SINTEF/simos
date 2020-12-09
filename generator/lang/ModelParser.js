@@ -38,7 +38,7 @@ ModelParser.prototype.constructor = function(model) {
 	
 	this.modelExt = 'json';
 	
-	this.numericTypeList = ["float", "real", "double", "short", "integer", "tiny", "complex"];
+	this.numericTypeList = ["float", "real", "double", "short", "integer", "tiny", "complex", "number"];
 	this.stringTypeList = ["string", "char"];
 	this.logicalTypeList = ["boolean"];
 };
@@ -658,16 +658,20 @@ ModelParser.prototype.isAtomic = function(prop) {
 	}
 };
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.isNumeric = function(prop) {
-	if (prop.type == undefined) {
-		throw "prop does not have a type. ModelParser.prototype.isNumeric";
-	}
-	if (this.numericTypes().indexOf(prop.type) >= 0){
+ModelParser.prototype.isNumericType = function(propType) {
+	if (this.numericTypes().indexOf(propType) >= 0){
 		return true;
 	}
 	else {
 		return false;
 	}
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.isNumeric = function(prop) {
+	if (prop.type == undefined) {
+		throw "prop does not have a type. ModelParser.prototype.isNumeric";
+	}
+	return his.isNumericType(prop.type);
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isString = function(prop) {
@@ -724,7 +728,8 @@ ModelParser.prototype.isDerived = function() {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isContained = function(prop) {
 	if ((prop.containment == undefined) ||
-		(prop.containment == 'true')){
+		(prop.containment == 'true')    ||
+		(prop.containment == true)){
 		return true;
 	}
 	else {
@@ -741,12 +746,12 @@ ModelParser.prototype.isReferenced = function(prop) {
 };
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isOptional = function(prop) {
-	if ((prop.optional == undefined) ||
-		(prop.optional == 'false')){
-		return false;
+	if ((prop.optional == 'true')   ||
+		(prop.optional == true)){
+		return true;
 	}
 	else {
-		return true;
+		return false;
 	}
 };
 ModelParser.prototype.isHidden = function(prop) {

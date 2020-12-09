@@ -14,4 +14,6 @@ exports.langs = {'python': {'id': 'py',
     			 'dmt'   : {'id': 'dmt', 
     						'interp': 'lang/dmt'},
     			 'dmt_migrator'   : {'id': 'dmig', 
-    						'interp': 'lang/dmt_migrator'}}
+							'interp': 'lang/dmt_migrator'},
+				 'dmt_to_simos'   : {'id': 'ds', 
+    						'interp': 'lang/dmt_to_simos'}}

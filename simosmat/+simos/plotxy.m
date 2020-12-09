@@ -16,6 +16,12 @@ function plotxy(varargin)
     
 end
 %%-----------------------------------------------------------------------%%
+function plotArrs(xys, options)
+    for ind = 1:length(xys)
+        plotArr(xys{ind}, options)
+    end
+end
+%%-----------------------------------------------------------------------%%
 function plotArr(xy, options)
     if ~(simos.hasField(options,'hold')) 
         figure
@@ -23,7 +29,8 @@ function plotArr(xy, options)
     
     hold on
     
-    plot(xy.xvalue, xy.value);
+    xvals = makeX(xy);
+    plot(xvals, xy.value);
     
     %title('2-D Line Plot')
     lab = makeXLabel(xy);
@@ -44,7 +51,14 @@ function plotArr(xy, options)
     
     hold off
 end
-
+%%-----------------------------------------------------------------------%%
+function x = makeX(xy)
+    if isprop(xy,'xdelta') 
+        x = (1:length(xy.value)) * xy.xdelta + xy.xstart;
+    else
+        x = xy.xvalue;
+    end
+end
 %%-----------------------------------------------------------------------%%
 function lab = makeXLabel(xy)
     lab = xy.xlabel;

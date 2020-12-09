@@ -254,7 +254,7 @@ Init.prototype.propInitValueFuncs = function(bl, prop) {
 			}
 			else {
 				/* array */
-				throw "array of objects can not be predefined.";
+				throw "array of objects can not be predefined.\n"+this.model.name + "\n" + JSON.stringify(prop);
 			}
 
 		}

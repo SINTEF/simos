@@ -282,7 +282,7 @@ Generator.prototype.generatedPackageIDtoPath = function(packageID) {
 
 /*----------------------------------------------------------------------------*/
 Generator.prototype.createOutPath = function(outppath) {
-	if (!fs.exists(outppath))
+	if (!(fs.existsSync(outppath)))
 		fs.mkdirPathSync(outppath);
 	
 	return outppath;

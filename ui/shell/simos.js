@@ -55,9 +55,10 @@ replServer.context.loadGenerators = function() {
 	//replServer.context.pygen = '';
 	//replServer.context.matgen = '';
 	var Generator = replServer.context.require(replServer.context.path.join(simosPath, 'generator'));
-	
+	console.log('\tloading generator: ' +  JSON.stringify(config.codeGenerators));
 	for (lang in config.codeGenerators) {
 		var genName = langConfig.langs[lang].id+'gen';
+		console.log('\tloading generator: ' + genName);
 		replServer.context[genName] =  new Generator();
 		replServer.context[genName].setSimosPath(simosPath);
 		replServer.context[genName].setLang(lang);
@@ -65,7 +66,8 @@ replServer.context.loadGenerators = function() {
 			replServer.context.path.join(config.outPath,config.codeGenerators[lang].outPath) )
 												);
 		replServer.context[genName].setModelsPaths( config.modelsPaths );
-		
+		console.log('\t\tDone.');
+
 	}
 
 };

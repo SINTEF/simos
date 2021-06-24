@@ -97,7 +97,7 @@ function catmanToSimos(varargin)
         end
     end
         
-    test.save(casePath);
+    test.save('filePath',casePath);
     fprintf(1,' %s is saved to %s !\n', test.name,casePath)
 
 end
@@ -169,19 +169,26 @@ function [a2time, a2] = getChannels(inp, a2Head)
             
             %get the time channel for headCH, i.e. selCh
             if  (headCH.what_time ~= 0) && ~(isempty(headCH.what_time))
-                chTime = a2Head(1, headCH.what_time);
+                chTime = a2Head(headCH.what_time);
+                
+                newChTimeInd = 0;
                 
                 if length(timeChInds) == 0
                     a2time(1) = chTime;
                     timeChInds(end+1) = headCH.what_time;
+                    newChTimeInd = 1;
                 else
-                    if isempty(find([a2time.Channelnumber] == chTime.Channelnumber))
+                    foundChTime = find([a2time.Channelnumber] == chTime.Channelnumber);
+                    if isempty(foundChTime)
                         a2time(end+1) = chTime;
                         timeChInds(end+1) = headCH.what_time;
+                        newChTimeInd = length(a2time);
+                    else
+                        newChTimeInd = foundChTime;
                     end
                 end
                 
-                a2(schInd).what_time = length(a2time);
+                a2(schInd).what_time = newChTimeInd;
                 
             end
         end
@@ -265,6 +272,9 @@ function appendESChannels(a2, a2time, test, inp)
         
         chName = strtrim(inch.ChannelName);
         
+        if (strcmpi(chName,'xpos') == 1)
+            disp "XPOS"
+        end
         ch = test.appendChannels(chName);
 
         ch.xdelta = 1.0;
@@ -274,28 +284,31 @@ function appendESChannels(a2, a2time, test, inp)
         ch.xlabel = 'I';
         ch.xdescription = 'array Index';
 
-        %if any(ismember(fieldnames(inch), 'dt')) 
-        %    if int8(inch.dt) == inch.dt
-        %        ch.xdelta = inch.dt/1000;
-        %    else
-        %        ch.xdelta = inch.dt;
-        %    end
-        %    ch.xstart = 0.0;
-        %    ch.xunit = 's';
-        %    ch.xname = 'time';
-        %    ch.xlabel = 'time';
-        %    ch.xdescription = 'time';
-        %end
-
+        if any(ismember(fieldnames(inch), 'dt')) 
+           if int8(inch.dt) == inch.dt
+               ch.xdelta = inch.dt/1000;
+           else
+               ch.xdelta = inch.dt;
+           end
+           ch.xstart = 0.0;
+            
+        end
+        
+        
+        
         tol = 10^-1;
-        chtime = a2time(1,inch.what_time);
-        sampling = 1.0/chtime.dt * 1000;
-        if abs(round(sampling)- sampling)<tol
-            ch.xdelta = chtime.dt/1000;
-        else
-            ch.xdelta = chtime.dt;
-        end 
-
+            chtime = a2time(1,inch.what_time);
+            sampling = 1.0/chtime.dt * 1000;
+            if abs(round(sampling)- sampling)<tol
+                ch.xdelta = chtime.dt/1000;
+            else
+                ch.xdelta = chtime.dt;
+            end         
+            
+        if strcmpi(chName,'xpos') == 1
+            checkingSomething = 1;
+        end
+        
         ch.xstart = chtime.data(1);
         ch.xunit = 's';
         ch.xname = 'time';
@@ -335,7 +348,9 @@ function c = getScaleFactor(unit, scale)
     if strcmpi('m',unit) == 1
         c = scale;
     elseif strcmpi('deg',unit) == 1
-        c = 1.0;        
+        c = 1.0;      
+    elseif strcmpi('kPa',unit) == 1
+        c = scale;           
     elseif strcmpi('s',unit) == 1
         c = scale^0.5;
     elseif strcmpi('m/s',unit) == 1

@@ -445,7 +445,7 @@ Generator.prototype.generateModel = function(modelID, outppath) {
 	if(typeof(phases) == 'string'){
 		// Just one phase
 		outFileName = phases;
-		this.generateModelFile(modelParser,phase,outppath)
+		this.generateModelFile(modelParser,outFileName,outppath)
 	}else{
 		phases.forEach(phase => {
 			this.lang.phase = phase

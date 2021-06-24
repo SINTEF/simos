@@ -7,24 +7,48 @@ var config = '';
 var relSimosPath = '../..'
     
 
+console.log(process.argv);
+console.log(process.argv.length);
 
+var configFilePath = path.join(relSimosPath, 'pathConfig.js');
+var scriptFilePath = '';
 
-var configFilePath = '';
-try{
-    configFilePath = process.argv[2];
-    //config = require(configFilePath);
-	config = require(process.cwd()+'/'+configFilePath);
-}
-catch (e) {
-	try{
-	    configFilePath = path.join(relSimosPath, 'pathConfig.js');
-	    config = require(configFilePath);
-	}
-	catch (e) {
-	    configFilePath = path.join(relSimosPath, 'config', 'pathConfig-org.js')
-	    config = require(configFilePath);
+if (process.argv.length>2) {
+	for (var inpind=2; inpind<process.argv.length; inpind++) {
+		var arginps = process.argv[inpind].split('=');
+		if (arginps[0] == '-p') {
+			configFilePath = arginps[1];
+		}
+		if (arginps[0] == '-g') {
+			scriptFilePath = arginps[1];
+		}
 	}
 }
+
+try {
+	if (fs.existsSync(configFilePath)) {
+		config = require(configFilePath);
+	}
+  } catch(err) {
+	console.error(err)
+  }
+
+// var configFilePath = '';
+// try{
+//     configFilePath = process.argv[2];
+//     //config = require(configFilePath);
+// 	config = require(process.cwd()+'/'+configFilePath);
+// }
+// catch (e) {
+// 	try{
+// 	    configFilePath = path.join(relSimosPath, 'pathConfig.js');
+// 	    config = require(configFilePath);
+// 	}
+// 	catch (e) {
+// 	    configFilePath = path.join(relSimosPath, 'config', 'pathConfig-org.js')
+// 	    config = require(configFilePath);
+// 	}
+// }
 	
 console.log('Starting SIMOS ...');
 console.log('\treading config file: ' + configFilePath);
@@ -95,11 +119,10 @@ replServer.context.reload = function() {
 	};
 	
 //reading script file for command line evaluation
-	if (process.argv.length == 4){
-		var scriptName = process.argv[3];
-		fs.readFile(scriptName, 'utf8', function(err, data) {
+	if (scriptFilePath != ''){
+		fs.readFile(scriptFilePath, 'utf8', function(err, data) {
 			  if (err) throw err;
-			  console.log('OK: ' + scriptName);
+			  console.log('OK: ' + scriptFilePath);
 			  replServer.context.eval(data)
 			});
 	}

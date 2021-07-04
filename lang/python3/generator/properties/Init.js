@@ -319,8 +319,10 @@ Init.prototype.classInit = function(bl) {
 	// cmd.push(this.gbl(bl+1) +
 	// 'self.' + this.modelDesAtt() + ' = ' +
 	// JSON.stringify(this.getModelWithOutPtoperties()) );
+
+	var strModel = this.stringify(this.getModel(),  null, '\t').replaceAll('true','True').replaceAll('false','False');
 	cmd.push(this.gbl(bl+1) + 
-		'self.' + this.modelDesAtt() + ' = ' + this.stringify(this.getModel(),  null, '\t') );
+		'self.' + this.modelDesAtt() + ' = ' +  strModel);
 	/*
 	 * this is a dictionary which keep track of synchronizing the data in object
 	 * with the back-end storage, it keep a list of properties, -- not in keys,
@@ -375,8 +377,9 @@ Init.prototype.classInit = function(bl) {
 		 * JSON.stringify(prop[propAttrs[j]])); }
 		 */
 		
+		var strProp = this.stringify(prop).replaceAll('true','True').replaceAll('false','False')
 		cmd.push(this.gbl(bl+1) + 
-				'self.' + this.modelDesAtt(prop) + ' = ' + this.stringify(prop) );
+				'self.' + this.modelDesAtt(prop) + ' = ' + strProp );
 		
 
 

@@ -2,24 +2,7 @@
 function JSONLoad(){
 };
 exports.JSONLoad = JSONLoad;
-/*----------------------------------------------------------------------------*/
-JSONLoad.prototype.jsonReprFunc = function(bl) {
-	if (bl == undefined) {
-		bl = 0;
-	}	
-	var cmd = [];
 
-	cmd.push(this.getBlockSpace(bl) + 
-	'def jsonRepr(self, short=False, deep=True):');
-	
-	cmd.push(this.getBlockSpace(bl+1) + 
-		'return ( json.dumps(self.dictRepr(short=short, deep=deep),' + 
-			'indent=4, separators=(\',\', \': \')) )' );
-	
-	cmd.push(this.getBlockSpace(bl+1));
-
-	return cmd.join('\n');
-};
 /*----------------------------------------------------------------------------*/
 JSONLoad.prototype.loadFromJSONDict = function(bl) {
 	if (bl == undefined) {

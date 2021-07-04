@@ -383,7 +383,7 @@ Generator.prototype.initModel = function(modelID) {
 	
 	//by pass everything if the model is in DMT format
 	console.log(modelID);
-	console.log("hahaha ***** " + JSON.stringify(pmodel));
+	//console.log("hahaha ***** " + JSON.stringify(pmodel));
 	
 	
 	pmodel.setType(pmodel.getName());

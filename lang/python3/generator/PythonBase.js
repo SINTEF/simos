@@ -18,6 +18,7 @@ PythonBase.prototype = Object.create(CommonLangBase.prototype);
 /*----------------------------------------------------------------------------*/
 
 packageParts = ['./storage/SaveLoad',
+					'./storage/DMTSave',
                     './storage/HDF5Load',
                     './storage/HDF5Save',
                     './storage/JSONLoad',

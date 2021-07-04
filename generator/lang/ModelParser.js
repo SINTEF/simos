@@ -11,11 +11,11 @@ ModelParser.prototype.constructor = function(model) {
 	this.dmtModel = undefined;
 	
 	var inputModel = model;
-	console.log("initializing model : " + JSON.stringify(model));
+	//console.log("initializing model : " + JSON.stringify(model));
 	//throw("hahaha");
 	if (model != undefined){
-		if (model.type == "system/SIMOS/Blueprint"){
-			console.log("    translating model ");
+		if (this.isDMTBluePrint(model)){
+			console.log("***    translating model from DMT to SIMOS ***");
 			this.dmtModel = model;
 			inputModel = this.DMTtoSIMOS(this.dmtModel);
 		}
@@ -1392,18 +1392,37 @@ ModelParser.prototype.validateMainAttributes = function() {
 };
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
+ModelParser.prototype.isDMTBluePrint = function(dmtModel) {
+	if (dmtModel.type == "system/SIMOS/Blueprint")
+		return true;
+	else
+		return false;
+};
+/*----------------------------------------------------------------------------*/
 ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
     var simosModel = {};
     
     simosModel['name'] = dmtModel.name;
     simosModel['description'] = dmtModel.description;    
     //simosModel['type'] = "system/SIMOS/Blueprint";
-    
+    simosModel['extends'] = [];
+
     simosModel['properties'] = [];
     
     var attributes = dmtModel.attributes;
     var props = [];
     
+	if (dmtModel.extends != undefined){
+		for (var i=0; i<dmtModel.extends.length; i++){
+			if (dmtModel.extends[i] == "system/SIMOS/NamedEntity"){
+				simosModel.extends.push("marmo:basic:NamedEntity")
+			}
+			else if (dmtModel.extends[i].indexOf("system/SIMOS") == -1){
+				simosModel.extends.push(dmtModel.extends[i].split("/").slice(1).join(":"));
+			}
+		}
+	}
+
     for(var i = 0; i < attributes.length; i++) {
     	
     	var att = attributes[i];  
@@ -1423,6 +1442,10 @@ ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
     	    if (att.attributeType == 'number'){
     	        prop["type"] = "float";
     	    }
+			else if (att.attributeType.indexOf("/")!=-1){
+				var attSimosType = att.attributeType.split("/").slice(1).join(":");
+				prop["type"] = attSimosType;
+			}
     	    else {
     	        prop["type"] = att.attributeType;
     	    }    		

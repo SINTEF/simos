@@ -147,7 +147,7 @@ Representation.prototype.dictDMTReprFunc = function(bl) {
 	cmd.push(this.gbl(bl) + 'def dictDMTRepr(self, allItems=False, short=False, deep = True, bpDataSource=None):');
 	
 	cmd.push(this.gbl(bl+1) +	'rep = collections.OrderedDict()' );
-	cmd.push(this.gbl(bl+1) +	'rep["type"] = ' + this.stringify(this.getVersionedPackagedTypeStr()).replaceAll(':','/'));
+	cmd.push(this.gbl(bl+1) +	'rep["type"] = ' + this.stringify(this.getVersionedPackagedTypeStr()).replace(/:/g,'/'));
 	cmd.push(this.gbl(bl+1) +	'if not(bpDataSource == None):');
 	cmd.push(this.gbl(bl+2) +		'rep["type"] = bpDataSource + "/" + rep["type"]');
 

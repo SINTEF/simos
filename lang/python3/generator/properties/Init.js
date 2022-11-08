@@ -320,7 +320,7 @@ Init.prototype.classInit = function(bl) {
 	// 'self.' + this.modelDesAtt() + ' = ' +
 	// JSON.stringify(this.getModelWithOutPtoperties()) );
 
-	var strModel = this.stringify(this.getModel(),  null, '\t').replaceAll('true','True').replaceAll('false','False');
+	var strModel = this.stringify(this.getModel(),  null, '\t').replace(/true/g,'True').replace(/false/g,'False');
 	cmd.push(this.gbl(bl+1) + 
 		'self.' + this.modelDesAtt() + ' = ' +  strModel);
 	/*
@@ -377,7 +377,7 @@ Init.prototype.classInit = function(bl) {
 		 * JSON.stringify(prop[propAttrs[j]])); }
 		 */
 		
-		var strProp = this.stringify(prop).replaceAll('true','True').replaceAll('false','False')
+		var strProp = this.stringify(prop).replace(/true/g,'True').replace(/false/g,'False')
 		cmd.push(this.gbl(bl+1) + 
 				'self.' + this.modelDesAtt(prop) + ' = ' + strProp );
 		

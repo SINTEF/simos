@@ -97,7 +97,7 @@ function catmanToSimos(varargin)
         end
     end
         
-    test.save(casePath);
+    test.save('filePath', casePath);
     fprintf(1,' %s is saved to %s !\n', test.name,casePath)
 
 end
@@ -287,6 +287,14 @@ function appendESChannels(a2, a2time, test, inp)
         %    ch.xdescription = 'time';
         %end
 
+        if any(ismember(fieldnames(inch), 'dt')) 
+            if int8(inch.dt) == 20
+                if a2(1,1).dt == int8(inch.dt)
+                    inch.what_time = 1;
+                    disp(['switching time channel for ' chName]);
+                end 
+            end
+        end
         tol = 10^-1;
         chtime = a2time(1,inch.what_time);
         sampling = 1.0/chtime.dt * 1000;

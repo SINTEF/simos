@@ -1,7 +1,12 @@
 {
     "name": "simos",
+    "version": "0.0.1",
+    "description": "SIMOS code generator.",
     "main": "ui/shell/simos.js",
+    "bin": "ui/shell/simos.js",
     "dependencies": {
         "fs-extra": "^9.0.0"
-    }
+    },
+    "author": "Babak Ommani",
+    "license": "MIT"    
 }

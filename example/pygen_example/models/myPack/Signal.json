@@ -1,0 +1,131 @@
+{
+    "name": "Signal",
+    "description": "signal in pi or opc",
+    "type": "CORE:Blueprint",
+    "extends": [],
+    "attributes": [
+        {
+            "name": "name",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "signal name",
+            "default": "signal"
+        },
+        {
+            "name": "description",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "measurement description",
+            "default": ""
+        },
+        {
+            "name": "type",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute"
+        },
+        {
+            "name": "xdescription",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "descriptin of x axis",
+            "default": ""
+        },
+        {
+            "name": "source_tag",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "source tag",
+            "default": ""
+        },
+        {
+            "name": "variable_tag",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "variable tag",
+            "default": ""
+        },
+        {
+            "name": "sample_tag",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "tag in pi",
+            "default": ""
+        },
+        {
+            "name": "tag_pi",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "tag in pi",
+            "default": ""
+        },
+        {
+            "name": "tag_opc",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "tag in opc on board",
+            "default": ""
+        },
+        {
+            "name": "systemID",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "system id",
+            "default": ""
+        },
+        {
+            "name": "unit",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "unit id",
+            "default": ""
+        },
+        {
+            "name": "xunit",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "unit id",
+            "default": ""
+        },
+        {
+            "name": "label",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "label",
+            "default": ""
+        },
+        {
+            "name": "xlabel",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "x label",
+            "default": ""
+        },
+        {
+            "name": "xname",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "x label",
+            "default": ""
+        },
+        {
+            "name": "start_time",
+            "attributeType": "./Date",
+            "type": "CORE:BlueprintAttribute",
+            "description": "time stamps"
+        },
+        {
+            "name": "xvalue",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "time stamps in seconds from start",
+            "dimensions": "*"
+        },
+        {
+            "name": "value",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "values",
+            "dimensions": "*"
+        }
+    ]
+}

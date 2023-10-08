@@ -1,0 +1,48 @@
+{
+    "name": "Platform",
+    "description": "platform for opc",
+    "type": "CORE:Blueprint",
+    "extends": [],
+    "attributes": [
+        {
+            "name": "name",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "name of the platform",
+            "default": "platform"
+        },
+        {
+            "name": "description",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "platform description",
+            "default": ""
+        },
+        {
+            "name": "type",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute"
+        },
+        {
+            "name": "tag_pi",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "tag in pi",
+            "default": ""
+        },
+        {
+            "name": "tag_opc",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "tag in opc on board",
+            "default": ""
+        },
+        {
+            "name": "signals",
+            "attributeType": "./Signal",
+            "type": "CORE:BlueprintAttribute",
+            "description": "signals",
+            "dimensions": "*"
+        }
+    ]
+}

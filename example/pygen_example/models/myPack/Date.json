@@ -1,0 +1,76 @@
+{
+    "name": "Date",
+    "description": "date and time",
+    "type": "CORE:Blueprint",
+    "extends": [],
+    "attributes": [
+        {
+            "name": "name",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "signal name",
+            "default": "date"
+        },
+        {
+            "name": "description",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "measurement description",
+            "default": ""
+        },
+        {
+            "name": "type",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute"
+        },
+        {
+            "name": "year",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "year",
+            "default": 2022
+        },
+        {
+            "name": "month",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "month number",
+            "default": 8
+        },
+        {
+            "name": "day",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "day",
+            "default": 1
+        },
+        {
+            "name": "hour",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "hour in 24h format, 00 to 23",
+            "default": 1
+        },
+        {
+            "name": "minute",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "minute 0 to 59",
+            "default": 0
+        },
+        {
+            "name": "second",
+            "attributeType": "number",
+            "type": "CORE:BlueprintAttribute",
+            "description": "second 0 to 60",
+            "default": 0
+        },
+        {
+            "name": "str_rep",
+            "attributeType": "string",
+            "type": "CORE:BlueprintAttribute",
+            "description": "string representation DD-MMM-YYYY HH:mm:ss",
+            "default": "01-Aug-2022 01:00:00"
+        }
+    ]
+}

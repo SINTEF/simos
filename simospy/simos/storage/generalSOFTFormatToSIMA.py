@@ -8,7 +8,7 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
       outfile =  ''.join(nameParts[0:-1]) + '_SIMA.' + nameParts[-1]
       
    def getItemFor(inh, attr):
-      for item in inh.keys():
+      for item in list(inh.keys()):
          if 'simaAttr' in inh[item].attrs:
             if inh[item].attrs['simaAttr'] == attr:
                return item
@@ -19,12 +19,12 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
       if 'simaObjectName' in inh.attrs:
          objName = inh.attrs['simaObjectName']
          if objName == 'collection':
-            print "exporting a collection:\t" + str(inh)
+            print("exporting a collection:\t" + str(inh))
             dgrp = outh.create_group(inh["name"].value)
-            for item in inh.keys():
+            for item in list(inh.keys()):
                writeItems(inh[item], dgrp)
          elif objName == 'equidistantData':
-            print "exporting a equidistantData:\t" + str(inh)
+            print("exporting a equidistantData:\t" + str(inh))
             dataItem = getItemFor(inh, "data")
             #print dataItem
             if dataItem == None:
@@ -40,7 +40,7 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
                else:
                   outh[inh["name"].value].attrs[attr] = inh[item].value
          elif objName == 'nonEquidistantData':
-            print "exporting a nonEquidistantData:\t" + str(inh)
+            print("exporting a nonEquidistantData:\t" + str(inh))
             xdataItem = getItemFor(inh, "xdata")
             ydataItem = getItemFor(inh, "ydata")
             #print dataItem
@@ -58,7 +58,7 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
                   outh[inh["name"].value].attrs[attr] = inh[item].value
 
          elif objName == 'scalar':
-            print "exporting a scalar data:\t" + str(inh)
+            print("exporting a scalar data:\t" + str(inh))
             dataItem = getItemFor(inh, "data")
             #print dataItem
             if dataItem == None:
@@ -74,7 +74,7 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
                else:
                   outh[inh["name"].value].attrs[item] = inh[item].value
          elif objName == 'scalar':
-            print "exporting a scalar data:\t" + str(inh)
+            print("exporting a scalar data:\t" + str(inh))
             dataItem = getItemFor(inh, "data")
             #print dataItem
             if dataItem == None:
@@ -93,7 +93,7 @@ def generalSOFTFormatToSIMA(infile, outfile=None):
          else:
             raise Exception('SIMAObjectName ' + objName + ' is not known.')
       else:
-         print "not sima transformable data ...:\t" + str(inh)
+         print("not sima transformable data ...:\t" + str(inh))
       
    inf = h5py.File(infile,'r')
    outf =  h5py.File(outfile,'w')

@@ -1,7 +1,7 @@
 try:
     import pymongo
 except:
-    print "***** please install pymongo. *****"
+    print("***** please install pymongo. *****")
     
 import os
 

@@ -33,12 +33,12 @@ def hp_to_ieee(hp_real):
     sign = get_bits(hp_real,31,1)
     # Check if the value is negative, if so
     # find it's two's complement of fraction's 23 bits
-    if (sign == 1): fraction = (~(fraction) & 037777777) + 1
+    if (sign == 1): fraction = (~(fraction) & 0o37777777) + 1
     x = fraction; # Value is positive
     # But don't forget the sign
     if (sign == 1): x = -(x)
     # Check for size of exponent
-    if (signexp == 1): move_point = exponent - 0200
+    if (signexp == 1): move_point = exponent - 0o200
     else:              move_point = exponent
     # Move the decimal point up or down
     # depending on the  value of the exponent
@@ -156,11 +156,11 @@ class COFile(object):
        return str(self.Testno)
     #-------------------------------------------------------------------------#
     def print_summary(self):
-        print '%10s: %d'   % ('Test no.', self.Testno)
-        print '%10s: %40s' % ('Test Str', self.TestIdString)
-        print '%10s: %30s' % ('Time Str', self.TimeInfoString)
-        print '%10s: %d'   % ('NoChannels', self.NderivedChannels)
-        print '%10s: %e'   % ('Time Step', self.SampleIntervalTime)
+        print('%10s: %d'   % ('Test no.', self.Testno))
+        print('%10s: %40s' % ('Test Str', self.TestIdString))
+        print('%10s: %30s' % ('Time Str', self.TimeInfoString))
+        print('%10s: %d'   % ('NoChannels', self.NderivedChannels))
+        print('%10s: %e'   % ('Time Step', self.SampleIntervalTime))
         self.listChannels()
         
 
@@ -221,7 +221,7 @@ class COFile(object):
             outunit = self.UnitsOfDerivedChannels[j]
 
 
-        print "Exporting to hdf5"
+        print("Exporting to hdf5")
         self.COXXXX=open(self.filename,'rb')
         self.data = [None]*self.NsamplesPerChannel # for storage
         if self.SystemIdentifier == 'SYS4':
@@ -270,7 +270,7 @@ class COFile(object):
         
         arr.xname = 'Time'
         arr.xunit = 's'
-        arr.xvalue = np.array(range(len(data)))*dt
+        arr.xvalue = np.array(list(range(len(data))))*dt
         
         return XYArr(data=arr)
     #-------------------------------------------------------------------------#
@@ -345,7 +345,7 @@ class COFile(object):
     #-------------------------------------------------------------------------#
     def listChannels(self):
         for i, chn in enumerate(self.NamesOfDerivedChannels):
-            print "Chn %i\t %s" % (i, chn)
+            print("Chn %i\t %s" % (i, chn))
     #-------------------------------------------------------------------------#
 def co2ascii(filename,channel,scalefactor=1.0,scalepower=1.0):
     CO = COFile(filename=filename)    

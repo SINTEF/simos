@@ -1,27 +1,21 @@
 var njs = require('../njs')();
 
-function ModelParser(model){
-	this.constructor(model);
+function ModelParser(model, modelFormat){
+	this.constructor(model, modelFormat);
 };
 exports.ModelParser = ModelParser;
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.constructor = function(model) {
+ModelParser.prototype.constructor = function(model, modelFormat) {
 	
 	this.model = undefined;
 	this.dmtModel = undefined;
-	
-	var inputModel = model;
+
 	//console.log("initializing model : " + JSON.stringify(model));
 	//throw("hahaha");
-	if (model != undefined){
-		if (this.isDMTBluePrint(model)){
-			console.log("***    translating model from DMT to SIMOS ***");
-			this.dmtModel = model;
-			inputModel = this.DMTtoSIMOS(this.dmtModel);
-		}
-	}
+	this.setModel(model);
+	console.log("model format: "+ modelFormat);
+	this.setModelFormat(modelFormat);
 	
-	this.setModel(inputModel);
 	
 	
 	this.dimensionType = "integer";
@@ -41,6 +35,9 @@ ModelParser.prototype.constructor = function(model) {
 	this.numericTypeList = ["float", "real", "double", "short", "integer", "tiny", "complex", "number"];
 	this.stringTypeList = ["string", "char"];
 	this.logicalTypeList = ["boolean"];
+
+	this.dmtAlias = [{"alias": "JOBCORE:", "addr":"Blueprints/"},
+					 {"alias": "CORE:", "addr":"SIMOS/"}]
 };
 /******************************************************************************/
 /* Type Functions */
@@ -97,6 +94,25 @@ ModelParser.prototype.getModelWithOutPtoperties = function(){
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.setModel = function(model){
 	this.model = model;
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.setModelFormat = function(modelFormat){
+
+	if (modelFormat == undefined)
+		this.modelFormat = 'simos';
+	else
+		this.modelFormat = modelFormat;
+
+	console.log("** setting model format to " + modelFormat)
+
+	if (this.model != undefined){
+		if ((this.modelFormat == 'dmt') &&(this.isDMTBluePrint(this.model))){
+			console.log("***    translating model from DMT to SIMOS ***");
+			this.dmtModel = this.model;
+			this.model = this.DMTtoSIMOS(this.dmtModel);
+		}
+	}
+
 };
 /*----------------------------------------------------------------------------*/
 /* name */
@@ -248,6 +264,7 @@ ModelParser.prototype.setPackages = function(packages) {
 	
 	model["package"] =  packages.join(this.packageSep);
 	
+	//console.log(model)
 	for (var p = 0, plen = model.properties.length; p < plen; p++){
 		var prop = model.properties[p];
 		if (!this.isAtomic(prop)) {
@@ -648,7 +665,7 @@ ModelParser.prototype.isSingle = function(prop) {
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.isAtomic = function(prop) {
 	if (prop.type == undefined) {
-		throw ("prop does not have a type. ModelParser.prototype.isAtomic" + "\n" + JSON.stringify(prop));
+		throw ("prop does not have a type. ModelParser.prototype.isAtomic" + ":: " + JSON.stringify(prop));
 	}
 	if (this.isAtomicType(prop.type)){
 		return true;
@@ -1325,10 +1342,12 @@ ModelParser.prototype.superTypes = function() {
 	var exts = [];
 	model = this.getModel();
 	
+	//console.log(model)
+
 	if (model['extends'] instanceof Array) {
 		
 		var types = model['extends'];
-		for (var i = 0, len = types.length; i< len; i++){
+		for (var i = 0; i< types.length; i++){
 			exts.push(this.parsePackagedTypeStr(types[i]));
 
 		}
@@ -1392,12 +1411,28 @@ ModelParser.prototype.validateMainAttributes = function() {
 };
 /*----------------------------------------------------------------------------*/
 /*----------------------------------------------------------------------------*/
-ModelParser.prototype.isDMTBluePrint = function(dmtModel) {
-	if (dmtModel.type == "system/SIMOS/Blueprint")
-		return true;
+ModelParser.prototype.isValidModel = function(model, modelFormat) {
+	if (modelFormat == 'dmt'){
+		if (model.type.includes("Blueprint"))
+			return true;
+		else
+			return false;
+	}
 	else
-		return false;
+		return true
 };
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.isDMTBluePrint = function(dmtModel) {
+	return dmtModel.type.includes("Blueprint");
+};
+/*----------------------------------------------------------------------------*/
+ModelParser.prototype.DMTReplaceAlias = function(ref) {
+	for (var i=0; i<this.dmtAlias.length; i++) {
+		ref = ref.replace(this.dmtAlias[i].alias, this.dmtAlias[i].addr)
+	}
+
+	return ref;
+}
 /*----------------------------------------------------------------------------*/
 ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
     var simosModel = {};
@@ -1414,12 +1449,9 @@ ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
     
 	if (dmtModel.extends != undefined){
 		for (var i=0; i<dmtModel.extends.length; i++){
-			if (dmtModel.extends[i] == "system/SIMOS/NamedEntity"){
-				simosModel.extends.push("marmo:basic:NamedEntity")
-			}
-			else if (dmtModel.extends[i].indexOf("system/SIMOS") == -1){
-				simosModel.extends.push(dmtModel.extends[i].split("/").slice(1).join(":"));
-			}
+			var extref = this.DMTReplaceAlias(dmtModel.extends[i]);
+			console.log("*** " + extref);
+			simosModel.extends.push(extref.split("/").slice(1).join(":"));
 		}
 	}
 
@@ -1439,6 +1471,8 @@ ModelParser.prototype.DMTtoSIMOS = function(dmtModel) {
     	    }
     	}
     	else {
+			att.attributeType = this.DMTReplaceAlias(att.attributeType);
+
     	    if (att.attributeType == 'number'){
     	        prop["type"] = "float";
     	    }

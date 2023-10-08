@@ -7,21 +7,22 @@ from .xml import load as loadXML
 
 
 #-----------------------------------------------------------------------------#
-def load(filePath, type=None):
+def load(filePath, rootPath=None, dataType=None, fileType=None):
     fileName = filePath.split(os.path.sep)[-1]
     
-    if type == None:
-        type = findDataType(fileName)
+    if fileType == None:
+        fileType = findDataType(fileName)
     
-    if (type.lower() == 'h5'):
-        return loadHDF5(filePath)
-    elif (type.lower() == 'json'):
-        return loadJSON(filePath)
-    elif (type.lower() == 'xml'):
-        return loadXML(filePath)
+    if (fileType == 'h5'):
+        return loadHDF5(filePath, rootPath=rootPath, dataType=dataType)
+    elif (fileType == 'json'):
+        return loadJSON(filePath, rootPath=rootPath, dataType=dataType)
+    elif (fileType == 'xml'):
+        return loadXML(filePath, rootPath=rootPath, dataType=dataType)
     else:
-        raise Exception("file type %s is not known for %s."%(type, filePath))
+        print("fileName : %s"%fileName)
+        raise Exception("file type %s is not known for %s."%(fileType, filePath))
     
 #-----------------------------------------------------------------------------#
 def findDataType(fileName):
-    return fileName.split('.')[-1]
+    return fileName.split('.')[-1].lower()

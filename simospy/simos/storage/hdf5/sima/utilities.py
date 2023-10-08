@@ -8,7 +8,7 @@ def readHDF5PathsToFlatDict(fileName):
     fileInfo = collections.OrderedDict()
     
     def visitAllObjects(group,path):
-        for i in group.items():
+        for i in list(group.items()):
             if isinstance(i[1],h5py.Group):
                 visitAllObjects(i[1],path + '/' + i[0])
             else:
@@ -25,7 +25,7 @@ def mergeData(fileIn):
     f = h5py.File(fileIn,'r')
     
     labels = []
-    for key in data.keys():
+    for key in list(data.keys()):
         #print key + "   " + str(f[key].value)
         label = key.split('/')[-1]
         if not(label in labels):
@@ -34,7 +34,7 @@ def mergeData(fileIn):
     arrays = []
     for label in labels:
         arrays.append([])
-        for key in data.keys():
+        for key in list(data.keys()):
             if (label == key.split('/')[-1]):
                 arrays[-1].append(f[key].value[0])
 
@@ -48,7 +48,7 @@ def hdf5ToDict(fileName):
     data = collections.OrderedDict()
     
     def loadHDF5(group,datain):
-        for key,val in group.iteritems():
+        for key,val in group.items():
             if isinstance(val,h5py.Group):
                 datain[key] = collections.OrderedDict()
                 loadHDF5(val,datain[key])

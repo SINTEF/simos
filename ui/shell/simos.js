@@ -32,8 +32,10 @@ console.log('Starting SIMOS ...');
 console.log('\treading config file: ' + configFilePath);
 
 var langConfigFile = path.join(relSimosPath, 'config', 'langConfig.js');
-var langConfig = require(langConfigFile);
 console.log('\treading lang config file: ' + langConfigFile);
+var langConfig = require(langConfigFile);
+console.log('\tloaded langs : ' + Object.keys(langConfig.langs));
+
 
 var simosPath 	= path.resolve(path.join(__dirname,relSimosPath));
 var outPath 	= config.outPath;
@@ -66,6 +68,8 @@ replServer.context.loadGenerators = function() {
 			replServer.context.path.join(config.outPath,config.codeGenerators[lang].outPath) )
 												);
 		replServer.context[genName].setModelsPaths( config.modelsPaths );
+		replServer.context[genName].setModelsFormats( config.modelsFormat );
+
 		console.log('\t\tDone.');
 
 	}

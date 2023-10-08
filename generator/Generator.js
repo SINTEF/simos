@@ -59,6 +59,7 @@ Generator.prototype.constructor = function(lang) {
 	this.externalPackageDependencies = [];
 	
 	this.modelsPaths = [];
+	this.modelsFormats = [];
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.setSimosPath = function(p) {
@@ -80,6 +81,18 @@ Generator.prototype.appendModelsPath = function(p) {
 	this.modelsPaths.push(path.resolve(p));
 };
 
+Generator.prototype.setModelsFormats = function(ps) {
+	if (ps == undefined){
+		ps = []
+		for (var i = 0; i<this.modelsPaths.length; i++) {
+			ps.push('simos');
+		}
+		console.log("** PS is "+ps)
+	}
+	
+	this.modelsFormats = ps;
+
+};
 /*----------------------------------------------------------------------------*/
 Generator.prototype.toString = function(){
 	return "Generator";
@@ -237,7 +250,9 @@ Generator.prototype.sourcePackageIDtoPath = function(packageID) {
 /*----------------------------------------------------------------------------*/
 Generator.prototype.sourceModelIDtoPath = function(modelID) {
 	 var modelPath = modelID.split(this.lang.packageSep).join('/');
-	 
+	 console.log(modelID);
+	 console.log(modelPath);
+	 console.log(this.modelsPaths);
 	 for (var i = 0; i<this.modelsPaths.length; i++) {
 		 var mPath = path.join(this.modelsPaths[i], modelPath)
 		 //console.log(mPath+ '.' + this.modelExt);
@@ -302,7 +317,23 @@ Generator.prototype.getModel = function(modelID) {
 	
 	var model = require(modelPath);
 	
-	return new ModelParser(model);
+	console.log(modelID)
+	console.log(modelPath)
+	console.log(this.modelsPaths)
+
+	var modelFormat="simos";
+	//find model format
+	for (var i=0; i<this.modelsPaths.length; i++){
+		if (modelPath.includes(this.modelsPaths[i])) {
+			modelFormat = this.modelsFormats[i];
+		}
+	}
+
+	console.log(modelFormat)
+	let mp = new ModelParser(model, modelFormat);
+
+	
+	return mp;
 	//return this.lang.getModelParser(model);
 };
 
@@ -354,12 +385,15 @@ Generator.prototype.flattenModel = function(pmodel) {
 		return pmodel;
 	}
 	var superTypes = pmodel.superTypes();
-	
+	console.log("** extend types")
+	console.log(superTypes)
 	for(var i = 0, ilen = superTypes.length; i < ilen; i++){
 		var type = superTypes[i];
 
 		var supModelID = pmodel.makeVersionedPackagedTypeStr(type.packages,type.versions, type.name );
-				
+		
+		console.log("** flatten Model " + supModelID + ' !');
+
 		var psupModel = this.initModel(supModelID);
 		var props = psupModel.getProperties();
 		for (var p = 0, plen = props.length; p < plen; p++){
@@ -378,11 +412,12 @@ Generator.prototype.flattenModel = function(pmodel) {
 };
 /*----------------------------------------------------------------------------*/
 Generator.prototype.initModel = function(modelID) {
-	
+	console.log("** initModel  " + modelID);
+
 	var pmodel = this.getModel(modelID);
 	
 	//by pass everything if the model is in DMT format
-	console.log(modelID);
+	console.log(pmodel);
 	//console.log("hahaha ***** " + JSON.stringify(pmodel));
 	
 	

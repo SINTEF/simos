@@ -2,7 +2,7 @@ import json
 import imp
 
 def load(filePath):
-    print("loading json file %s"%filePath)
+    print(("loading json file %s"%filePath))
     
     f = open(filePath,'r')
     data = f.read()
@@ -10,7 +10,7 @@ def load(filePath):
     
     dd = json.loads(data)
     
-    print dd["__type__"]
+    print(dd["__type__"])
     
     typePath, typeName = makeTypePath(dd["__type__"], dd["__versions__"])
     

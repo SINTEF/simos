@@ -87,7 +87,6 @@ Generator.prototype.setModelsFormats = function(ps) {
 		for (var i = 0; i<this.modelsPaths.length; i++) {
 			ps.push('simos');
 		}
-		console.log("** PS is "+ps)
 	}
 	
 	this.modelsFormats = ps;
